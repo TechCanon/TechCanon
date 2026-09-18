@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TechCanon</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f4f7;
+  color: #202124;
+}
+
+header {
+  background: #111827;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+}
+
+header p {
+  margin: 6px 0 0;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 16px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+select,
+textarea,
+button {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+select,
+textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+button {
+  margin-top: 12px;
+  padding: 14px;
+  border: 0;
+  background: #111827;
+  color: white;
+  font-weight: bold;
+}
+
+#resultat {
+  display: none;
+}
+
+.procedure {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.info {
+  background: #f3f4f6;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.source {
+  background: #f9fafb;
+  border-left: 4px solid #111827;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+img {
+  width: 100%;
+  margin-top: 12px;
+  border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>TechCanon</h1>
+<p>Assistant technique Canon</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<label>Modele</label>
+
+<select id="modele">
+<option value="C1538P">C1538P</option>
+<option value="C1533P">C1533P</option>
+<option value="LBP1538C">LBP1538C</option>
+</select>
+
+<br><br>
+
+<label>Que veux-tu faire ?</label>
+
+<textarea
+id="question"
+placeholder="Exemple : Demonter le DC Controller PCB">
+</textarea>
+
+<button id="btn">
+Rechercher
+</button>
+
+</div>
+
+<div id="resultat" class="card"></div>
+
+</div>
+
+<script>
+
+const API =
+"https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
+
+document
+.getElementById("btn")
+.addEventListener("click", rechercher);
+
+async function rechercher() {
+
+const modele =
+document.getElementById("modele").value;
+
+const question =
+document.getElementById("question").value.trim();
+
+const bouton =
+document.getElementById("btn");
+
+const resultat =
+document.getElementById("resultat");
+
+if (!question) {
+
+alert("Decris ce que tu veux faire.");
+
+return;
+
+}
+
+bouton.disabled = true;
+
+bouton.textContent = "Recherche...";
+
+resultat.style.display = "block";
+
+resultat.innerHTML =
+"<div>Recherche dans les manuels Canon...</div>";
+
+try {
+
+const response =
+await fetch(API, {
+
+method: "POST",
+
+headers: {
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+question: question,
+modele: modele
+})
+
+});
+
+const data =
+await response.json();
+
+if (!response.ok ||
+data.status === "error") {
+
+resultat.innerHTML =
+"<div class='info'>" +
+(data.message || "Erreur.") +
+"</div>";
+
+return;
+
+}
+
+afficherResultat(data);
+
+} catch (error) {
+
+resultat.innerHTML =
+"<div class='info'>" +
+"Impossible de contacter TechCanon." +
+"</div>";
+
+} finally {
+
+bouton.disabled = false;
+
+bouton.textContent = "Rechercher";
+
+}
+
+}
+
+function afficherResultat(data) {
+
+const resultat =
+document.getElementById("resultat");
+
+const r =
+data.reponse || {};
+
+let html = "";
+
+if (r.type === "PROCEDURE") {
+
+html +=
+"<div class='procedure'>" +
+(r.procedure?.titre ||
+"Procedure technique") +
+"</div>";
+
+html +=
+"<div class='info'>" +
+"<b>Composant :</b> " +
+(r.composant || "-") +
+"</div>";
+
+html +=
+"<div class='info'>" +
+"<b>Unite :</b> " +
+(r.unite || "-") +
+"</div>";
+
+if (r.procedure) {
+
+html +=
+"<div class='info'>" +
+"<b>Page Service Manual :</b> " +
+(r.procedure.page_manuel || "-") +
+"</div>";
+
+if (r.procedure.image) {
+
+html +=
+"<img src='" +
+r.procedure.image +
+"'>";
+
+}
+
+}
+
+if (r.preparatifs &&
+r.preparatifs.length) {
+
+html += "<h3>Preparatifs</h3>";
+
+for (const p of r.preparatifs) {
+
+html +=
+"<div class='source'>" +
+"<b>" +
+p.ordre +
+". " +
+p.titre +
+"</b><br>" +
+"Page " +
+p.page_manuel +
+"</div>";
+
+}
+
+}
+
+if (r.message) {
+
+html +=
+"<div class='info'>" +
+r.message +
+"</div>";
+
+}
+
+} else {
+
+html +=
+"<div class='procedure'>Resultat</div>";
+
+if (typeof data.reponse === "string") {
+
+html +=
+"<div class='info'>" +
+data.reponse +
+"</div>";
+
+}
+
+}
+
+resultat.innerHTML = html;
+
+}
+
+</script>
+
+</body>
+</html>
