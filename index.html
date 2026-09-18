@@ -1,452 +1,295 @@
 ﻿<!DOCTYPE html>
+
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechCanon</title>
 
-  <title>TechCanon</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 16px;
+  background: #f4f4f4;
+  color: #222;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+.container {
+  max-width: 700px;
+  margin: auto;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f5f7;
-      color: #202124;
-    }
+h1 {
+  text-align: center;
+}
 
-    header {
-      background: #111827;
-      color: white;
-      padding: 18px 20px;
-    }
+.card {
+  background: white;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
 
-    header p {
-      margin: 5px 0 0;
-      color: #cbd5e1;
-      font-size: 14px;
-    }
+select,
+textarea,
+input[type="file"],
+button {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
 
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 18px;
-    }
+select,
+textarea,
+input[type="file"] {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+}
 
-    .search-box,
-    .pv-box {
-      background: white;
-      border-radius: 14px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      margin-bottom: 18px;
-    }
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
 
-    .pv-box h2 {
-      margin-top: 0;
-      font-size: 20px;
-    }
+button {
+  padding: 13px;
+  border: 0;
+  border-radius: 8px;
+  background: #111;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 7px;
-    }
+button:disabled {
+  opacity: .5;
+}
 
-    select,
-    textarea,
-    input[type="file"],
-    button {
-      width: 100%;
-      font-size: 16px;
-      border-radius: 10px;
-    }
+.status {
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
 
-    select,
-    textarea,
-    input[type="file"] {
-      border: 1px solid #cbd5e1;
-      padding: 12px;
-      background: white;
-    }
+.success {
+  background: #e8f7e8;
+  color: #146214;
+}
 
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-      margin-bottom: 12px;
-    }
+.error {
+  background: #ffe8e8;
+  color: #8b0000;
+}
 
-    button {
-      border: 0;
-      padding: 13px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.step {
+  margin-top: 16px;
+}
 
-    #searchButton {
-      background: #111827;
-      color: white;
-    }
+.step img {
+  width: 100%;
+  max-height: 600px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #eee;
+}
 
-    #uploadButton {
-      background: #2563eb;
-      color: white;
-      margin-top: 12px;
-    }
+.navigation {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
+.navigation button {
+  flex: 1;
+}
 
-    #status,
-    #pvStatus {
-      margin-top: 12px;
-      font-size: 14px;
-    }
+.small {
+  font-size: 13px;
+  color: #666;
+}
+</style>
 
-    .error {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .success {
-      background: #dcfce7;
-      color: #166534;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .procedure {
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      overflow: hidden;
-    }
-
-    .procedure-header {
-      padding: 18px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .procedure-header h2 {
-      margin: 0 0 8px;
-      font-size: 21px;
-    }
-
-    .procedure-header p {
-      margin: 4px 0;
-      color: #475569;
-    }
-
-    .step-counter {
-      padding: 14px 18px;
-      background: #f8fafc;
-      font-weight: bold;
-    }
-
-    .step {
-      padding: 18px;
-    }
-
-    .step-type {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 20px;
-      background: #e2e8f0;
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .step h3 {
-      margin: 0 0 8px;
-      font-size: 20px;
-    }
-
-    .page-info {
-      color: #475569;
-      font-size: 14px;
-      margin-bottom: 15px;
-    }
-
-    .step-description {
-      line-height: 1.5;
-      margin-bottom: 15px;
-    }
-
-    .manual-image {
-      width: 100%;
-      height: auto;
-      display: block;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      background: #f8fafc;
-    }
-
-    .no-image {
-      padding: 25px;
-      background: #f1f5f9;
-      border-radius: 10px;
-      text-align: center;
-      color: #64748b;
-    }
-
-    .source {
-      margin-top: 15px;
-      padding: 12px;
-      background: #f8fafc;
-      border-left: 4px solid #64748b;
-      font-size: 13px;
-      white-space: pre-wrap;
-      line-height: 1.4;
-    }
-
-    .warning {
-      margin: 18px;
-      padding: 14px;
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-      border-radius: 10px;
-      color: #9a3412;
-      font-size: 14px;
-    }
-
-    .navigation {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      padding: 18px;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .navigation button {
-      background: #111827;
-      color: white;
-    }
-
-    .navigation button:disabled {
-      opacity: 0.35;
-      cursor: default;
-    }
-
-    .result-list {
-      background: white;
-      border-radius: 14px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .result-item {
-      padding: 12px 0;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .result-item:last-child {
-      border-bottom: 0;
-    }
-
-    @media (max-width: 600px) {
-      main {
-        padding: 10px;
-      }
-
-      header {
-        padding: 15px;
-      }
-
-      header h1 {
-        font-size: 21px;
-      }
-
-      .procedure-header h2 {
-        font-size: 18px;
-      }
-
-      .step h3 {
-        font-size: 18px;
-      }
-
-      .navigation {
-        position: sticky;
-        bottom: 0;
-        background: white;
-      }
-    }
-  </style>
 </head>
 
 <body>
 
-<header>
-  <h1>TechCanon</h1>
-  <p>Assistant technique Canon</p>
-</header>
+<div class="container">
 
-<main>
+<h1>🛠️ TechCanon</h1>
 
-  <section class="search-box">
+<div class="card">
 
-    <label for="modele">Modèle</label>
+<label for="modele">Modèle</label>
 
-    <select id="modele">
-      <option value="C1538P">C1538P</option>
-      <option value="C1533P">C1533P</option>
-      <option value="LBP1538C">LBP1538C</option>
-    </select>
+<select id="modele">
+  <option value="C1538P">C1538P</option>
+  <option value="C1533P">C1533P</option>
+  <option value="LBP1538C">LBP1538C</option>
+</select>
 
-    <br><br>
+<label for="question">Question</label>
 
-    <label for="question">Question technique</label>
+<textarea
+  id="question"
+  placeholder="Exemple : démonter la carte de contrôleur CC UN2"
+></textarea>
 
-    <textarea
-      id="question"
-      placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"
-    ></textarea>
+<button id="searchButton" type="button" onclick="rechercher()">
+🔎 Rechercher
+</button>
 
-    <button id="searchButton" type="button">
-      🔎 Rechercher
-    </button>
+<div id="searchStatus"></div>
 
-    <div id="status"></div>
+</div>
 
-  </section>
+<div class="card">
 
+<h2>📎 Ajouter un PV d'intervention</h2>
 
-  <section class="pv-box">
+<p class="small">
+Sélectionne un PDF depuis ton téléphone puis envoie-le à TechCanon.
+</p>
 
-    <h2>📎 Ajouter un PV d'intervention</h2>
+<input
+id="pvFile"
+type="file"
+accept="application/pdf,.pdf"
 
-    <p>
-      Sélectionne un PV PDF depuis ton téléphone.
-      TechCanon va l'enregistrer dans son espace documentaire.
-    </p>
+>
 
-    <label for="pvFile">
-      Fichier PDF
-    </label>
+<button
+id="pvButton"
+type="button"
+onclick="envoyerPV()"
 
-    <input
-      id="pvFile"
-      type="file"
-      accept="application/pdf,.pdf"
-    >
+>
 
-    <button
-      id="uploadButton"
-      type="button"
-    >
-      📤 Envoyer le PV
-    </button>
+📤 Envoyer le PV </button>
 
-    <div id="pvStatus"></div>
+<div id="pvStatus"></div>
 
-  </section>
+</div>
 
+<div id="resultCard" class="card" style="display:none;">
 
-  <div id="result"></div>
+<h2>📋 Résultat</h2>
 
-</main>
+<div id="result"></div>
 
+<div id="stepContainer"></div>
+
+<div class="navigation">
+
+<button
+id="previousButton"
+type="button"
+onclick="precedent()"
+
+>
+
+← Précédent </button>
+
+<button
+id="nextButton"
+type="button"
+onclick="suivant()"
+
+>
+
+Suivant → </button>
+
+</div>
+
+</div>
+
+</div>
 
 <script>
 
-const API_URL =
+const ANSWER_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
 
-const UPLOAD_PV_URL =
+const UPLOAD_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/upload-pv";
 
-
-let etapes = [];
-
-let etapeActuelle = 0;
-
-let procedureActuelle = null;
+let procedureSteps = [];
+let currentStep = 0;
 
 
-const modeleElement =
-  document.getElementById("modele");
+/* =========================
+   OUTILS
+========================= */
 
-const questionElement =
-  document.getElementById("question");
+function afficherStatus(elementId, message, type) {
 
-const searchButton =
-  document.getElementById("searchButton");
+  const element =
+    document.getElementById(elementId);
 
-const statusElement =
-  document.getElementById("status");
+  element.className =
+    "status " + (type || "");
 
-const resultElement =
-  document.getElementById("result");
-
-const pvFileElement =
-  document.getElementById("pvFile");
-
-const uploadButton =
-  document.getElementById("uploadButton");
-
-const pvStatusElement =
-  document.getElementById("pvStatus");
+  element.textContent =
+    message;
+}
 
 
-searchButton.addEventListener(
-  "click",
-  rechercher
-);
-
-
-uploadButton.addEventListener(
-  "click",
-  envoyerPV
-);
-
+/* =========================
+   RECHERCHE MANUEL
+========================= */
 
 async function rechercher() {
 
   const modele =
-    modeleElement.value;
+    document.getElementById("modele").value;
 
   const question =
-    questionElement.value.trim();
+    document.getElementById("question").value.trim();
+
+  const button =
+    document.getElementById("searchButton");
 
   if (!question) {
 
-    statusElement.innerHTML =
-      '<div class="error">Veuillez saisir une question.</div>';
+    afficherStatus(
+      "searchStatus",
+      "Écris une question.",
+      "error"
+    );
 
     return;
   }
 
-  searchButton.disabled = true;
+  button.disabled = true;
 
-  statusElement.textContent =
-    "Recherche dans le Service Manual...";
-
-  resultElement.innerHTML = "";
+  afficherStatus(
+    "searchStatus",
+    "Recherche en cours...",
+    ""
+  );
 
   try {
 
     const response =
       await fetch(
-        API_URL,
+        ANSWER_URL,
         {
           method: "POST",
 
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type":
+              "application/json"
           },
 
           body: JSON.stringify({
@@ -456,114 +299,403 @@ async function rechercher() {
         }
       );
 
+    const text =
+      await response.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(
+        "Réponse serveur invalide : " +
+        text
+      );
+    }
+
     if (!response.ok) {
 
       throw new Error(
+        data.erreur ||
+        data.error ||
         "Erreur serveur HTTP " +
         response.status
       );
     }
 
-    const data =
-      await response.json();
-
-    console.log(
-      "Réponse TechCanon :",
-      data
-    );
-
     if (!data.ok) {
 
       throw new Error(
         data.erreur ||
-        "Erreur inconnue."
+        "La recherche a échoué."
       );
     }
 
-    afficherReponse(
-      data.reponse
+    afficherStatus(
+      "searchStatus",
+      "Recherche terminée.",
+      "success"
     );
 
-    statusElement.innerHTML =
-      '<div class="success">' +
-      "Recherche terminée." +
-      "</div>";
+    afficherResultat(
+      data.reponse
+    );
 
   } catch (error) {
 
     console.error(error);
 
-    statusElement.innerHTML =
-      '<div class="error">' +
+    afficherStatus(
+      "searchStatus",
       "Erreur : " +
-      escapeHtml(error.message) +
-      "</div>";
+      (error.message || error),
+      "error"
+    );
 
   } finally {
 
-    searchButton.disabled = false;
+    button.disabled = false;
   }
 }
 
 
+/* =========================
+   AFFICHAGE RESULTAT
+========================= */
+
+function afficherResultat(reponse) {
+
+  const card =
+    document.getElementById("resultCard");
+
+  const result =
+    document.getElementById("result");
+
+  card.style.display = "block";
+
+  procedureSteps = [];
+  currentStep = 0;
+
+  if (!reponse) {
+
+    result.textContent =
+      "Aucune réponse.";
+
+    return;
+  }
+
+  result.innerHTML = "";
+
+  if (reponse.type === "PROCEDURE") {
+
+    if (reponse.titre) {
+
+      const title =
+        document.createElement("h3");
+
+      title.textContent =
+        reponse.titre;
+
+      result.appendChild(title);
+    }
+
+    if (reponse.avertissement) {
+
+      const warning =
+        document.createElement("div");
+
+      warning.className =
+        "status error";
+
+      warning.textContent =
+        reponse.avertissement;
+
+      result.appendChild(warning);
+    }
+
+    procedureSteps =
+      reponse.etapes ||
+      reponse.steps ||
+      [];
+
+    afficherEtape();
+
+    return;
+  }
+
+  if (reponse.reponse) {
+
+    result.textContent =
+      reponse.reponse;
+
+  } else if (reponse.contenu) {
+
+    result.textContent =
+      reponse.contenu;
+
+  } else {
+
+    result.textContent =
+      JSON.stringify(
+        reponse,
+        null,
+        2
+      );
+  }
+
+  document.getElementById(
+    "stepContainer"
+  ).innerHTML = "";
+
+  document.getElementById(
+    "previousButton"
+  ).style.display = "none";
+
+  document.getElementById(
+    "nextButton"
+  ).style.display = "none";
+}
+
+
+/* =========================
+   ETAPES PROCEDURE
+========================= */
+
+function afficherEtape() {
+
+  const container =
+    document.getElementById(
+      "stepContainer"
+    );
+
+  container.innerHTML = "";
+
+  if (
+    !procedureSteps ||
+    procedureSteps.length === 0
+  ) {
+
+    container.textContent =
+      "Aucune étape détaillée disponible.";
+
+    return;
+  }
+
+  const step =
+    procedureSteps[currentStep];
+
+  const box =
+    document.createElement("div");
+
+  box.className = "step";
+
+  const title =
+    document.createElement("h3");
+
+  title.textContent =
+    step.titre ||
+    step.title ||
+    "Étape " +
+    (currentStep + 1);
+
+  box.appendChild(title);
+
+  if (step.description) {
+
+    const description =
+      document.createElement("p");
+
+    description.textContent =
+      step.description;
+
+    box.appendChild(description);
+  }
+
+  if (step.texte) {
+
+    const texte =
+      document.createElement("p");
+
+    texte.textContent =
+      step.texte;
+
+    box.appendChild(texte);
+  }
+
+  if (step.page) {
+
+    const page =
+      document.createElement("p");
+
+    page.className = "small";
+
+    page.textContent =
+      "Page : " +
+      step.page;
+
+    box.appendChild(page);
+  }
+
+  if (step.pdf_page) {
+
+    const pdfPage =
+      document.createElement("p");
+
+    pdfPage.className = "small";
+
+    pdfPage.textContent =
+      "Page PDF : " +
+      step.pdf_page;
+
+    box.appendChild(pdfPage);
+  }
+
+  if (step.image) {
+
+    const image =
+      document.createElement("img");
+
+    image.src =
+      step.image;
+
+    image.alt =
+      "Illustration étape " +
+      (currentStep + 1);
+
+    image.loading =
+      "lazy";
+
+    box.appendChild(image);
+  }
+
+  container.appendChild(box);
+
+  const previous =
+    document.getElementById(
+      "previousButton"
+    );
+
+  const next =
+    document.getElementById(
+      "nextButton"
+    );
+
+  previous.style.display =
+    currentStep > 0
+      ? "block"
+      : "none";
+
+  next.style.display =
+    currentStep <
+    procedureSteps.length - 1
+      ? "block"
+      : "none";
+}
+
+
+function precedent() {
+
+  if (currentStep > 0) {
+
+    currentStep--;
+
+    afficherEtape();
+  }
+}
+
+
+function suivant() {
+
+  if (
+    currentStep <
+    procedureSteps.length - 1
+  ) {
+
+    currentStep++;
+
+    afficherEtape();
+  }
+}
+
+
+/* =========================
+   UPLOAD PV
+========================= */
+
 async function envoyerPV() {
 
+  const input =
+    document.getElementById(
+      "pvFile"
+    );
+
+  const button =
+    document.getElementById(
+      "pvButton"
+    );
+
   const fichier =
-    pvFileElement.files[0];
+    input.files &&
+    input.files[0];
 
   if (!fichier) {
 
-    pvStatusElement.innerHTML =
-      '<div class="error">' +
-      "Sélectionne d'abord un PDF." +
-      "</div>";
+    afficherStatus(
+      "pvStatus",
+      "Sélectionne d'abord un fichier PDF.",
+      "error"
+    );
 
     return;
   }
 
-
-  const estPDF =
-    fichier.type === "application/pdf" ||
-    fichier.name
+  if (
+    fichier.type !== "application/pdf" &&
+    !fichier.name
       .toLowerCase()
-      .endsWith(".pdf");
+      .endsWith(".pdf")
+  ) {
 
-
-  if (!estPDF) {
-
-    pvStatusElement.innerHTML =
-      '<div class="error">' +
-      "Le fichier doit être un PDF." +
-      "</div>";
-
-    return;
-  }
-
-
-  if (fichier.size > 25 * 1024 * 1024) {
-
-    pvStatusElement.innerHTML =
-      '<div class="error">' +
-      "Le PDF dépasse la limite de 25 Mo." +
-      "</div>";
+    afficherStatus(
+      "pvStatus",
+      "Le fichier doit être un PDF.",
+      "error"
+    );
 
     return;
   }
 
+  if (
+    fichier.size >
+    25 * 1024 * 1024
+  ) {
 
-  uploadButton.disabled = true;
+    afficherStatus(
+      "pvStatus",
+      "Le PDF dépasse la limite de 25 Mo.",
+      "error"
+    );
 
-  pvStatusElement.textContent =
-    "📤 Envoi du PV en cours...";
+    return;
+  }
 
+  button.disabled = true;
+
+  afficherStatus(
+    "pvStatus",
+    "📤 Envoi du PV en cours...",
+    ""
+  );
 
   try {
 
     const response =
       await fetch(
-        UPLOAD_PV_URL,
+        UPLOAD_URL,
         {
           method: "POST",
+
+          mode: "cors",
 
           headers: {
             "Content-Type":
@@ -577,519 +709,83 @@ async function envoyerPV() {
         }
       );
 
+    const text =
+      await response.text();
 
-    const data =
-      await response.json();
+    let data;
 
+    try {
 
-    console.log(
-      "Réponse upload PV :",
-      data
-    );
+      data =
+        JSON.parse(text);
 
-
-    if (!response.ok || !data.ok) {
+    } catch {
 
       throw new Error(
-        data.erreur ||
-        "Erreur pendant l'envoi du PV."
+        "Réponse serveur invalide : " +
+        text
       );
     }
 
+    if (!response.ok) {
 
-    pvStatusElement.innerHTML =
-      '<div class="success">' +
-      "✅ PV envoyé avec succès." +
-      "<br><br>" +
-      "Fichier : " +
-      escapeHtml(
-        fichier.name
-      ) +
-      "<br>" +
-      "Le PV est maintenant enregistré dans TechCanon." +
-      "</div>";
+      throw new Error(
+        data.erreur ||
+        data.error ||
+        "Erreur HTTP " +
+        response.status
+      );
+    }
 
+    if (!data.ok) {
 
-    pvFileElement.value = "";
+      throw new Error(
+        data.erreur ||
+        "Le serveur a refusé le PV."
+      );
+    }
 
+    afficherStatus(
+      "pvStatus",
+      "✅ PV envoyé avec succès.",
+      "success"
+    );
+
+    input.value = "";
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Erreur upload PV:",
+      error
+    );
 
-    pvStatusElement.innerHTML =
-      '<div class="error">' +
-      "❌ Erreur : " +
-      escapeHtml(
-        error.message
-      ) +
-      "</div>";
+    let message =
+      error &&
+      error.message
+        ? error.message
+        : String(error);
+
+    if (
+      message ===
+      "Failed to fetch"
+    ) {
+
+      message =
+        "Connexion impossible avec le serveur Supabase. " +
+        "Vérifie la connexion Internet du téléphone puis réessaie.";
+    }
+
+    afficherStatus(
+      "pvStatus",
+      "❌ " + message,
+      "error"
+    );
 
   } finally {
 
-    uploadButton.disabled = false;
+    button.disabled = false;
   }
-}
-
-
-function afficherReponse(
-  reponse
-) {
-
-  if (
-    reponse &&
-    reponse.type === "PROCEDURE" &&
-    reponse.procedure
-  ) {
-
-    afficherProcedure(
-      reponse
-    );
-
-    return;
-  }
-
-  afficherRecherche(
-    reponse
-  );
-}
-
-
-function afficherProcedure(
-  reponse
-) {
-
-  procedureActuelle =
-    reponse.procedure;
-
-  etapes =
-    Array.isArray(
-      reponse.procedure.etapes
-    )
-      ? reponse.procedure.etapes
-      : [];
-
-  etapeActuelle = 0;
-
-
-  if (!etapes.length) {
-
-    resultElement.innerHTML =
-      '<div class="error">' +
-      "Aucune étape de procédure trouvée." +
-      "</div>";
-
-    return;
-  }
-
-
-  resultElement.innerHTML = `
-
-    <section class="procedure">
-
-      <div class="procedure-header">
-
-        <h2>
-          ${escapeHtml(
-            reponse.procedure.titre ||
-            "Procédure"
-          )}
-        </h2>
-
-        <p>
-          Modèle :
-          <strong>
-            ${escapeHtml(
-              reponse.modele || ""
-            )}
-          </strong>
-        </p>
-
-        <p>
-          Composant :
-          <strong>
-            ${escapeHtml(
-              reponse.composant || ""
-            )}
-          </strong>
-        </p>
-
-        <p>
-          Unité :
-          <strong>
-            ${escapeHtml(
-              reponse.unite || ""
-            )}
-          </strong>
-        </p>
-
-      </div>
-
-      <div
-        id="stepCounter"
-        class="step-counter"
-      ></div>
-
-      <div
-        id="stepContainer"
-        class="step"
-      ></div>
-
-      <div class="warning">
-
-        ${escapeHtml(
-          reponse.procedure.avertissement ||
-          "Vérifier les illustrations et les opérations dans le Service Manual avant toute intervention."
-        )}
-
-      </div>
-
-      <div class="navigation">
-
-        <button
-          id="previousButton"
-          type="button"
-          onclick="etapePrecedente()"
-        >
-          ← Précédent
-        </button>
-
-        <button
-          id="nextButton"
-          type="button"
-          onclick="etapeSuivante()"
-        >
-          Suivant →
-        </button>
-
-      </div>
-
-    </section>
-  `;
-
-
-  afficherEtape();
-}
-
-
-function afficherEtape() {
-
-  if (!etapes.length) {
-    return;
-  }
-
-
-  const etape =
-    etapes[etapeActuelle];
-
-
-  const counter =
-    document.getElementById(
-      "stepCounter"
-    );
-
-  const container =
-    document.getElementById(
-      "stepContainer"
-    );
-
-  const previousButton =
-    document.getElementById(
-      "previousButton"
-    );
-
-  const nextButton =
-    document.getElementById(
-      "nextButton"
-    );
-
-
-  if (
-    !counter ||
-    !container ||
-    !previousButton ||
-    !nextButton
-  ) {
-    return;
-  }
-
-
-  counter.textContent =
-    "Étape " +
-    (etapeActuelle + 1) +
-    " / " +
-    etapes.length;
-
-
-  const type =
-    etape.type === "INTERVENTION"
-      ? "INTERVENTION"
-      : "PRÉPARATIF";
-
-
-  let imageHtml = "";
-
-
-  if (etape.image) {
-
-    imageHtml = `
-
-      <img
-        class="manual-image"
-        src="${escapeAttribute(
-          etape.image
-        )}"
-        alt="Illustration du Service Manual"
-        loading="eager"
-      >
-
-    `;
-
-  } else {
-
-    imageHtml = `
-
-      <div class="no-image">
-        Illustration non disponible pour cette étape.
-      </div>
-
-    `;
-  }
-
-
-  container.innerHTML = `
-
-    <div class="step-type">
-      ${type}
-    </div>
-
-    <h3>
-      ${escapeHtml(
-        etape.titre ||
-        "Étape"
-      )}
-    </h3>
-
-    <div class="page-info">
-
-      Page manuel :
-      <strong>
-        ${escapeHtml(
-          etape.page_manuel ??
-          "?"
-        )}
-      </strong>
-
-      &nbsp;|&nbsp;
-
-      Page PDF :
-      <strong>
-        ${escapeHtml(
-          etape.page_pdf ??
-          "?"
-        )}
-      </strong>
-
-    </div>
-
-    <div class="step-description">
-
-      ${escapeHtml(
-        etape.description ||
-        ""
-      )}
-
-    </div>
-
-    ${imageHtml}
-
-    <div class="source">
-
-      <strong>
-        Source Service Manual
-      </strong>
-
-      <br><br>
-
-      ${escapeHtml(
-        etape.source ||
-        ""
-      )}
-
-    </div>
-  `;
-
-
-  previousButton.disabled =
-    etapeActuelle === 0;
-
-
-  nextButton.disabled =
-    etapeActuelle ===
-    etapes.length - 1;
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-}
-
-
-function etapePrecedente() {
-
-  if (
-    etapeActuelle <= 0
-  ) {
-    return;
-  }
-
-  etapeActuelle--;
-
-  afficherEtape();
-}
-
-
-function etapeSuivante() {
-
-  if (
-    etapeActuelle >=
-    etapes.length - 1
-  ) {
-    return;
-  }
-
-  etapeActuelle++;
-
-  afficherEtape();
-}
-
-
-function afficherRecherche(
-  reponse
-) {
-
-  const resultats =
-    Array.isArray(
-      reponse?.resultats
-    )
-      ? reponse.resultats
-      : [];
-
-
-  if (!resultats.length) {
-
-    resultElement.innerHTML = `
-
-      <div class="result-list">
-
-        <strong>
-          Aucun résultat trouvé.
-        </strong>
-
-        <p>
-          Les informations disponibles dans les documents ne permettent pas de répondre précisément à cette question.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  let html = `
-
-    <div class="result-list">
-
-      <h2>
-        Résultats du manuel
-      </h2>
-  `;
-
-
-  resultats.forEach(
-    (item) => {
-
-      html += `
-
-        <div class="result-item">
-
-          <strong>
-            Page ${escapeHtml(
-              item.page ??
-              "?"
-            )}
-          </strong>
-
-          <br><br>
-
-          ${escapeHtml(
-            item.contenu ||
-            ""
-          )}
-
-        </div>
-
-      `;
-    }
-  );
-
-
-  html += `
-    </div>
-  `;
-
-
-  resultElement.innerHTML =
-    html;
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  if (
-    value === null ||
-    value === undefined
-  ) {
-    return "";
-  }
-
-
-  return String(value)
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  );
 }
 
 </script>
