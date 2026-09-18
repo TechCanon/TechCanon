@@ -41,12 +41,18 @@
       padding: 18px;
     }
 
-    .search-box {
+    .search-box,
+    .pv-box {
       background: white;
       border-radius: 14px;
       padding: 18px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       margin-bottom: 18px;
+    }
+
+    .pv-box h2 {
+      margin-top: 0;
+      font-size: 20px;
     }
 
     label {
@@ -57,6 +63,7 @@
 
     select,
     textarea,
+    input[type="file"],
     button {
       width: 100%;
       font-size: 16px;
@@ -64,7 +71,8 @@
     }
 
     select,
-    textarea {
+    textarea,
+    input[type="file"] {
       border: 1px solid #cbd5e1;
       padding: 12px;
       background: white;
@@ -76,21 +84,31 @@
       margin-bottom: 12px;
     }
 
-    #searchButton {
+    button {
       border: 0;
-      background: #111827;
-      color: white;
       padding: 13px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    #searchButton:disabled {
+    #searchButton {
+      background: #111827;
+      color: white;
+    }
+
+    #uploadButton {
+      background: #2563eb;
+      color: white;
+      margin-top: 12px;
+    }
+
+    button:disabled {
       opacity: 0.6;
       cursor: wait;
     }
 
-    #status {
+    #status,
+    #pvStatus {
       margin-top: 12px;
       font-size: 14px;
     }
@@ -98,6 +116,14 @@
     .error {
       background: #fee2e2;
       color: #991b1b;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .success {
+      background: #dcfce7;
+      color: #166534;
       padding: 12px;
       border-radius: 10px;
       margin-bottom: 15px;
@@ -207,10 +233,6 @@
     }
 
     .navigation button {
-      border: 0;
-      padding: 13px;
-      font-weight: bold;
-      cursor: pointer;
       background: #111827;
       color: white;
     }
@@ -218,10 +240,6 @@
     .navigation button:disabled {
       opacity: 0.35;
       cursor: default;
-    }
-
-    .hidden {
-      display: none;
     }
 
     .result-list {
@@ -299,25 +317,65 @@
     ></textarea>
 
     <button id="searchButton" type="button">
-      Rechercher
+      🔎 Rechercher
     </button>
 
     <div id="status"></div>
 
   </section>
 
+
+  <section class="pv-box">
+
+    <h2>📎 Ajouter un PV d'intervention</h2>
+
+    <p>
+      Sélectionne un PV PDF depuis ton téléphone.
+      TechCanon va l'enregistrer dans son espace documentaire.
+    </p>
+
+    <label for="pvFile">
+      Fichier PDF
+    </label>
+
+    <input
+      id="pvFile"
+      type="file"
+      accept="application/pdf,.pdf"
+    >
+
+    <button
+      id="uploadButton"
+      type="button"
+    >
+      📤 Envoyer le PV
+    </button>
+
+    <div id="pvStatus"></div>
+
+  </section>
+
+
   <div id="result"></div>
 
 </main>
+
 
 <script>
 
 const API_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
 
+const UPLOAD_PV_URL =
+  "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/upload-pv";
+
+
 let etapes = [];
+
 let etapeActuelle = 0;
+
 let procedureActuelle = null;
+
 
 const modeleElement =
   document.getElementById("modele");
@@ -334,10 +392,25 @@ const statusElement =
 const resultElement =
   document.getElementById("result");
 
+const pvFileElement =
+  document.getElementById("pvFile");
+
+const uploadButton =
+  document.getElementById("uploadButton");
+
+const pvStatusElement =
+  document.getElementById("pvStatus");
+
 
 searchButton.addEventListener(
   "click",
   rechercher
+);
+
+
+uploadButton.addEventListener(
+  "click",
+  envoyerPV
 );
 
 
@@ -394,7 +467,10 @@ async function rechercher() {
     const data =
       await response.json();
 
-    console.log("Réponse TechCanon :", data);
+    console.log(
+      "Réponse TechCanon :",
+      data
+    );
 
     if (!data.ok) {
 
@@ -408,8 +484,10 @@ async function rechercher() {
       data.reponse
     );
 
-    statusElement.textContent =
-      "Recherche terminée.";
+    statusElement.innerHTML =
+      '<div class="success">' +
+      "Recherche terminée." +
+      "</div>";
 
   } catch (error) {
 
@@ -428,7 +506,135 @@ async function rechercher() {
 }
 
 
-function afficherReponse(reponse) {
+async function envoyerPV() {
+
+  const fichier =
+    pvFileElement.files[0];
+
+  if (!fichier) {
+
+    pvStatusElement.innerHTML =
+      '<div class="error">' +
+      "Sélectionne d'abord un PDF." +
+      "</div>";
+
+    return;
+  }
+
+
+  const estPDF =
+    fichier.type === "application/pdf" ||
+    fichier.name
+      .toLowerCase()
+      .endsWith(".pdf");
+
+
+  if (!estPDF) {
+
+    pvStatusElement.innerHTML =
+      '<div class="error">' +
+      "Le fichier doit être un PDF." +
+      "</div>";
+
+    return;
+  }
+
+
+  if (fichier.size > 25 * 1024 * 1024) {
+
+    pvStatusElement.innerHTML =
+      '<div class="error">' +
+      "Le PDF dépasse la limite de 25 Mo." +
+      "</div>";
+
+    return;
+  }
+
+
+  uploadButton.disabled = true;
+
+  pvStatusElement.textContent =
+    "📤 Envoi du PV en cours...";
+
+
+  try {
+
+    const response =
+      await fetch(
+        UPLOAD_PV_URL,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/pdf",
+
+            "x-filename":
+              fichier.name
+          },
+
+          body: fichier
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "Réponse upload PV :",
+      data
+    );
+
+
+    if (!response.ok || !data.ok) {
+
+      throw new Error(
+        data.erreur ||
+        "Erreur pendant l'envoi du PV."
+      );
+    }
+
+
+    pvStatusElement.innerHTML =
+      '<div class="success">' +
+      "✅ PV envoyé avec succès." +
+      "<br><br>" +
+      "Fichier : " +
+      escapeHtml(
+        fichier.name
+      ) +
+      "<br>" +
+      "Le PV est maintenant enregistré dans TechCanon." +
+      "</div>";
+
+
+    pvFileElement.value = "";
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    pvStatusElement.innerHTML =
+      '<div class="error">' +
+      "❌ Erreur : " +
+      escapeHtml(
+        error.message
+      ) +
+      "</div>";
+
+  } finally {
+
+    uploadButton.disabled = false;
+  }
+}
+
+
+function afficherReponse(
+  reponse
+) {
 
   if (
     reponse &&
@@ -449,7 +655,9 @@ function afficherReponse(reponse) {
 }
 
 
-function afficherProcedure(reponse) {
+function afficherProcedure(
+  reponse
+) {
 
   procedureActuelle =
     reponse.procedure;
@@ -463,6 +671,7 @@ function afficherProcedure(reponse) {
 
   etapeActuelle = 0;
 
+
   if (!etapes.length) {
 
     resultElement.innerHTML =
@@ -472,6 +681,7 @@ function afficherProcedure(reponse) {
 
     return;
   }
+
 
   resultElement.innerHTML = `
 
@@ -557,20 +767,21 @@ function afficherProcedure(reponse) {
     </section>
   `;
 
+
   afficherEtape();
 }
 
 
 function afficherEtape() {
 
-  if (
-    !etapes.length
-  ) {
+  if (!etapes.length) {
     return;
   }
 
+
   const etape =
     etapes[etapeActuelle];
+
 
   const counter =
     document.getElementById(
@@ -592,13 +803,16 @@ function afficherEtape() {
       "nextButton"
     );
 
-  if (!counter ||
-      !container ||
-      !previousButton ||
-      !nextButton
+
+  if (
+    !counter ||
+    !container ||
+    !previousButton ||
+    !nextButton
   ) {
     return;
   }
+
 
   counter.textContent =
     "Étape " +
@@ -606,32 +820,42 @@ function afficherEtape() {
     " / " +
     etapes.length;
 
+
   const type =
     etape.type === "INTERVENTION"
       ? "INTERVENTION"
       : "PRÉPARATIF";
 
+
   let imageHtml = "";
+
 
   if (etape.image) {
 
     imageHtml = `
+
       <img
         class="manual-image"
-        src="${escapeAttribute(etape.image)}"
-        alt="Illustration du Service Manual - page PDF ${escapeAttribute(etape.page_pdf)}"
+        src="${escapeAttribute(
+          etape.image
+        )}"
+        alt="Illustration du Service Manual"
         loading="eager"
       >
+
     `;
 
   } else {
 
     imageHtml = `
+
       <div class="no-image">
         Illustration non disponible pour cette étape.
       </div>
+
     `;
   }
+
 
   container.innerHTML = `
 
@@ -681,7 +905,9 @@ function afficherEtape() {
 
     <div class="source">
 
-      <strong>Source Service Manual</strong>
+      <strong>
+        Source Service Manual
+      </strong>
 
       <br><br>
 
@@ -693,12 +919,15 @@ function afficherEtape() {
     </div>
   `;
 
+
   previousButton.disabled =
     etapeActuelle === 0;
+
 
   nextButton.disabled =
     etapeActuelle ===
     etapes.length - 1;
+
 
   window.scrollTo({
     top: 0,
@@ -736,7 +965,9 @@ function etapeSuivante() {
 }
 
 
-function afficherRecherche(reponse) {
+function afficherRecherche(
+  reponse
+) {
 
   const resultats =
     Array.isArray(
@@ -745,29 +976,44 @@ function afficherRecherche(reponse) {
       ? reponse.resultats
       : [];
 
+
   if (!resultats.length) {
 
     resultElement.innerHTML = `
+
       <div class="result-list">
-        <strong>Aucun résultat trouvé.</strong>
+
+        <strong>
+          Aucun résultat trouvé.
+        </strong>
+
         <p>
           Les informations disponibles dans les documents ne permettent pas de répondre précisément à cette question.
         </p>
+
       </div>
+
     `;
 
     return;
   }
 
+
   let html = `
+
     <div class="result-list">
-      <h2>Résultats du manuel</h2>
+
+      <h2>
+        Résultats du manuel
+      </h2>
   `;
+
 
   resultats.forEach(
     (item) => {
 
       html += `
+
         <div class="result-item">
 
           <strong>
@@ -785,20 +1031,25 @@ function afficherRecherche(reponse) {
           )}
 
         </div>
+
       `;
     }
   );
 
+
   html += `
     </div>
   `;
+
 
   resultElement.innerHTML =
     html;
 }
 
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
   if (
     value === null ||
@@ -806,6 +1057,7 @@ function escapeHtml(value) {
   ) {
     return "";
   }
+
 
   return String(value)
     .replace(
@@ -831,7 +1083,9 @@ function escapeHtml(value) {
 }
 
 
-function escapeAttribute(value) {
+function escapeAttribute(
+  value
+) {
 
   return escapeHtml(
     value
