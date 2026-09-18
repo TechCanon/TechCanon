@@ -1,170 +1,844 @@
 ﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TechCanon</title>
-<style>
-body{font-family:Arial;margin:0;background:#f3f4f6;color:#111827}
-main{max-width:850px;margin:auto;padding:20px}
-.card{background:white;padding:20px;margin:15px 0;border-radius:14px;box-shadow:0 2px 8px #0001}
-label{display:block;font-weight:bold;margin:15px 0 7px}
-select,textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid #ccc;border-radius:9px;font-size:16px}
-textarea{min-height:110px}
-button{padding:12px 18px;margin-top:15px;border:0;border-radius:9px;background:#111827;color:white;font-weight:bold;font-size:16px}
-button:disabled{opacity:.5}
-.error{margin-top:15px;padding:12px;border-radius:9px;background:#fee2e2;color:#991b1b}
-.success{margin-top:15px;padding:12px;border-radius:9px;background:#dcfce7;color:#166534}
-.step{margin-top:20px;padding:15px;border-left:4px solid #111827;background:#f9fafb}
-.page{color:#6b7280;margin-top:8px}
-img{max-width:100%;margin-top:15px;border-radius:8px}
-.nav{display:flex;gap:10px}.nav button{flex:1}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>TechCanon</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f5f7;
+      color: #202124;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 5px 0 0;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .search-box {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    select,
+    textarea,
+    button {
+      width: 100%;
+      font-size: 16px;
+      border-radius: 10px;
+    }
+
+    select,
+    textarea {
+      border: 1px solid #cbd5e1;
+      padding: 12px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+
+    #searchButton {
+      border: 0;
+      background: #111827;
+      color: white;
+      padding: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #searchButton:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    #status {
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .procedure {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .procedure-header {
+      padding: 18px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .procedure-header h2 {
+      margin: 0 0 8px;
+      font-size: 21px;
+    }
+
+    .procedure-header p {
+      margin: 4px 0;
+      color: #475569;
+    }
+
+    .step-counter {
+      padding: 14px 18px;
+      background: #f8fafc;
+      font-weight: bold;
+    }
+
+    .step {
+      padding: 18px;
+    }
+
+    .step-type {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 20px;
+      background: #e2e8f0;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .step h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .page-info {
+      color: #475569;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .step-description {
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .manual-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      background: #f8fafc;
+    }
+
+    .no-image {
+      padding: 25px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      text-align: center;
+      color: #64748b;
+    }
+
+    .source {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f8fafc;
+      border-left: 4px solid #64748b;
+      font-size: 13px;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+
+    .warning {
+      margin: 18px;
+      padding: 14px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 10px;
+      color: #9a3412;
+      font-size: 14px;
+    }
+
+    .navigation {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 18px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .navigation button {
+      border: 0;
+      padding: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #111827;
+      color: white;
+    }
+
+    .navigation button:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .result-list {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .result-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .result-item:last-child {
+      border-bottom: 0;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 10px;
+      }
+
+      header {
+        padding: 15px;
+      }
+
+      header h1 {
+        font-size: 21px;
+      }
+
+      .procedure-header h2 {
+        font-size: 18px;
+      }
+
+      .step h3 {
+        font-size: 18px;
+      }
+
+      .navigation {
+        position: sticky;
+        bottom: 0;
+        background: white;
+      }
+    }
+  </style>
 </head>
+
 <body>
+
+<header>
+  <h1>TechCanon</h1>
+  <p>Assistant technique Canon</p>
+</header>
+
 <main>
-<h1>TechCanon</h1>
-<p>Assistant technique Canon</p>
 
-<div class="card">
-<label>Modèle</label>
-<select id="modele">
-<option>C1538P</option>
-<option>C1533P</option>
-<option>LBP1538C</option>
-</select>
+  <section class="search-box">
 
-<label>Question</label>
-<textarea id="question" placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"></textarea>
+    <label for="modele">Modèle</label>
 
-<button id="search">Rechercher</button>
-<div id="status"></div>
-</div>
+    <select id="modele">
+      <option value="C1538P">C1538P</option>
+      <option value="C1533P">C1533P</option>
+      <option value="LBP1538C">LBP1538C</option>
+    </select>
 
-<div id="result" class="card" style="display:none"></div>
+    <br><br>
+
+    <label for="question">Question technique</label>
+
+    <textarea
+      id="question"
+      placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"
+    ></textarea>
+
+    <button id="searchButton" type="button">
+      Rechercher
+    </button>
+
+    <div id="status"></div>
+
+  </section>
+
+  <div id="result"></div>
+
 </main>
 
 <script>
-const API="https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
-const btn=document.getElementById("search");
-const modele=document.getElementById("modele");
-const question=document.getElementById("question");
-const status=document.getElementById("status");
-const result=document.getElementById("result");
 
-let steps=[];
-let current=0;
+const API_URL =
+  "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
 
-function msg(t,c=""){status.className=c;status.textContent=t}
+let etapes = [];
+let etapeActuelle = 0;
+let procedureActuelle = null;
 
-function showStep(){
- const s=steps[current];
- result.innerHTML=
- "<h2>Procédure identifiée</h2>"+
- "<p><b>Modèle :</b> "+modele.value+"</p>"+
- "<div class='step'>"+
- "<b>Étape "+(current+1)+" / "+steps.length+"</b>"+
- "<h3>"+s.titre+"</h3>"+
- "<div class='page'>Page manuel : "+(s.page_manuel||"-")+"<br>Page PDF : "+(s.page_pdf||"-")+"</div>"+
- (s.image?"<img src='"+s.image+"'>":"")+
- "</div>"+
- "<div class='nav'>"+
- "<button id='prev' "+(current===0?"disabled":"")+">← Précédent</button>"+
- "<button id='next' "+(current===steps.length-1?"disabled":"")+">Suivant →</button>"+
- "</div>"+
- "<p><b>Important :</b> vérifier les vis, connecteurs et figures dans le Service Manual avant intervention.</p>";
- result.style.display="block";
+const modeleElement =
+  document.getElementById("modele");
 
- document.getElementById("prev").onclick=()=>{
-  if(current>0){current--;showStep()}
- };
+const questionElement =
+  document.getElementById("question");
 
- document.getElementById("next").onclick=()=>{
-  if(current<steps.length-1){current++;showStep()}
- };
+const searchButton =
+  document.getElementById("searchButton");
+
+const statusElement =
+  document.getElementById("status");
+
+const resultElement =
+  document.getElementById("result");
+
+
+searchButton.addEventListener(
+  "click",
+  rechercher
+);
+
+
+async function rechercher() {
+
+  const modele =
+    modeleElement.value;
+
+  const question =
+    questionElement.value.trim();
+
+  if (!question) {
+
+    statusElement.innerHTML =
+      '<div class="error">Veuillez saisir une question.</div>';
+
+    return;
+  }
+
+  searchButton.disabled = true;
+
+  statusElement.textContent =
+    "Recherche dans le Service Manual...";
+
+  resultElement.innerHTML = "";
+
+  try {
+
+    const response =
+      await fetch(
+        API_URL,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            modele: modele,
+            question: question
+          })
+        }
+      );
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Erreur serveur HTTP " +
+        response.status
+      );
+    }
+
+    const data =
+      await response.json();
+
+    console.log("Réponse TechCanon :", data);
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.erreur ||
+        "Erreur inconnue."
+      );
+    }
+
+    afficherReponse(
+      data.reponse
+    );
+
+    statusElement.textContent =
+      "Recherche terminée.";
+
+  } catch (error) {
+
+    console.error(error);
+
+    statusElement.innerHTML =
+      '<div class="error">' +
+      "Erreur : " +
+      escapeHtml(error.message) +
+      "</div>";
+
+  } finally {
+
+    searchButton.disabled = false;
+  }
 }
 
-async function rechercher(){
- const q=question.value.trim();
 
- if(!q){
-  msg("Veuillez entrer une question.","error");
-  return;
- }
+function afficherReponse(reponse) {
 
- btn.disabled=true;
- btn.textContent="Recherche...";
- msg("Interrogation du Service Manual...");
- result.style.display="none";
+  if (
+    reponse &&
+    reponse.type === "PROCEDURE" &&
+    reponse.procedure
+  ) {
 
- try{
-  const r=await fetch(API,{
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({
-    modele:modele.value,
-    question:q
-   })
+    afficherProcedure(
+      reponse
+    );
+
+    return;
+  }
+
+  afficherRecherche(
+    reponse
+  );
+}
+
+
+function afficherProcedure(reponse) {
+
+  procedureActuelle =
+    reponse.procedure;
+
+  etapes =
+    Array.isArray(
+      reponse.procedure.etapes
+    )
+      ? reponse.procedure.etapes
+      : [];
+
+  etapeActuelle = 0;
+
+  if (!etapes.length) {
+
+    resultElement.innerHTML =
+      '<div class="error">' +
+      "Aucune étape de procédure trouvée." +
+      "</div>";
+
+    return;
+  }
+
+  resultElement.innerHTML = `
+
+    <section class="procedure">
+
+      <div class="procedure-header">
+
+        <h2>
+          ${escapeHtml(
+            reponse.procedure.titre ||
+            "Procédure"
+          )}
+        </h2>
+
+        <p>
+          Modèle :
+          <strong>
+            ${escapeHtml(
+              reponse.modele || ""
+            )}
+          </strong>
+        </p>
+
+        <p>
+          Composant :
+          <strong>
+            ${escapeHtml(
+              reponse.composant || ""
+            )}
+          </strong>
+        </p>
+
+        <p>
+          Unité :
+          <strong>
+            ${escapeHtml(
+              reponse.unite || ""
+            )}
+          </strong>
+        </p>
+
+      </div>
+
+      <div
+        id="stepCounter"
+        class="step-counter"
+      ></div>
+
+      <div
+        id="stepContainer"
+        class="step"
+      ></div>
+
+      <div class="warning">
+
+        ${escapeHtml(
+          reponse.procedure.avertissement ||
+          "Vérifier les illustrations et les opérations dans le Service Manual avant toute intervention."
+        )}
+
+      </div>
+
+      <div class="navigation">
+
+        <button
+          id="previousButton"
+          type="button"
+          onclick="etapePrecedente()"
+        >
+          ← Précédent
+        </button>
+
+        <button
+          id="nextButton"
+          type="button"
+          onclick="etapeSuivante()"
+        >
+          Suivant →
+        </button>
+
+      </div>
+
+    </section>
+  `;
+
+  afficherEtape();
+}
+
+
+function afficherEtape() {
+
+  if (
+    !etapes.length
+  ) {
+    return;
+  }
+
+  const etape =
+    etapes[etapeActuelle];
+
+  const counter =
+    document.getElementById(
+      "stepCounter"
+    );
+
+  const container =
+    document.getElementById(
+      "stepContainer"
+    );
+
+  const previousButton =
+    document.getElementById(
+      "previousButton"
+    );
+
+  const nextButton =
+    document.getElementById(
+      "nextButton"
+    );
+
+  if (!counter ||
+      !container ||
+      !previousButton ||
+      !nextButton
+  ) {
+    return;
+  }
+
+  counter.textContent =
+    "Étape " +
+    (etapeActuelle + 1) +
+    " / " +
+    etapes.length;
+
+  const type =
+    etape.type === "INTERVENTION"
+      ? "INTERVENTION"
+      : "PRÉPARATIF";
+
+  let imageHtml = "";
+
+  if (etape.image) {
+
+    imageHtml = `
+      <img
+        class="manual-image"
+        src="${escapeAttribute(etape.image)}"
+        alt="Illustration du Service Manual - page PDF ${escapeAttribute(etape.page_pdf)}"
+        loading="eager"
+      >
+    `;
+
+  } else {
+
+    imageHtml = `
+      <div class="no-image">
+        Illustration non disponible pour cette étape.
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+
+    <div class="step-type">
+      ${type}
+    </div>
+
+    <h3>
+      ${escapeHtml(
+        etape.titre ||
+        "Étape"
+      )}
+    </h3>
+
+    <div class="page-info">
+
+      Page manuel :
+      <strong>
+        ${escapeHtml(
+          etape.page_manuel ??
+          "?"
+        )}
+      </strong>
+
+      &nbsp;|&nbsp;
+
+      Page PDF :
+      <strong>
+        ${escapeHtml(
+          etape.page_pdf ??
+          "?"
+        )}
+      </strong>
+
+    </div>
+
+    <div class="step-description">
+
+      ${escapeHtml(
+        etape.description ||
+        ""
+      )}
+
+    </div>
+
+    ${imageHtml}
+
+    <div class="source">
+
+      <strong>Source Service Manual</strong>
+
+      <br><br>
+
+      ${escapeHtml(
+        etape.source ||
+        ""
+      )}
+
+    </div>
+  `;
+
+  previousButton.disabled =
+    etapeActuelle === 0;
+
+  nextButton.disabled =
+    etapeActuelle ===
+    etapes.length - 1;
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
   });
-
-  const text=await r.text();
-
-  if(!r.ok) throw new Error("HTTP "+r.status+" : "+text);
-
-  const data=JSON.parse(text);
-
-  if(data.status==="error") throw new Error(data.message||"Erreur serveur");
-
-  if(!data.reponse||data.reponse.type!=="PROCEDURE"){
-   result.innerHTML="<h2>Résultat</h2><div class='success'>Information trouvée dans les manuels.</div>";
-   result.style.display="block";
-   msg("Recherche terminée.","success");
-   return;
-  }
-
-  steps=[];
-
-  if(Array.isArray(data.reponse.preparatifs)){
-   data.reponse.preparatifs.forEach(p=>{
-    steps.push({
-     titre:p.titre,
-     page_manuel:p.page_manuel,
-     page_pdf:p.page_pdf,
-     image:null
-    });
-   });
-  }
-
-  if(data.reponse.procedure){
-   steps.push({
-    titre:data.reponse.procedure.titre,
-    page_manuel:data.reponse.procedure.page_manuel,
-    page_pdf:data.reponse.procedure.page_pdf,
-    image:data.reponse.procedure.image
-   });
-  }
-
-  current=0;
-  showStep();
-  msg("Recherche terminée.","success");
-
- }catch(e){
-  console.error(e);
-  msg("Erreur : "+e.message,"error");
- }finally{
-  btn.disabled=false;
-  btn.textContent="Rechercher";
- }
 }
 
-btn.onclick=rechercher;
 
-question.addEventListener("keydown",e=>{
- if(e.key==="Enter"&&!e.shiftKey){
-  e.preventDefault();
-  rechercher();
- }
-});
+function etapePrecedente() {
+
+  if (
+    etapeActuelle <= 0
+  ) {
+    return;
+  }
+
+  etapeActuelle--;
+
+  afficherEtape();
+}
+
+
+function etapeSuivante() {
+
+  if (
+    etapeActuelle >=
+    etapes.length - 1
+  ) {
+    return;
+  }
+
+  etapeActuelle++;
+
+  afficherEtape();
+}
+
+
+function afficherRecherche(reponse) {
+
+  const resultats =
+    Array.isArray(
+      reponse?.resultats
+    )
+      ? reponse.resultats
+      : [];
+
+  if (!resultats.length) {
+
+    resultElement.innerHTML = `
+      <div class="result-list">
+        <strong>Aucun résultat trouvé.</strong>
+        <p>
+          Les informations disponibles dans les documents ne permettent pas de répondre précisément à cette question.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  let html = `
+    <div class="result-list">
+      <h2>Résultats du manuel</h2>
+  `;
+
+  resultats.forEach(
+    (item) => {
+
+      html += `
+        <div class="result-item">
+
+          <strong>
+            Page ${escapeHtml(
+              item.page ??
+              "?"
+            )}
+          </strong>
+
+          <br><br>
+
+          ${escapeHtml(
+            item.contenu ||
+            ""
+          )}
+
+        </div>
+      `;
+    }
+  );
+
+  html += `
+    </div>
+  `;
+
+  resultElement.innerHTML =
+    html;
+}
+
+
+function escapeHtml(value) {
+
+  if (
+    value === null ||
+    value === undefined
+  ) {
+    return "";
+  }
+
+  return String(value)
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+}
+
+
+function escapeAttribute(value) {
+
+  return escapeHtml(
+    value
+  );
+}
+
 </script>
+
 </body>
 </html>
