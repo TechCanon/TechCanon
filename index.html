@@ -1,346 +1,347 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechCanon</title>
 
-<title>TechCanon</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f4;
+      color: #222;
+    }
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f2f4f7;
-  color: #202124;
-}
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
 
-header {
-  background: #111827;
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
+    h1 {
+      text-align: center;
+      margin-top: 0;
+    }
 
-header h1 {
-  margin: 0;
-}
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
 
-header p {
-  margin: 6px 0 0;
-}
+    select,
+    textarea,
+    button {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px;
+      border-radius: 8px;
+    }
 
-.container {
-  max-width: 700px;
-  margin: auto;
-  padding: 16px;
-}
+    select,
+    textarea {
+      padding: 12px;
+      border: 1px solid #ccc;
+    }
 
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 14px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
 
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
+    button {
+      margin-top: 15px;
+      padding: 14px;
+      border: none;
+      background: #222;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-select,
-textarea,
-button {
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 16px;
-  border-radius: 10px;
-}
+    button:disabled {
+      opacity: 0.5;
+    }
 
-select,
-textarea {
-  padding: 12px;
-  border: 1px solid #ccc;
-}
+    #resultat {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      white-space: pre-wrap;
+    }
 
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
+    img {
+      max-width: 100%;
+      margin-top: 15px;
+      border-radius: 8px;
+    }
 
-button {
-  margin-top: 12px;
-  padding: 14px;
-  border: 0;
-  background: #111827;
-  color: white;
-  font-weight: bold;
-}
+    .erreur {
+      background: #ffe5e5 !important;
+      color: #900;
+    }
 
-#resultat {
-  display: none;
-}
-
-.procedure {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.info {
-  background: #f3f4f6;
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-
-.source {
-  background: #f9fafb;
-  border-left: 4px solid #111827;
-  padding: 10px;
-  margin-top: 10px;
-}
-
-img {
-  width: 100%;
-  margin-top: 12px;
-  border-radius: 10px;
-}
-</style>
+    .ok {
+      background: #e8f5e9 !important;
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-<h1>TechCanon</h1>
-<p>Assistant technique Canon</p>
-</header>
-
 <div class="container">
 
-<div class="card">
+  <h1>TechCanon</h1>
 
-<label>Modele</label>
+  <label for="modele">Modèle</label>
 
-<select id="modele">
-<option value="C1538P">C1538P</option>
-<option value="C1533P">C1533P</option>
-<option value="LBP1538C">LBP1538C</option>
-</select>
+  <select id="modele">
+    <option value="C1538P">C1538P</option>
+    <option value="C1533P">C1533P</option>
+    <option value="LBP1538C">LBP1538C</option>
+  </select>
 
-<br><br>
+  <label for="question">Question / problème</label>
 
-<label>Que veux-tu faire ?</label>
+  <textarea
+    id="question"
+    placeholder="Exemple : DEMONTER DC CONTROLLER PCB"
+  ></textarea>
 
-<textarea
-id="question"
-placeholder="Exemple : Demonter le DC Controller PCB">
-</textarea>
+  <button id="bouton" onclick="rechercher()">
+    Rechercher
+  </button>
 
-<button id="btn">
-Rechercher
-</button>
-
-</div>
-
-<div id="resultat" class="card"></div>
+  <div id="resultat">
+    Prêt.
+  </div>
 
 </div>
 
 <script>
 
-const API =
-"https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
+const SUPABASE_URL =
+  "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
 
-document
-.getElementById("btn")
-.addEventListener("click", rechercher);
 
 async function rechercher() {
 
-const modele =
-document.getElementById("modele").value;
+  const bouton = document.getElementById("bouton");
+  const resultat = document.getElementById("resultat");
 
-const question =
-document.getElementById("question").value.trim();
+  const modele = document.getElementById("modele").value;
+  const question = document.getElementById("question").value.trim();
 
-const bouton =
-document.getElementById("btn");
+  if (!question) {
+    resultat.className = "erreur";
+    resultat.textContent = "Veuillez entrer une question.";
+    return;
+  }
 
-const resultat =
-document.getElementById("resultat");
+  bouton.disabled = true;
+  bouton.textContent = "Recherche...";
 
-if (!question) {
+  resultat.className = "";
+  resultat.textContent = "Recherche dans les manuels Canon...";
 
-alert("Decris ce que tu veux faire.");
+  try {
 
-return;
+    const reponse = await fetch(SUPABASE_URL, {
 
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        modele: modele,
+        question: question
+      })
+
+    });
+
+    const texte = await reponse.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(texte);
+    } catch (e) {
+      throw new Error(
+        "Réponse Supabase invalide : " + texte
+      );
+    }
+
+    if (!reponse.ok) {
+      throw new Error(
+        data.message || "Erreur Supabase HTTP " + reponse.status
+      );
+    }
+
+    if (data.status === "error") {
+      throw new Error(
+        data.message || "Erreur inconnue de TechCanon"
+      );
+    }
+
+    afficherResultat(data);
+
+  } catch (erreur) {
+
+    console.error(erreur);
+
+    resultat.className = "erreur";
+
+    resultat.textContent =
+      "Impossible de contacter TechCanon.\n\n" +
+      "Détail : " +
+      erreur.message;
+
+  } finally {
+
+    bouton.disabled = false;
+    bouton.textContent = "Rechercher";
+
+  }
 }
 
-bouton.disabled = true;
-
-bouton.textContent = "Recherche...";
-
-resultat.style.display = "block";
-
-resultat.innerHTML =
-"<div>Recherche dans les manuels Canon...</div>";
-
-try {
-
-const response =
-await fetch(API, {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
-},
-
-body: JSON.stringify({
-question: question,
-modele: modele
-})
-
-});
-
-const data =
-await response.json();
-
-if (!response.ok ||
-data.status === "error") {
-
-resultat.innerHTML =
-"<div class='info'>" +
-(data.message || "Erreur.") +
-"</div>";
-
-return;
-
-}
-
-afficherResultat(data);
-
-} catch (error) {
-
-resultat.innerHTML =
-"<div class='info'>" +
-"Impossible de contacter TechCanon." +
-"</div>";
-
-} finally {
-
-bouton.disabled = false;
-
-bouton.textContent = "Rechercher";
-
-}
-
-}
 
 function afficherResultat(data) {
 
-const resultat =
-document.getElementById("resultat");
+  const resultat = document.getElementById("resultat");
 
-const r =
-data.reponse || {};
+  resultat.className = "ok";
 
-let html = "";
+  let html = "";
 
-if (r.type === "PROCEDURE") {
+  if (data.type) {
+    html += "<strong>Type :</strong> "
+      + data.type + "<br><br>";
+  }
 
-html +=
-"<div class='procedure'>" +
-(r.procedure?.titre ||
-"Procedure technique") +
-"</div>";
+  if (data.composant) {
+    html += "<strong>Composant :</strong> "
+      + data.composant + "<br>";
+  }
 
-html +=
-"<div class='info'>" +
-"<b>Composant :</b> " +
-(r.composant || "-") +
-"</div>";
+  if (data.unite) {
+    html += "<strong>Unité :</strong> "
+      + data.unite + "<br>";
+  }
 
-html +=
-"<div class='info'>" +
-"<b>Unite :</b> " +
-(r.unite || "-") +
-"</div>";
+  if (data.procedure) {
 
-if (r.procedure) {
+    if (data.procedure.titre) {
+      html += "<strong>Procédure :</strong> "
+        + data.procedure.titre + "<br>";
+    }
 
-html +=
-"<div class='info'>" +
-"<b>Page Service Manual :</b> " +
-(r.procedure.page_manuel || "-") +
-"</div>";
+    if (data.procedure.page_manuel) {
+      html += "<strong>Page manuel :</strong> "
+        + data.procedure.page_manuel + "<br>";
+    }
 
-if (r.procedure.image) {
+    if (data.procedure.page_pdf) {
+      html += "<strong>Page PDF :</strong> "
+        + data.procedure.page_pdf + "<br>";
+    }
+  }
 
-html +=
-"<img src='" +
-r.procedure.image +
-"'>";
+  if (data.document) {
 
+    html += "<br><strong>Document :</strong> "
+      + (data.document.titre || "") + "<br>";
+
+    if (data.document.fichier) {
+      html += data.document.fichier + "<br>";
+    }
+  }
+
+  if (data.message) {
+
+    html += "<br><strong>Message :</strong><br>"
+      + escapeHtml(data.message);
+  }
+
+  if (data.reponse) {
+
+    html += "<br><br><strong>Réponse :</strong><br>"
+      + escapeHtml(
+          typeof data.reponse === "string"
+            ? data.reponse
+            : JSON.stringify(data.reponse, null, 2)
+        );
+  }
+
+  if (data.image_url) {
+
+    html += "<br><br>"
+      + "<strong>Illustration :</strong><br>"
+      + "<img src=\""
+      + escapeAttribute(data.image_url)
+      + "\" alt=\"Illustration de la procédure\">";
+
+  }
+
+  if (data.sources && Array.isArray(data.sources)) {
+
+    html += "<br><br><strong>Sources :</strong><br>";
+
+    for (const source of data.sources) {
+
+      html +=
+        "Page PDF "
+        + (source.page_pdf || "")
+        + " — "
+        + escapeHtml(source.titre || "")
+        + "<br>";
+    }
+  }
+
+  if (!html) {
+
+    html =
+      "<strong>Réponse reçue :</strong><br>" +
+      escapeHtml(
+        JSON.stringify(data, null, 2)
+      );
+  }
+
+  resultat.innerHTML = html;
 }
 
+
+function escapeHtml(texte) {
+
+  return String(texte)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-if (r.preparatifs &&
-r.preparatifs.length) {
 
-html += "<h3>Preparatifs</h3>";
+function escapeAttribute(texte) {
 
-for (const p of r.preparatifs) {
-
-html +=
-"<div class='source'>" +
-"<b>" +
-p.ordre +
-". " +
-p.titre +
-"</b><br>" +
-"Page " +
-p.page_manuel +
-"</div>";
-
-}
-
-}
-
-if (r.message) {
-
-html +=
-"<div class='info'>" +
-r.message +
-"</div>";
-
-}
-
-} else {
-
-html +=
-"<div class='procedure'>Resultat</div>";
-
-if (typeof data.reponse === "string") {
-
-html +=
-"<div class='info'>" +
-data.reponse +
-"</div>";
-
-}
-
-}
-
-resultat.innerHTML = html;
-
+  return String(texte)
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 </script>
 
 </body>
 </html>
+```
