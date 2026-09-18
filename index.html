@@ -1,441 +1,170 @@
-```html
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TechCanon</title>
-
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f3f4f6;
-  color: #111827;
-}
-
-.container {
-  max-width: 850px;
-  margin: auto;
-  padding: 20px;
-}
-
-.card {
-  background: white;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
-
-h1 {
-  margin-bottom: 5px;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin: 15px 0 7px;
-}
-
-select,
-textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 9px;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-textarea {
-  min-height: 110px;
-}
-
-button {
-  margin-top: 15px;
-  padding: 12px 18px;
-  border: 0;
-  border-radius: 9px;
-  background: #111827;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: .5;
-}
-
-.error {
-  margin-top: 15px;
-  padding: 12px;
-  border-radius: 9px;
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.success {
-  margin-top: 15px;
-  padding: 12px;
-  border-radius: 9px;
-  background: #dcfce7;
-  color: #166534;
-}
-
-.step {
-  margin-top: 20px;
-  padding: 15px;
-  border-left: 4px solid #111827;
-  background: #f9fafb;
-}
-
-.step-title {
-  font-size: 19px;
-  font-weight: bold;
-}
-
-.page {
-  color: #6b7280;
-  margin-top: 8px;
-}
-
-img {
-  max-width: 100%;
-  margin-top: 15px;
-  border-radius: 8px;
-}
-
-.nav {
-  display: flex;
-  gap: 10px;
-}
-
-.nav button {
-  flex: 1;
-}
-
-.hidden {
-  display: none;
-}
+body{font-family:Arial;margin:0;background:#f3f4f6;color:#111827}
+main{max-width:850px;margin:auto;padding:20px}
+.card{background:white;padding:20px;margin:15px 0;border-radius:14px;box-shadow:0 2px 8px #0001}
+label{display:block;font-weight:bold;margin:15px 0 7px}
+select,textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid #ccc;border-radius:9px;font-size:16px}
+textarea{min-height:110px}
+button{padding:12px 18px;margin-top:15px;border:0;border-radius:9px;background:#111827;color:white;font-weight:bold;font-size:16px}
+button:disabled{opacity:.5}
+.error{margin-top:15px;padding:12px;border-radius:9px;background:#fee2e2;color:#991b1b}
+.success{margin-top:15px;padding:12px;border-radius:9px;background:#dcfce7;color:#166534}
+.step{margin-top:20px;padding:15px;border-left:4px solid #111827;background:#f9fafb}
+.page{color:#6b7280;margin-top:8px}
+img{max-width:100%;margin-top:15px;border-radius:8px}
+.nav{display:flex;gap:10px}.nav button{flex:1}
 </style>
 </head>
-
 <body>
-
-<div class="container">
-
+<main>
 <h1>TechCanon</h1>
-
-<p>
-Assistant technique Canon
-</p>
+<p>Assistant technique Canon</p>
 
 <div class="card">
-
-<label for="modele">Modèle</label>
-
+<label>Modèle</label>
 <select id="modele">
-<option value="C1538P">C1538P</option>
-<option value="C1533P">C1533P</option>
-<option value="LBP1538C">LBP1538C</option>
+<option>C1538P</option>
+<option>C1533P</option>
+<option>LBP1538C</option>
 </select>
 
-<label for="question">Question</label>
+<label>Question</label>
+<textarea id="question" placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"></textarea>
 
-<textarea
-id="question"
-placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"
-></textarea>
-
-<button id="searchButton">
-Rechercher
-</button>
-
+<button id="search">Rechercher</button>
 <div id="status"></div>
-
 </div>
 
-<div id="result" class="card hidden"></div>
-
-</div>
+<div id="result" class="card" style="display:none"></div>
+</main>
 
 <script>
+const API="https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
+const btn=document.getElementById("search");
+const modele=document.getElementById("modele");
+const question=document.getElementById("question");
+const status=document.getElementById("status");
+const result=document.getElementById("result");
 
-const API =
-"https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
+let steps=[];
+let current=0;
 
-const button =
-document.getElementById("searchButton");
+function msg(t,c=""){status.className=c;status.textContent=t}
 
-const modele =
-document.getElementById("modele");
+function showStep(){
+ const s=steps[current];
+ result.innerHTML=
+ "<h2>Procédure identifiée</h2>"+
+ "<p><b>Modèle :</b> "+modele.value+"</p>"+
+ "<div class='step'>"+
+ "<b>Étape "+(current+1)+" / "+steps.length+"</b>"+
+ "<h3>"+s.titre+"</h3>"+
+ "<div class='page'>Page manuel : "+(s.page_manuel||"-")+"<br>Page PDF : "+(s.page_pdf||"-")+"</div>"+
+ (s.image?"<img src='"+s.image+"'>":"")+
+ "</div>"+
+ "<div class='nav'>"+
+ "<button id='prev' "+(current===0?"disabled":"")+">← Précédent</button>"+
+ "<button id='next' "+(current===steps.length-1?"disabled":"")+">Suivant →</button>"+
+ "</div>"+
+ "<p><b>Important :</b> vérifier les vis, connecteurs et figures dans le Service Manual avant intervention.</p>";
+ result.style.display="block";
 
-const question =
-document.getElementById("question");
+ document.getElementById("prev").onclick=()=>{
+  if(current>0){current--;showStep()}
+ };
 
-const status =
-document.getElementById("status");
-
-const result =
-document.getElementById("result");
-
-let steps = [];
-
-let step = 0;
-
-
-function message(text, type) {
-
-status.className = type || "";
-
-status.textContent = text;
-
+ document.getElementById("next").onclick=()=>{
+  if(current<steps.length-1){current++;showStep()}
+ };
 }
 
+async function rechercher(){
+ const q=question.value.trim();
 
-function afficherEtape() {
+ if(!q){
+  msg("Veuillez entrer une question.","error");
+  return;
+ }
 
-if (!steps.length) return;
+ btn.disabled=true;
+ btn.textContent="Recherche...";
+ msg("Interrogation du Service Manual...");
+ result.style.display="none";
 
-const s = steps[step];
+ try{
+  const r=await fetch(API,{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    modele:modele.value,
+    question:q
+   })
+  });
 
-result.innerHTML = `
+  const text=await r.text();
 
-<h2>Procédure identifiée</h2>
+  if(!r.ok) throw new Error("HTTP "+r.status+" : "+text);
 
-<p>
-<strong>Modèle :</strong>
-${modele.value}
-</p>
+  const data=JSON.parse(text);
 
-<div class="step">
+  if(data.status==="error") throw new Error(data.message||"Erreur serveur");
 
-<div class="step-title">
-Étape ${step + 1} / ${steps.length}
-</div>
+  if(!data.reponse||data.reponse.type!=="PROCEDURE"){
+   result.innerHTML="<h2>Résultat</h2><div class='success'>Information trouvée dans les manuels.</div>";
+   result.style.display="block";
+   msg("Recherche terminée.","success");
+   return;
+  }
 
-<p>
-${s.titre}
-</p>
+  steps=[];
 
-<div class="page">
-Page manuel : ${s.page_manuel || "-"}<br>
-Page PDF : ${s.page_pdf || "-"}
-</div>
+  if(Array.isArray(data.reponse.preparatifs)){
+   data.reponse.preparatifs.forEach(p=>{
+    steps.push({
+     titre:p.titre,
+     page_manuel:p.page_manuel,
+     page_pdf:p.page_pdf,
+     image:null
+    });
+   });
+  }
 
-${s.image ? `<img src="${s.image}">` : ""}
+  if(data.reponse.procedure){
+   steps.push({
+    titre:data.reponse.procedure.titre,
+    page_manuel:data.reponse.procedure.page_manuel,
+    page_pdf:data.reponse.procedure.page_pdf,
+    image:data.reponse.procedure.image
+   });
+  }
 
-</div>
+  current=0;
+  showStep();
+  msg("Recherche terminée.","success");
 
-<div class="nav">
-
-<button id="prev">
-← Précédent
-</button>
-
-<button id="next">
-Suivant →
-</button>
-
-</div>
-
-<p>
-<strong>Important :</strong>
-vérifier les vis, connecteurs et figures
-dans le Service Manual avant intervention.
-</p>
-`;
-
-
-document.getElementById("prev").disabled =
-step === 0;
-
-document.getElementById("next").disabled =
-step === steps.length - 1;
-
-
-document.getElementById("prev").onclick =
-function() {
-
-if (step > 0) {
-
-step--;
-
-afficherEtape();
-
+ }catch(e){
+  console.error(e);
+  msg("Erreur : "+e.message,"error");
+ }finally{
+  btn.disabled=false;
+  btn.textContent="Rechercher";
+ }
 }
 
-};
+btn.onclick=rechercher;
 
-
-document.getElementById("next").onclick =
-function() {
-
-if (step < steps.length - 1) {
-
-step++;
-
-afficherEtape();
-
-}
-
-};
-
-}
-
-
-async function rechercher() {
-
-const m =
-modele.value.trim();
-
-const q =
-question.value.trim();
-
-
-if (!q) {
-
-message(
-"Veuillez entrer une question.",
-"error"
-);
-
-return;
-
-}
-
-
-button.disabled = true;
-
-button.textContent =
-"Recherche...";
-
-result.classList.add("hidden");
-
-message(
-"Interrogation du Service Manual..."
-);
-
-
-try {
-
-const response =
-await fetch(API, {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
-},
-
-body: JSON.stringify({
-
-modele: m,
-
-question: q
-
-})
-
+question.addEventListener("keydown",e=>{
+ if(e.key==="Enter"&&!e.shiftKey){
+  e.preventDefault();
+  rechercher();
+ }
 });
-
-
-const text =
-await response.text();
-
-
-if (!response.ok) {
-
-throw new Error(
-"HTTP " +
-response.status +
-" : " +
-text
-);
-
-}
-
-
-const data =
-JSON.parse(text);
-
-
-if (data.status === "error") {
-
-throw new Error(
-data.message ||
-"Erreur serveur"
-);
-
-}
-
-
-if (
-!data.reponse ||
-data.reponse.type !== "PROCEDURE"
-) {
-
-result.innerHTML = `
-
-<h2>Résultat</h2>
-
-<div class="success">
-
-${typeof data.reponse === "string"
-? data.reponse
-: "Information trouvée dans les manuels."}
-
-</div>
-
-`;
-
-result.classList.remove("hidden");
-
-message(
-"Recherche terminée.",
-"success"
-);
-
-return;
-
-}
-
-
-steps = [];
-
-
-if (Array.isArray(data.reponse.preparatifs)) {
-
-data.reponse.preparatifs.forEach(
-function(p) {
-
-steps.push({
-
-titre: p.titre,
-
-page_manuel:
-p.page_manuel,
-
-page_pdf:
-p.page_pdf,
-
-image: null
-
-});
-
-});
-
-}
-
-
-if (data.reponse.procedure) {
-
-steps.push({
-
-titre:
-data.reponse.procedure.titre,
-
-page_manuel:
-data.reponse.p
-```
+</script>
+</body>
+</html>
