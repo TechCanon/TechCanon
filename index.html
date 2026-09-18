@@ -10,30 +10,45 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
-      background: #f4f4f4;
+      background: #f4f5f7;
       color: #222;
     }
 
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px;
+      text-align: center;
     }
 
-    h1 {
-      text-align: center;
-      margin-top: 0;
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      opacity: 0.8;
+    }
+
+    main {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     label {
       display: block;
-      margin-top: 15px;
-      margin-bottom: 5px;
       font-weight: bold;
+      margin-bottom: 8px;
     }
 
     select,
@@ -42,13 +57,14 @@
       width: 100%;
       box-sizing: border-box;
       font-size: 16px;
-      border-radius: 8px;
+      border-radius: 10px;
     }
 
     select,
     textarea {
+      border: 1px solid #d1d5db;
       padding: 12px;
-      border: 1px solid #ccc;
+      background: white;
     }
 
     textarea {
@@ -57,288 +73,581 @@
     }
 
     button {
-      margin-top: 15px;
+      margin-top: 14px;
       padding: 14px;
       border: none;
-      background: #222;
+      background: #2563eb;
       color: white;
       font-weight: bold;
       cursor: pointer;
     }
 
     button:disabled {
-      opacity: 0.5;
+      opacity: 0.6;
+      cursor: wait;
     }
 
-    #resultat {
-      margin-top: 20px;
+    .loading {
+      text-align: center;
       padding: 15px;
-      background: #f0f0f0;
+      display: none;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 12px;
       border-radius: 10px;
+      display: none;
       white-space: pre-wrap;
     }
 
-    img {
-      max-width: 100%;
+    .procedure {
+      display: none;
+    }
+
+    .procedure h2 {
+      margin-top: 0;
+    }
+
+    .info {
+      background: #f3f4f6;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+
+    .source {
+      border-left: 4px solid #2563eb;
+      padding: 10px 12px;
+      margin-top: 12px;
+      background: #f9fafb;
+    }
+
+    .source pre {
+      white-space: pre-wrap;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .procedure-image {
+      width: 100%;
+      border-radius: 10px;
       margin-top: 15px;
+      border: 1px solid #ddd;
+    }
+
+    .page {
+      display: inline-block;
+      background: #e5e7eb;
+      padding: 5px 9px;
       border-radius: 8px;
+      margin: 3px;
+      font-size: 14px;
     }
 
-    .erreur {
-      background: #ffe5e5 !important;
-      color: #900;
-    }
-
-    .ok {
-      background: #e8f5e9 !important;
+    .success {
+      background: #dcfce7;
+      color: #166534;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
     }
   </style>
 </head>
 
 <body>
 
-<div class="container">
-
+<header>
   <h1>TechCanon</h1>
+  <p>Assistant technique Canon</p>
+</header>
 
-  <label for="modele">Modèle</label>
+<main>
 
-  <select id="modele">
-    <option value="C1538P">C1538P</option>
-    <option value="C1533P">C1533P</option>
-    <option value="LBP1538C">LBP1538C</option>
-  </select>
+  <div class="card">
 
-  <label for="question">Question / problème</label>
+    <label for="modele">Modèle</label>
 
-  <textarea
-    id="question"
-    placeholder="Exemple : DEMONTER DC CONTROLLER PCB"
-  ></textarea>
+    <select id="modele">
+      <option value="C1538P">C1538P</option>
+      <option value="C1533P">C1533P</option>
+      <option value="LBP1538C">LBP1538C</option>
+    </select>
 
-  <button id="bouton" onclick="rechercher()">
-    Rechercher
-  </button>
+    <br><br>
 
-  <div id="resultat">
-    Prêt.
+    <label for="question">Question technique</label>
+
+    <textarea
+      id="question"
+      placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"
+    ></textarea>
+
+    <button id="send">
+      Rechercher dans TechCanon
+    </button>
+
   </div>
 
-</div>
+  <div id="loading" class="loading">
+    Recherche dans les manuels Canon...
+  </div>
+
+  <div id="error" class="error"></div>
+
+  <div id="result" class="card procedure">
+
+    <div class="success">
+      Procédure identifiée dans le Service Manual.
+    </div>
+
+    <h2 id="procedureTitle"></h2>
+
+    <div class="info">
+      <strong>Modèle :</strong>
+      <span id="resultModel"></span>
+      <br>
+
+      <strong>Composant :</strong>
+      <span id="component"></span>
+      <br>
+
+      <strong>Unité :</strong>
+      <span id="unit"></span>
+      <br>
+
+      <strong>Page manuel :</strong>
+      <span id="manualPage"></span>
+      <br>
+
+      <strong>Page PDF :</strong>
+      <span id="pdfPage"></span>
+    </div>
+
+    <h3>Préparatifs</h3>
+
+    <div id="preparatifs"></div>
+
+    <div id="imageContainer"></div>
+
+    <h3>Source du manuel</h3>
+
+    <div id="sources"></div>
+
+  </div>
+
+</main>
 
 <script>
 
-const SUPABASE_URL =
+const API_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
+
+const modeleElement =
+  document.getElementById("modele");
+
+const questionElement =
+  document.getElementById("question");
+
+const sendButton =
+  document.getElementById("send");
+
+const loadingElement =
+  document.getElementById("loading");
+
+const errorElement =
+  document.getElementById("error");
+
+const resultElement =
+  document.getElementById("result");
+
+const procedureTitle =
+  document.getElementById("procedureTitle");
+
+const resultModel =
+  document.getElementById("resultModel");
+
+const componentElement =
+  document.getElementById("component");
+
+const unitElement =
+  document.getElementById("unit");
+
+const manualPageElement =
+  document.getElementById("manualPage");
+
+const pdfPageElement =
+  document.getElementById("pdfPage");
+
+const preparatifsElement =
+  document.getElementById("preparatifs");
+
+const imageContainer =
+  document.getElementById("imageContainer");
+
+const sourcesElement =
+  document.getElementById("sources");
+
+
+function afficherErreur(message) {
+
+  errorElement.textContent = message;
+  errorElement.style.display = "block";
+
+}
+
+
+function nettoyerResultat() {
+
+  errorElement.style.display = "none";
+  errorElement.textContent = "";
+
+  resultElement.style.display = "none";
+
+  procedureTitle.textContent = "";
+  resultModel.textContent = "";
+  componentElement.textContent = "";
+  unitElement.textContent = "";
+  manualPageElement.textContent = "";
+  pdfPageElement.textContent = "";
+
+  preparatifsElement.innerHTML = "";
+  imageContainer.innerHTML = "";
+  sourcesElement.innerHTML = "";
+
+}
+
+
+function afficherProcedure(data) {
+
+  const reponse = data.reponse;
+
+  if (!reponse) {
+
+    afficherErreur(
+      "TechCanon n'a pas retourné de procédure exploitable."
+    );
+
+    return;
+  }
+
+  resultElement.style.display = "block";
+
+  resultModel.textContent =
+    data.modele || "";
+
+  componentElement.textContent =
+    reponse.composant || "";
+
+  unitElement.textContent =
+    reponse.unite || "";
+
+  procedureTitle.textContent =
+    reponse.procedure?.titre ||
+    "Procédure";
+
+  manualPageElement.textContent =
+    reponse.procedure?.page_manuel ||
+    "?";
+
+  pdfPageElement.textContent =
+    reponse.procedure?.page_pdf ||
+    "?";
+
+
+  if (
+    reponse.procedure &&
+    reponse.procedure.image
+  ) {
+
+    const image =
+      document.createElement("img");
+
+    image.src =
+      reponse.procedure.image;
+
+    image.alt =
+      "Illustration de la procédure";
+
+    image.className =
+      "procedure-image";
+
+    imageContainer.appendChild(image);
+
+  }
+
+
+  if (
+    Array.isArray(reponse.preparatifs)
+  ) {
+
+    reponse.preparatifs.forEach(
+      preparatif => {
+
+        const div =
+          document.createElement("div");
+
+        div.className =
+          "info";
+
+        div.innerHTML =
+          "<strong>Étape " +
+          preparatif.ordre +
+          "</strong><br>" +
+          preparatif.titre +
+          "<br>" +
+          "<span class='page'>Manuel p." +
+          preparatif.page_manuel +
+          "</span>" +
+          "<span class='page'>PDF p." +
+          preparatif.page_pdf +
+          "</span>";
+
+        preparatifsElement.appendChild(div);
+
+      }
+    );
+
+  }
+
+
+  if (
+    Array.isArray(data.sources)
+  ) {
+
+    data.sources.forEach(
+      source => {
+
+        const div =
+          document.createElement("div");
+
+        div.className =
+          "source";
+
+        const titre =
+          document.createElement("strong");
+
+        titre.textContent =
+          source.titre ||
+          "Source";
+
+        const page =
+          document.createElement("div");
+
+        page.textContent =
+          "PDF p." +
+          source.page_pdf +
+          " — Manuel p." +
+          source.page_manuel;
+
+        const texte =
+          document.createElement("pre");
+
+        texte.textContent =
+          source.contenu || "";
+
+        div.appendChild(titre);
+        div.appendChild(page);
+        div.appendChild(texte);
+
+        sourcesElement.appendChild(div);
+
+      }
+    );
+
+  }
+
+}
 
 
 async function rechercher() {
 
-  const bouton = document.getElementById("bouton");
-  const resultat = document.getElementById("resultat");
+  const modele =
+    modeleElement.value;
 
-  const modele = document.getElementById("modele").value;
-  const question = document.getElementById("question").value.trim();
+  const question =
+    questionElement.value.trim();
+
+  nettoyerResultat();
 
   if (!question) {
-    resultat.className = "erreur";
-    resultat.textContent = "Veuillez entrer une question.";
+
+    afficherErreur(
+      "Écris d'abord ta question technique."
+    );
+
     return;
   }
 
-  bouton.disabled = true;
-  bouton.textContent = "Recherche...";
+  sendButton.disabled = true;
 
-  resultat.className = "";
-  resultat.textContent = "Recherche dans les manuels Canon...";
+  loadingElement.style.display =
+    "block";
 
   try {
 
-    const reponse = await fetch(SUPABASE_URL, {
+    const response =
+      await fetch(API_URL, {
 
-      method: "POST",
+        method: "POST",
 
-      headers: {
-        "Content-Type": "application/json"
-      },
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
 
-      body: JSON.stringify({
-        modele: modele,
-        question: question
-      })
+        body: JSON.stringify({
+          modele: modele,
+          question: question
+        })
 
-    });
+      });
 
-    const texte = await reponse.text();
+
+    const texte =
+      await response.text();
 
     let data;
 
     try {
-      data = JSON.parse(texte);
-    } catch (e) {
+
+      data =
+        JSON.parse(texte);
+
+    } catch {
+
       throw new Error(
-        "Réponse Supabase invalide : " + texte
+        "Réponse invalide de TechCanon :\n" +
+        texte
       );
+
     }
 
-    if (!reponse.ok) {
+
+    if (!response.ok) {
+
       throw new Error(
-        data.message || "Erreur Supabase HTTP " + reponse.status
+        data.message ||
+        "Erreur serveur TechCanon."
       );
+
     }
 
-    if (data.status === "error") {
+
+    if (
+      data.status === "error"
+    ) {
+
       throw new Error(
-        data.message || "Erreur inconnue de TechCanon"
+        data.message ||
+        "TechCanon a rencontré une erreur."
       );
+
     }
 
-    afficherResultat(data);
 
-  } catch (erreur) {
+    if (
+      data.reponse &&
+      data.reponse.type ===
+        "PROCEDURE"
+    ) {
 
-    console.error(erreur);
+      afficherProcedure(data);
 
-    resultat.className = "erreur";
+    } else {
 
-    resultat.textContent =
+      resultElement.style.display =
+        "block";
+
+      procedureTitle.textContent =
+        "Résultat TechCanon";
+
+      const message =
+        document.createElement("div");
+
+      message.className =
+        "info";
+
+      message.textContent =
+        data.reponse ||
+        "Aucune réponse.";
+
+      imageContainer.appendChild(
+        message
+      );
+
+      if (
+        Array.isArray(data.sources)
+      ) {
+
+        data.sources.forEach(
+          source => {
+
+            const div =
+              document.createElement("div");
+
+            div.className =
+              "source";
+
+            div.textContent =
+              "Page " +
+              source.page +
+              "\n\n" +
+              (source.contenu || "");
+
+            sourcesElement.appendChild(
+              div
+            );
+
+          }
+        );
+
+      }
+
+    }
+
+  } catch (error) {
+
+    afficherErreur(
       "Impossible de contacter TechCanon.\n\n" +
-      "Détail : " +
-      erreur.message;
+      (error.message || error)
+    );
 
   } finally {
 
-    bouton.disabled = false;
-    bouton.textContent = "Rechercher";
+    loadingElement.style.display =
+      "none";
+
+    sendButton.disabled =
+      false;
 
   }
+
 }
 
 
-function afficherResultat(data) {
+sendButton.addEventListener(
+  "click",
+  rechercher
+);
 
-  const resultat = document.getElementById("resultat");
 
-  resultat.className = "ok";
+questionElement.addEventListener(
+  "keydown",
+  event => {
 
-  let html = "";
+    if (
+      event.key === "Enter" &&
+      (event.ctrlKey || event.metaKey)
+    ) {
 
-  if (data.type) {
-    html += "<strong>Type :</strong> "
-      + data.type + "<br><br>";
-  }
+      rechercher();
 
-  if (data.composant) {
-    html += "<strong>Composant :</strong> "
-      + data.composant + "<br>";
-  }
-
-  if (data.unite) {
-    html += "<strong>Unité :</strong> "
-      + data.unite + "<br>";
-  }
-
-  if (data.procedure) {
-
-    if (data.procedure.titre) {
-      html += "<strong>Procédure :</strong> "
-        + data.procedure.titre + "<br>";
     }
 
-    if (data.procedure.page_manuel) {
-      html += "<strong>Page manuel :</strong> "
-        + data.procedure.page_manuel + "<br>";
-    }
-
-    if (data.procedure.page_pdf) {
-      html += "<strong>Page PDF :</strong> "
-        + data.procedure.page_pdf + "<br>";
-    }
   }
-
-  if (data.document) {
-
-    html += "<br><strong>Document :</strong> "
-      + (data.document.titre || "") + "<br>";
-
-    if (data.document.fichier) {
-      html += data.document.fichier + "<br>";
-    }
-  }
-
-  if (data.message) {
-
-    html += "<br><strong>Message :</strong><br>"
-      + escapeHtml(data.message);
-  }
-
-  if (data.reponse) {
-
-    html += "<br><br><strong>Réponse :</strong><br>"
-      + escapeHtml(
-          typeof data.reponse === "string"
-            ? data.reponse
-            : JSON.stringify(data.reponse, null, 2)
-        );
-  }
-
-  if (data.image_url) {
-
-    html += "<br><br>"
-      + "<strong>Illustration :</strong><br>"
-      + "<img src=\""
-      + escapeAttribute(data.image_url)
-      + "\" alt=\"Illustration de la procédure\">";
-
-  }
-
-  if (data.sources && Array.isArray(data.sources)) {
-
-    html += "<br><br><strong>Sources :</strong><br>";
-
-    for (const source of data.sources) {
-
-      html +=
-        "Page PDF "
-        + (source.page_pdf || "")
-        + " — "
-        + escapeHtml(source.titre || "")
-        + "<br>";
-    }
-  }
-
-  if (!html) {
-
-    html =
-      "<strong>Réponse reçue :</strong><br>" +
-      escapeHtml(
-        JSON.stringify(data, null, 2)
-      );
-  }
-
-  resultat.innerHTML = html;
-}
-
-
-function escapeHtml(texte) {
-
-  return String(texte)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-
-function escapeAttribute(texte) {
-
-  return String(texte)
-    .replaceAll("&", "&amp;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
-}
+);
 
 </script>
 
