@@ -4,14 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>TechCanon</title>
 
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      background: #f4f5f7;
-      color: #222;
+      background: #f3f4f6;
+      color: #111827;
     }
 
     header {
@@ -23,7 +24,7 @@
 
     header h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 25px;
     }
 
     header p {
@@ -34,14 +35,14 @@
     main {
       max-width: 800px;
       margin: auto;
-      padding: 20px;
+      padding: 16px;
     }
 
     .card {
       background: white;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 18px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
@@ -68,14 +69,14 @@
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 110px;
       resize: vertical;
     }
 
     button {
-      margin-top: 14px;
+      border: 0;
       padding: 14px;
-      border: none;
+      margin-top: 12px;
       background: #2563eb;
       color: white;
       font-weight: bold;
@@ -83,38 +84,79 @@
     }
 
     button:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: wait;
     }
 
+    .secondary {
+      background: #374151;
+    }
+
+    .navigation {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .navigation button {
+      margin-top: 0;
+    }
+
     .loading {
-      text-align: center;
-      padding: 15px;
       display: none;
+      text-align: center;
+      padding: 14px;
     }
 
     .error {
+      display: none;
       background: #fee2e2;
       color: #991b1b;
       padding: 12px;
       border-radius: 10px;
-      display: none;
       white-space: pre-wrap;
+      margin-bottom: 16px;
     }
 
-    .procedure {
+    .result {
       display: none;
     }
 
-    .procedure h2 {
-      margin-top: 0;
+    .success {
+      background: #dcfce7;
+      color: #166534;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 14px;
     }
 
     .info {
-      background: #f3f4f6;
+      background: #f9fafb;
       border-radius: 10px;
       padding: 12px;
-      margin: 10px 0;
+      margin-top: 10px;
+    }
+
+    .step-title {
+      font-size: 22px;
+      margin: 8px 0;
+    }
+
+    .step-counter {
+      display: inline-block;
+      background: #e5e7eb;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .procedure-image {
+      width: 100%;
+      margin-top: 16px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
     }
 
     .source {
@@ -122,19 +164,14 @@
       padding: 10px 12px;
       margin-top: 12px;
       background: #f9fafb;
+      border-radius: 6px;
     }
 
     .source pre {
       white-space: pre-wrap;
       font-family: Arial, sans-serif;
       font-size: 14px;
-    }
-
-    .procedure-image {
-      width: 100%;
-      border-radius: 10px;
-      margin-top: 15px;
-      border: 1px solid #ddd;
+      line-height: 1.45;
     }
 
     .page {
@@ -143,15 +180,16 @@
       padding: 5px 9px;
       border-radius: 8px;
       margin: 3px;
-      font-size: 14px;
+      font-size: 13px;
     }
 
-    .success {
-      background: #dcfce7;
-      color: #166534;
+    .warning {
+      background: #fff7ed;
+      color: #9a3412;
       padding: 12px;
       border-radius: 10px;
-      margin-bottom: 12px;
+      margin-top: 14px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -196,42 +234,75 @@
 
   <div id="error" class="error"></div>
 
-  <div id="result" class="card procedure">
+  <div id="result" class="card result">
 
     <div class="success">
       Procédure identifiée dans le Service Manual.
     </div>
 
-    <h2 id="procedureTitle"></h2>
+    <div>
+      <span id="stepCounter" class="step-counter">
+        Étape 1/3
+      </span>
+    </div>
+
+    <h2 id="stepTitle" class="step-title"></h2>
 
     <div class="info">
+
       <strong>Modèle :</strong>
       <span id="resultModel"></span>
+
       <br>
 
       <strong>Composant :</strong>
       <span id="component"></span>
+
       <br>
 
       <strong>Unité :</strong>
       <span id="unit"></span>
+
       <br>
 
-      <strong>Page manuel :</strong>
-      <span id="manualPage"></span>
-      <br>
+      <span class="page">
+        Manuel p.<span id="stepManualPage"></span>
+      </span>
 
-      <strong>Page PDF :</strong>
-      <span id="pdfPage"></span>
+      <span class="page">
+        PDF p.<span id="stepPdfPage"></span>
+      </span>
+
     </div>
 
-    <h3>Préparatifs</h3>
-
-    <div id="preparatifs"></div>
+    <div id="stepDescription" class="info"></div>
 
     <div id="imageContainer"></div>
 
-    <h3>Source du manuel</h3>
+    <div class="warning">
+      Les positions exactes des vis, connecteurs et pièces doivent être
+      vérifiées sur l'illustration et dans le manuel Canon.
+      TechCanon n'invente pas les informations absentes de l'extraction texte.
+    </div>
+
+    <div class="navigation">
+
+      <button
+        id="previousButton"
+        class="secondary"
+      >
+        ← Précédent
+      </button>
+
+      <button
+        id="nextButton"
+      >
+        Suivant →
+      </button>
+
+    </div>
+
+    <h3>Sources du manuel</h3>
 
     <div id="sources"></div>
 
@@ -262,8 +333,11 @@ const errorElement =
 const resultElement =
   document.getElementById("result");
 
-const procedureTitle =
-  document.getElementById("procedureTitle");
+const stepCounter =
+  document.getElementById("stepCounter");
+
+const stepTitle =
+  document.getElementById("stepTitle");
 
 const resultModel =
   document.getElementById("resultModel");
@@ -274,14 +348,14 @@ const componentElement =
 const unitElement =
   document.getElementById("unit");
 
-const manualPageElement =
-  document.getElementById("manualPage");
+const stepManualPage =
+  document.getElementById("stepManualPage");
 
-const pdfPageElement =
-  document.getElementById("pdfPage");
+const stepPdfPage =
+  document.getElementById("stepPdfPage");
 
-const preparatifsElement =
-  document.getElementById("preparatifs");
+const stepDescription =
+  document.getElementById("stepDescription");
 
 const imageContainer =
   document.getElementById("imageContainer");
@@ -289,94 +363,29 @@ const imageContainer =
 const sourcesElement =
   document.getElementById("sources");
 
+const previousButton =
+  document.getElementById("previousButton");
 
-function afficherErreur(message) {
-
-  errorElement.textContent = message;
-  errorElement.style.display = "block";
-
-}
+const nextButton =
+  document.getElementById("nextButton");
 
 
-function nettoyerResultat() {
+let procedureData = null;
 
-  errorElement.style.display = "none";
-  errorElement.textContent = "";
-
-  resultElement.style.display = "none";
-
-  procedureTitle.textContent = "";
-  resultModel.textContent = "";
-  componentElement.textContent = "";
-  unitElement.textContent = "";
-  manualPageElement.textContent = "";
-  pdfPageElement.textContent = "";
-
-  preparatifsElement.innerHTML = "";
-  imageContainer.innerHTML = "";
-  sourcesElement.innerHTML = "";
-
-}
+let currentStep = 0;
 
 
-function afficherProcedure(data) {
+/*
+  Les étapes sont volontairement limitées
+  aux informations réellement disponibles
+  dans les sources vérifiées.
+*/
+function construireEtapes(data) {
 
-  const reponse = data.reponse;
+  const reponse =
+    data.reponse;
 
-  if (!reponse) {
-
-    afficherErreur(
-      "TechCanon n'a pas retourné de procédure exploitable."
-    );
-
-    return;
-  }
-
-  resultElement.style.display = "block";
-
-  resultModel.textContent =
-    data.modele || "";
-
-  componentElement.textContent =
-    reponse.composant || "";
-
-  unitElement.textContent =
-    reponse.unite || "";
-
-  procedureTitle.textContent =
-    reponse.procedure?.titre ||
-    "Procédure";
-
-  manualPageElement.textContent =
-    reponse.procedure?.page_manuel ||
-    "?";
-
-  pdfPageElement.textContent =
-    reponse.procedure?.page_pdf ||
-    "?";
-
-
-  if (
-    reponse.procedure &&
-    reponse.procedure.image
-  ) {
-
-    const image =
-      document.createElement("img");
-
-    image.src =
-      reponse.procedure.image;
-
-    image.alt =
-      "Illustration de la procédure";
-
-    image.className =
-      "procedure-image";
-
-    imageContainer.appendChild(image);
-
-  }
-
+  const etapes = [];
 
   if (
     Array.isArray(reponse.preparatifs)
@@ -385,26 +394,24 @@ function afficherProcedure(data) {
     reponse.preparatifs.forEach(
       preparatif => {
 
-        const div =
-          document.createElement("div");
+        etapes.push({
 
-        div.className =
-          "info";
+          titre:
+            preparatif.titre,
 
-        div.innerHTML =
-          "<strong>Étape " +
-          preparatif.ordre +
-          "</strong><br>" +
-          preparatif.titre +
-          "<br>" +
-          "<span class='page'>Manuel p." +
-          preparatif.page_manuel +
-          "</span>" +
-          "<span class='page'>PDF p." +
-          preparatif.page_pdf +
-          "</span>";
+          description:
+            "Préparatif indiqué par le Service Manual.",
 
-        preparatifsElement.appendChild(div);
+          manualPage:
+            preparatif.page_manuel,
+
+          pdfPage:
+            preparatif.page_pdf,
+
+          image:
+            null
+
+        });
 
       }
     );
@@ -413,244 +420,23 @@ function afficherProcedure(data) {
 
 
   if (
-    Array.isArray(data.sources)
+    reponse.procedure
   ) {
 
-    data.sources.forEach(
-      source => {
+    etapes.push({
 
-        const div =
-          document.createElement("div");
+      titre:
+        reponse.procedure.titre,
 
-        div.className =
-          "source";
+      description:
+        "Procédure principale indiquée par le Service Manual.",
 
-        const titre =
-          document.createElement("strong");
+      manualPage:
+        reponse.procedure.page_manuel,
 
-        titre.textContent =
-          source.titre ||
-          "Source";
+      pdfPage:
+        reponse.procedure.page_pdf,
 
-        const page =
-          document.createElement("div");
-
-        page.textContent =
-          "PDF p." +
-          source.page_pdf +
-          " — Manuel p." +
-          source.page_manuel;
-
-        const texte =
-          document.createElement("pre");
-
-        texte.textContent =
-          source.contenu || "";
-
-        div.appendChild(titre);
-        div.appendChild(page);
-        div.appendChild(texte);
-
-        sourcesElement.appendChild(div);
-
-      }
-    );
-
-  }
-
-}
-
-
-async function rechercher() {
-
-  const modele =
-    modeleElement.value;
-
-  const question =
-    questionElement.value.trim();
-
-  nettoyerResultat();
-
-  if (!question) {
-
-    afficherErreur(
-      "Écris d'abord ta question technique."
-    );
-
-    return;
-  }
-
-  sendButton.disabled = true;
-
-  loadingElement.style.display =
-    "block";
-
-  try {
-
-    const response =
-      await fetch(API_URL, {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-
-        body: JSON.stringify({
-          modele: modele,
-          question: question
-        })
-
-      });
-
-
-    const texte =
-      await response.text();
-
-    let data;
-
-    try {
-
-      data =
-        JSON.parse(texte);
-
-    } catch {
-
-      throw new Error(
-        "Réponse invalide de TechCanon :\n" +
-        texte
-      );
-
-    }
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.message ||
-        "Erreur serveur TechCanon."
-      );
-
-    }
-
-
-    if (
-      data.status === "error"
-    ) {
-
-      throw new Error(
-        data.message ||
-        "TechCanon a rencontré une erreur."
-      );
-
-    }
-
-
-    if (
-      data.reponse &&
-      data.reponse.type ===
-        "PROCEDURE"
-    ) {
-
-      afficherProcedure(data);
-
-    } else {
-
-      resultElement.style.display =
-        "block";
-
-      procedureTitle.textContent =
-        "Résultat TechCanon";
-
-      const message =
-        document.createElement("div");
-
-      message.className =
-        "info";
-
-      message.textContent =
-        data.reponse ||
-        "Aucune réponse.";
-
-      imageContainer.appendChild(
-        message
-      );
-
-      if (
-        Array.isArray(data.sources)
-      ) {
-
-        data.sources.forEach(
-          source => {
-
-            const div =
-              document.createElement("div");
-
-            div.className =
-              "source";
-
-            div.textContent =
-              "Page " +
-              source.page +
-              "\n\n" +
-              (source.contenu || "");
-
-            sourcesElement.appendChild(
-              div
-            );
-
-          }
-        );
-
-      }
-
-    }
-
-  } catch (error) {
-
-    afficherErreur(
-      "Impossible de contacter TechCanon.\n\n" +
-      (error.message || error)
-    );
-
-  } finally {
-
-    loadingElement.style.display =
-      "none";
-
-    sendButton.disabled =
-      false;
-
-  }
-
-}
-
-
-sendButton.addEventListener(
-  "click",
-  rechercher
-);
-
-
-questionElement.addEventListener(
-  "keydown",
-  event => {
-
-    if (
-      event.key === "Enter" &&
-      (event.ctrlKey || event.metaKey)
-    ) {
-
-      rechercher();
-
-    }
-
-  }
-);
-
-</script>
-
-</body>
-</html>
+      image:
+        reponse.proced
 ```
