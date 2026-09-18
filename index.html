@@ -1,389 +1,441 @@
-html
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TechCanon</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechCanon</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f3f4f6;
-      color: #111827;
-    }
+.container {
+  max-width: 850px;
+  margin: auto;
+  padding: 20px;
+}
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+.card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
 
-    h1 {
-      margin-bottom: 6px;
-    }
+h1 {
+  margin-bottom: 5px;
+}
 
-    .subtitle {
-      color: #6b7280;
-      margin-bottom: 24px;
-    }
+label {
+  display: block;
+  font-weight: bold;
+  margin: 15px 0 7px;
+}
 
-    .card {
-      background: white;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 9px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+textarea {
+  min-height: 110px;
+}
 
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      font-size: 16px;
-      margin-bottom: 18px;
-      background: white;
-    }
+button {
+  margin-top: 15px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 9px;
+  background: #111827;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
+button:disabled {
+  opacity: .5;
+}
 
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 12px 18px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      background: #111827;
-      color: white;
-    }
+.error {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 9px;
+  background: #fee2e2;
+  color: #991b1b;
+}
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+.success {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 9px;
+  background: #dcfce7;
+  color: #166534;
+}
 
-    .error {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 14px;
-      border-radius: 10px;
-      margin-top: 15px;
-    }
+.step {
+  margin-top: 20px;
+  padding: 15px;
+  border-left: 4px solid #111827;
+  background: #f9fafb;
+}
 
-    .success {
-      background: #ecfdf5;
-      color: #065f46;
-      padding: 14px;
-      border-radius: 10px;
-      margin-top: 15px;
-    }
+.step-title {
+  font-size: 19px;
+  font-weight: bold;
+}
 
-    .procedure-title {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 12px;
-    }
+.page {
+  color: #6b7280;
+  margin-top: 8px;
+}
 
-    .step {
-      border-left: 4px solid #111827;
-      padding-left: 15px;
-      margin: 20px 0;
-    }
+img {
+  max-width: 100%;
+  margin-top: 15px;
+  border-radius: 8px;
+}
 
-    .step-number {
-      font-size: 14px;
-      color: #6b7280;
-      margin-bottom: 5px;
-    }
+.nav {
+  display: flex;
+  gap: 10px;
+}
 
-    .step-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+.nav button {
+  flex: 1;
+}
 
-    .page-info {
-      color: #6b7280;
-      margin-bottom: 12px;
-    }
-
-    img {
-      width: 100%;
-      max-width: 800px;
-      border-radius: 10px;
-      border: 1px solid #d1d5db;
-      margin-top: 12px;
-    }
-
-    .navigation {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .navigation button {
-      flex: 1;
-    }
-
-    .sources {
-      margin-top: 25px;
-      padding-top: 15px;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .source {
-      background: #f9fafb;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 10px;
-      white-space: pre-wrap;
-      font-size: 14px;
-    }
-
-    .warning {
-      background: #fff7ed;
-      color: #9a3412;
-      padding: 12px;
-      border-radius: 10px;
-      margin-top: 15px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 12px;
-      }
-
-      .card {
-        padding: 15px;
-      }
-
-      h1 {
-        font-size: 26px;
-      }
-    }
-  </style>
+.hidden {
+  display: none;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <h1>TechCanon</h1>
-  <div class="subtitle">
-    Assistant technique Canon
-  </div>
+<h1>TechCanon</h1>
 
-  <div class="card">
+<p>
+Assistant technique Canon
+</p>
 
-    <label for="modele">Modèle</label>
+<div class="card">
 
-    <select id="modele">
-      <option value="C1538P">C1538P</option>
-      <option value="C1533P">C1533P</option>
-      <option value="LBP1538C">LBP1538C</option>
-    </select>
+<label for="modele">Modèle</label>
 
-    <label for="question">Question</label>
+<select id="modele">
+<option value="C1538P">C1538P</option>
+<option value="C1533P">C1533P</option>
+<option value="LBP1538C">LBP1538C</option>
+</select>
 
-    <textarea
-      id="question"
-      placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"
-    ></textarea>
+<label for="question">Question</label>
 
-    <button id="searchButton" type="button">
-      Rechercher
-    </button>
+<textarea
+id="question"
+placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"
+></textarea>
 
-    <div id="status"></div>
+<button id="searchButton">
+Rechercher
+</button>
 
-  </div>
+<div id="status"></div>
 
-  <div id="resultCard" class="card hidden">
+</div>
 
-    <div id="resultContent"></div>
-
-  </div>
+<div id="result" class="card hidden"></div>
 
 </div>
 
 <script>
 
-const API_URL =
-  "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
+const API =
+"https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
 
-const searchButton =
-  document.getElementById("searchButton");
+const button =
+document.getElementById("searchButton");
 
-const modeleInput =
-  document.getElementById("modele");
+const modele =
+document.getElementById("modele");
 
-const questionInput =
-  document.getElementById("question");
+const question =
+document.getElementById("question");
 
-const statusBox =
-  document.getElementById("status");
+const status =
+document.getElementById("status");
 
-const resultCard =
-  document.getElementById("resultCard");
-
-const resultContent =
-  document.getElementById("resultContent");
-
+const result =
+document.getElementById("result");
 
 let steps = [];
-let currentStep = 0;
+
+let step = 0;
 
 
-function afficherStatus(message, type = "") {
+function message(text, type) {
 
-  statusBox.className = type;
+status.className = type || "";
 
-  statusBox.textContent = message;
-
-}
-
-
-function afficherErreur(message) {
-
-  statusBox.className = "error";
-
-  statusBox.textContent = message;
+status.textContent = text;
 
 }
 
 
-function afficherProcedure(data) {
+function afficherEtape() {
 
-  resultCard.classList.remove("hidden");
+if (!steps.length) return;
 
-  const reponse = data.reponse;
+const s = steps[step];
 
-  if (!reponse) {
+result.innerHTML = `
 
-    resultContent.innerHTML = `
-      <div class="error">
-        Aucune réponse exploitable reçue.
-      </div>
-    `;
+<h2>Procédure identifiée</h2>
 
-    return;
-  }
+<p>
+<strong>Modèle :</strong>
+${modele.value}
+</p>
 
+<div class="step">
 
-  if (reponse.type !== "PROCEDURE") {
+<div class="step-title">
+Étape ${step + 1} / ${steps.length}
+</div>
 
-    resultContent.innerHTML = `
-      <div class="procedure-title">
-        Information trouvée
-      </div>
+<p>
+${s.titre}
+</p>
 
-      <div class="success">
-        ${reponse.reference || reponse.message || data.reponse || ""}
-      </div>
-    `;
+<div class="page">
+Page manuel : ${s.page_manuel || "-"}<br>
+Page PDF : ${s.page_pdf || "-"}
+</div>
 
-    return;
-  }
+${s.image ? `<img src="${s.image}">` : ""}
 
+</div>
 
-  steps = [];
+<div class="nav">
 
+<button id="prev">
+← Précédent
+</button>
 
-  if (Array.isArray(reponse.preparatifs)) {
+<button id="next">
+Suivant →
+</button>
 
-    reponse.preparatifs.forEach((item) => {
+</div>
 
-      steps.push({
-        titre: item.titre,
-        page_manuel: item.page_manuel,
-        page_pdf: item.page_pdf,
-        image: null
-      });
-
-    });
-
-  }
-
-
-  if (reponse.procedure) {
-
-    steps.push({
-
-      titre: reponse.procedure.titre,
-
-      page_manuel:
-        reponse.procedure.page_manuel,
-
-      page_pdf:
-        reponse.procedure.page_pdf,
-
-      image:
-        reponse.procedure.image
-
-    });
-
-  }
+<p>
+<strong>Important :</strong>
+vérifier les vis, connecteurs et figures
+dans le Service Manual avant intervention.
+</p>
+`;
 
 
-  currentStep = 0;
+document.getElementById("prev").disabled =
+step === 0;
+
+document.getElementById("next").disabled =
+step === steps.length - 1;
 
 
-  resultContent.innerHTML = `
+document.getElementById("prev").onclick =
+function() {
 
-    <div class="procedure-title">
-      ${reponse.procedure
-        ? reponse.procedure.titre
-        : "Procédure"}
-    </div>
+if (step > 0) {
 
-    <div>
-      <strong>Modèle :</strong>
-      ${data.modele}
-    </div>
+step--;
 
-    <div>
-      <strong>Composant :</strong>
-      ${reponse.composant || ""}
-    </div>
+afficherEtape();
 
-    <div>
-      <strong>Unité :</strong>
-      ${reponse.unite || ""}
-    </div>
+}
 
-    <div class="warning">
-      Vérifier les vis, connecteurs et illustrations
-      directement dans le Service Manual avant toute intervention.
-    </div>
+};
 
-    <div id="stepContainer"></div>
 
-    <div class="navigation">
+document.getElementById("next").onclick =
+function() {
 
-      <button
-        id="previousButton"
-        type="button"
-      >
-        ← Précédent
+if (step < steps.length - 1) {
 
+step++;
+
+afficherEtape();
+
+}
+
+};
+
+}
+
+
+async function rechercher() {
+
+const m =
+modele.value.trim();
+
+const q =
+question.value.trim();
+
+
+if (!q) {
+
+message(
+"Veuillez entrer une question.",
+"error"
+);
+
+return;
+
+}
+
+
+button.disabled = true;
+
+button.textContent =
+"Recherche...";
+
+result.classList.add("hidden");
+
+message(
+"Interrogation du Service Manual..."
+);
+
+
+try {
+
+const response =
+await fetch(API, {
+
+method: "POST",
+
+headers: {
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+
+modele: m,
+
+question: q
+
+})
+
+});
+
+
+const text =
+await response.text();
+
+
+if (!response.ok) {
+
+throw new Error(
+"HTTP " +
+response.status +
+" : " +
+text
+);
+
+}
+
+
+const data =
+JSON.parse(text);
+
+
+if (data.status === "error") {
+
+throw new Error(
+data.message ||
+"Erreur serveur"
+);
+
+}
+
+
+if (
+!data.reponse ||
+data.reponse.type !== "PROCEDURE"
+) {
+
+result.innerHTML = `
+
+<h2>Résultat</h2>
+
+<div class="success">
+
+${typeof data.reponse === "string"
+? data.reponse
+: "Information trouvée dans les manuels."}
+
+</div>
+
+`;
+
+result.classList.remove("hidden");
+
+message(
+"Recherche terminée.",
+"success"
+);
+
+return;
+
+}
+
+
+steps = [];
+
+
+if (Array.isArray(data.reponse.preparatifs)) {
+
+data.reponse.preparatifs.forEach(
+function(p) {
+
+steps.push({
+
+titre: p.titre,
+
+page_manuel:
+p.page_manuel,
+
+page_pdf:
+p.page_pdf,
+
+image: null
+
+});
+
+});
+
+}
+
+
+if (data.reponse.procedure) {
+
+steps.push({
+
+titre:
+data.reponse.procedure.titre,
+
+page_manuel:
+data.reponse.p
+```
