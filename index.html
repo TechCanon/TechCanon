@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -139,22 +140,6 @@
       margin-bottom: 15px;
     }
 
-    .confidence {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 12px;
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .confidence.warning {
-      background: #fff7ed;
-      color: #9a3412;
-    }
-
     .technical-answer {
       background: white;
       border-radius: 14px;
@@ -180,10 +165,6 @@
 
     .technical-body {
       padding: 18px;
-    }
-
-    .technical-body h3 {
-      margin-top: 0;
     }
 
     .answer-text {
@@ -354,10 +335,6 @@
       border-bottom: 0;
     }
 
-    .hidden {
-      display: none;
-    }
-
     @media (max-width: 600px) {
       main {
         padding: 10px;
@@ -387,6 +364,7 @@
       }
     }
   </style>
+
 </head>
 
 <body>
@@ -400,67 +378,65 @@
 
   <section class="search-box">
 
-    <label for="modele">Modèle</label>
+```
+<label for="modele">Modèle</label>
 
-    <select id="modele">
-      <option value="C1538P">C1538P</option>
-      <option value="C1533P">C1533P</option>
-      <option value="LBP1538C">LBP1538C</option>
-    </select>
+<select id="modele">
+  <option value="C1538P">C1538P</option>
+  <option value="C1533P">C1533P</option>
+  <option value="LBP1538C">LBP1538C</option>
+</select>
 
-    <br><br>
+<br><br>
 
-    <label for="question">Question technique</label>
+<label for="question">Question technique</label>
 
-    <textarea
-      id="question"
-      placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"
-    ></textarea>
+<textarea
+  id="question"
+  placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"
+></textarea>
 
-    <button id="searchButton" type="button">
-      🔎 Rechercher
-    </button>
+<button id="searchButton" type="button">
+  Rechercher
+</button>
 
-    <div id="status"></div>
+<div id="status"></div>
+```
 
   </section>
-
 
   <section class="pv-box">
 
-    <h2>📎 Ajouter un PV d'intervention</h2>
+```
+<h2>Ajouter un PV d'intervention</h2>
 
-    <p>
-      Sélectionne un PV PDF depuis ton téléphone.
-      TechCanon pourra ensuite l'enregistrer pour l'utiliser comme historique.
-    </p>
+<p>
+  Sélectionne un PV PDF depuis ton téléphone.
+  TechCanon pourra ensuite l'enregistrer pour l'utiliser comme historique.
+</p>
 
-    <label for="pvFile">
-      Fichier PDF
-    </label>
+<label for="pvFile">
+  Fichier PDF
+</label>
 
-    <input
-      id="pvFile"
-      type="file"
-      accept="application/pdf,.pdf"
-    >
+<input
+  id="pvFile"
+  type="file"
+  accept="application/pdf,.pdf"
+>
 
-    <button
-      id="uploadButton"
-      type="button"
-    >
-      📤 Envoyer le PV
-    </button>
+<button id="uploadButton" type="button">
+  Envoyer le PV
+</button>
 
-    <div id="pvStatus"></div>
+<div id="pvStatus"></div>
+```
 
   </section>
-
 
   <div id="result"></div>
 
 </main>
-
 
 <script>
 
@@ -685,7 +661,7 @@ async function envoyerPV() {
 
     pvStatusElement.innerHTML =
       '<div class="success">' +
-      "✅ PV envoyé avec succès.<br><br>" +
+      "PV envoyé avec succès.<br><br>" +
       escapeHtml(
         data.fichier ||
         fichier.name
@@ -729,11 +705,7 @@ function afficherReponse(
 
 
   /*
-   * NOUVELLE RÉPONSE TECHNIQUE
-   *
-   * Exemple :
-   * type = REPONSE_TECHNIQUE
-   * intention = LOCALISATION
+   * Réponse technique structurée
    */
 
   if (
@@ -749,7 +721,7 @@ function afficherReponse(
 
 
   /*
-   * ANCIEN FORMAT PROCÉDURE
+   * Procédure structurée
    */
 
   if (
@@ -766,7 +738,27 @@ function afficherReponse(
 
 
   /*
-   * FALLBACK RECHERCHE
+   * Si le backend renvoie directement
+   * une intention de procédure sous forme
+   * d'objet, on l'affiche également comme
+   * réponse technique.
+   */
+
+  if (
+    reponse.intention &&
+    typeof reponse.intention === "object"
+  ) {
+
+    afficherReponseTechnique(
+      reponse
+    );
+
+    return;
+  }
+
+
+  /*
+   * Fallback recherche
    */
 
   afficherRecherche(
@@ -780,19 +772,26 @@ function afficherReponseTechnique(
 ) {
 
   const titre =
-    reponse.titre ||
-    "Réponse technique";
+    valeurTexte(
+      reponse.titre,
+      "Réponse technique"
+    );
 
 
   const intention =
-    reponse.intention ||
-    "";
+    valeurTexte(
+      reponse.intention,
+      ""
+    );
 
 
   const texte =
-    reponse.reponse ||
-    reponse.texte ||
-    "Aucune réponse textuelle fournie.";
+    valeurTexte(
+      reponse.reponse ||
+      reponse.texte ||
+      reponse.message,
+      "J'ai trouvé des passages pertinents dans le Service Manual."
+    );
 
 
   let html = `
@@ -809,7 +808,10 @@ function afficherReponseTechnique(
           Modèle :
           <strong>
             ${escapeHtml(
-              reponse.modele || ""
+              valeurTexte(
+                reponse.modele,
+                modeleElement.value
+              )
             )}
           </strong>
         </p>
@@ -829,7 +831,6 @@ function afficherReponseTechnique(
 
       </div>
 
-
       <div class="technical-body">
 
         <div class="answer-text">
@@ -839,7 +840,7 @@ function afficherReponseTechnique(
 
 
   /*
-   * IDENTIFICATION
+   * Identification
    */
 
   if (
@@ -864,7 +865,9 @@ function afficherReponseTechnique(
               <p>
                 <strong>Unité :</strong>
                 ${escapeHtml(
-                  identification.unite
+                  valeurTexte(
+                    identification.unite
+                  )
                 )}
               </p>
             `
@@ -877,7 +880,9 @@ function afficherReponseTechnique(
               <p>
                 <strong>Composant :</strong>
                 ${escapeHtml(
-                  identification.composant
+                  valeurTexte(
+                    identification.composant
+                  )
                 )}
               </p>
             `
@@ -889,7 +894,9 @@ function afficherReponseTechnique(
             ? `
               <p>
                 ${escapeHtml(
-                  identification.description
+                  valeurTexte(
+                    identification.description
+                  )
                 )}
               </p>
             `
@@ -904,7 +911,9 @@ function afficherReponseTechnique(
                   Page manuel :
                 </strong>
                 ${escapeHtml(
-                  identification.page_manuel
+                  valeurTexte(
+                    identification.page_manuel
+                  )
                 )}
               </p>
             `
@@ -919,7 +928,9 @@ function afficherReponseTechnique(
                   Page PDF :
                 </strong>
                 ${escapeHtml(
-                  identification.page_pdf
+                  valeurTexte(
+                    identification.page_pdf
+                  )
                 )}
               </p>
             `
@@ -932,94 +943,114 @@ function afficherReponseTechnique(
 
 
   /*
-   * LOCALISATION
+   * Localisation
    */
 
   if (
-    reponse.localisation &&
-    Array.isArray(
-      reponse.localisation.pages
-    )
+    reponse.localisation
   ) {
 
-    html += `
-
-      <div class="localisation">
-
-        <h3>
-          Localisation dans le Service Manual
-        </h3>
-    `;
+    const localisation =
+      reponse.localisation;
 
 
-    reponse.localisation.pages.forEach(
-      (page) => {
-
-        html += `
-
-          <div class="page-card">
-
-            <strong>
-              ${escapeHtml(
-                page.titre ||
-                "Page du manuel"
-              )}
-            </strong>
-
-            <div>
-              Page manuel :
-              ${escapeHtml(
-                page.page_manuel ??
-                "?"
-              )}
-              &nbsp;|&nbsp;
-              Page PDF :
-              ${escapeHtml(
-                page.page_pdf ??
-                "?"
-              )}
-            </div>
-        `;
+    const pages =
+      Array.isArray(
+        localisation.pages
+      )
+        ? localisation.pages
+        : [];
 
 
-        if (
-          page.image
-        ) {
+    if (pages.length) {
+
+      html += `
+
+        <div class="localisation">
+
+          <h3>
+            Localisation dans le Service Manual
+          </h3>
+      `;
+
+
+      pages.forEach(
+        (page) => {
 
           html += `
 
-            <img
-              class="page-image"
-              src="${escapeAttribute(
-                page.image
-              )}"
-              alt="Illustration du Service Manual"
-              loading="lazy"
-            >
+            <div class="page-card">
+
+              <strong>
+                ${escapeHtml(
+                  valeurTexte(
+                    page.titre,
+                    "Page du manuel"
+                  )
+                )}
+              </strong>
+
+              <div>
+                Page manuel :
+                ${escapeHtml(
+                  valeurTexte(
+                    page.page_manuel,
+                    "?"
+                  )
+                )}
+
+                &nbsp;|&nbsp;
+
+                Page PDF :
+                ${escapeHtml(
+                  valeurTexte(
+                    page.page_pdf,
+                    "?"
+                  )
+                )}
+              </div>
+          `;
+
+
+          if (
+            page.image
+          ) {
+
+            html += `
+
+              <img
+                class="page-image"
+                src="${escapeAttribute(
+                  page.image
+                )}"
+                alt="Illustration du Service Manual"
+                loading="lazy"
+              >
+
+            `;
+          }
+
+
+          html += `
+
+            </div>
 
           `;
         }
+      );
 
 
-        html += `
+      html += `
 
-          </div>
+        </div>
 
-        `;
-      }
-    );
-
-
-    html += `
-
-      </div>
-
-    `;
+      `;
+    }
   }
 
 
   /*
-   * RÉFÉRENCE PROCÉDURE
+   * Procédure de maintenance
    */
 
   if (
@@ -1044,7 +1075,9 @@ function afficherReponseTechnique(
               <p>
                 <strong>
                   ${escapeHtml(
-                    procedure.titre
+                    valeurTexte(
+                      procedure.titre
+                    )
                   )}
                 </strong>
               </p>
@@ -1059,7 +1092,9 @@ function afficherReponseTechnique(
                 Page manuel :
                 <strong>
                   ${escapeHtml(
-                    procedure.page_manuel
+                    valeurTexte(
+                      procedure.page_manuel
+                    )
                   )}
                 </strong>
               </p>
@@ -1074,7 +1109,9 @@ function afficherReponseTechnique(
                 Page PDF :
                 <strong>
                   ${escapeHtml(
-                    procedure.page_pdf
+                    valeurTexte(
+                      procedure.page_pdf
+                    )
                   )}
                 </strong>
               </p>
@@ -1089,7 +1126,7 @@ function afficherReponseTechnique(
 
 
   /*
-   * AVERTISSEMENT
+   * Avertissement
    */
 
   if (
@@ -1101,8 +1138,76 @@ function afficherReponseTechnique(
       <div class="warning">
 
         ${escapeHtml(
-          reponse.avertissement
+          valeurTexte(
+            reponse.avertissement
+          )
         )}
+
+      </div>
+
+    `;
+  }
+
+
+  /*
+   * Si le backend a renvoyé une liste
+   * de résultats en plus de la réponse,
+   * on les affiche.
+   */
+
+  if (
+    Array.isArray(
+      reponse.resultats
+    ) &&
+    reponse.resultats.length
+  ) {
+
+    html += `
+
+      <div class="procedure-reference">
+
+        <h3>
+          Résultats du Service Manual
+        </h3>
+    `;
+
+
+    reponse.resultats.forEach(
+      (item) => {
+
+        html += `
+
+          <div class="page-card">
+
+            <strong>
+              Page ${escapeHtml(
+                valeurTexte(
+                  item.page_manuel ??
+                  item.page_pdf ??
+                  "?"
+                )
+              )}
+            </strong>
+
+            <div>
+              ${escapeHtml(
+                valeurTexte(
+                  item.extrait ||
+                  item.contenu ||
+                  item.texte ||
+                  ""
+                )
+              )}
+            </div>
+
+          </div>
+
+        `;
+      }
+    );
+
+
+    html += `
 
       </div>
 
@@ -1160,8 +1265,10 @@ function afficherProcedure(
 
         <h2>
           ${escapeHtml(
-            reponse.procedure.titre ||
-            "Procédure"
+            valeurTexte(
+              reponse.procedure.titre,
+              "Procédure"
+            )
           )}
         </h2>
 
@@ -1169,7 +1276,10 @@ function afficherProcedure(
           Modèle :
           <strong>
             ${escapeHtml(
-              reponse.modele || ""
+              valeurTexte(
+                reponse.modele,
+                modeleElement.value
+              )
             )}
           </strong>
         </p>
@@ -1178,7 +1288,10 @@ function afficherProcedure(
           Composant :
           <strong>
             ${escapeHtml(
-              reponse.composant || ""
+              valeurTexte(
+                reponse.composant,
+                ""
+              )
             )}
           </strong>
         </p>
@@ -1187,7 +1300,10 @@ function afficherProcedure(
           Unité :
           <strong>
             ${escapeHtml(
-              reponse.unite || ""
+              valeurTexte(
+                reponse.unite,
+                ""
+              )
             )}
           </strong>
         </p>
@@ -1207,8 +1323,10 @@ function afficherProcedure(
       <div class="warning">
 
         ${escapeHtml(
-          reponse.procedure.avertissement ||
-          "Vérifier les illustrations et les opérations dans le Service Manual avant toute intervention."
+          valeurTexte(
+            reponse.procedure.avertissement,
+            "Vérifier les illustrations et les opérations dans le Service Manual avant toute intervention."
+          )
         )}
 
       </div>
@@ -1220,7 +1338,7 @@ function afficherProcedure(
           type="button"
           onclick="etapePrecedente()"
         >
-          ← Précédent
+          Précédent
         </button>
 
         <button
@@ -1228,7 +1346,7 @@ function afficherProcedure(
           type="button"
           onclick="etapeSuivante()"
         >
-          Suivant →
+          Suivant
         </button>
 
       </div>
@@ -1334,8 +1452,10 @@ function afficherEtape() {
 
     <h3>
       ${escapeHtml(
-        etape.titre ||
-        "Étape"
+        valeurTexte(
+          etape.titre,
+          "Étape"
+        )
       )}
     </h3>
 
@@ -1344,8 +1464,10 @@ function afficherEtape() {
       Page manuel :
       <strong>
         ${escapeHtml(
-          etape.page_manuel ??
-          "?"
+          valeurTexte(
+            etape.page_manuel,
+            "?"
+          )
         )}
       </strong>
 
@@ -1354,8 +1476,10 @@ function afficherEtape() {
       Page PDF :
       <strong>
         ${escapeHtml(
-          etape.page_pdf ??
-          "?"
+          valeurTexte(
+            etape.page_pdf,
+            "?"
+          )
         )}
       </strong>
 
@@ -1364,8 +1488,10 @@ function afficherEtape() {
     <div class="step-description">
 
       ${escapeHtml(
-        etape.description ||
-        ""
+        valeurTexte(
+          etape.description,
+          ""
+        )
       )}
 
     </div>
@@ -1381,8 +1507,10 @@ function afficherEtape() {
       <br><br>
 
       ${escapeHtml(
-        etape.source ||
-        ""
+        valeurTexte(
+          etape.source,
+          ""
+        )
       )}
 
     </div>
@@ -1473,7 +1601,7 @@ function afficherRecherche(
     <div class="result-list">
 
       <h2>
-        Résultats du manuel
+        Résultats du Service Manual
       </h2>
   `;
 
@@ -1487,18 +1615,23 @@ function afficherRecherche(
 
           <strong>
             Page ${escapeHtml(
-              item.page_manuel ??
-              item.page_pdf ??
-              "?"
+              valeurTexte(
+                item.page_manuel ??
+                item.page_pdf,
+                "?"
+              )
             )}
           </strong>
 
           <br><br>
 
           ${escapeHtml(
-            item.extrait ||
-            item.contenu ||
-            ""
+            valeurTexte(
+              item.extrait ||
+              item.contenu ||
+              item.texte,
+              ""
+            )
           )}
 
         </div>
@@ -1518,19 +1651,147 @@ function afficherRecherche(
 }
 
 
+/*
+ * Convertit proprement n'importe quelle
+ * valeur provenant du backend en texte.
+ *
+ * C'est notamment ce qui évite :
+ *
+ * [object Object]
+ *
+ * lorsque "intention" ou un autre champ
+ * arrive sous forme d'objet JSON.
+ */
+
+function valeurTexte(
+  valeur,
+  valeurParDefaut = ""
+) {
+
+  if (
+    valeur === null ||
+    valeur === undefined
+  ) {
+
+    return valeurParDefaut;
+  }
+
+
+  if (
+    typeof valeur === "string"
+  ) {
+
+    return valeur;
+  }
+
+
+  if (
+    typeof valeur === "number" ||
+    typeof valeur === "boolean"
+  ) {
+
+    return String(valeur);
+  }
+
+
+  if (
+    Array.isArray(valeur)
+  ) {
+
+    return valeur
+      .map(
+        (element) =>
+          valeurTexte(
+            element,
+            ""
+          )
+      )
+      .filter(
+        (element) =>
+          element !== ""
+      )
+      .join(", ");
+  }
+
+
+  if (
+    typeof valeur === "object"
+  ) {
+
+    /*
+     * Cas fréquents :
+     *
+     * { nom: "LOCALISATION" }
+     * { type: "LOCALISATION" }
+     * { intention: "LOCALISATION" }
+     * { action: "DEPOSE" }
+     */
+
+    if (
+      typeof valeur.nom === "string"
+    ) {
+
+      return valeur.nom;
+    }
+
+
+    if (
+      typeof valeur.type === "string"
+    ) {
+
+      return valeur.type;
+    }
+
+
+    if (
+      typeof valeur.intention === "string"
+    ) {
+
+      return valeur.intention;
+    }
+
+
+    if (
+      typeof valeur.action === "string"
+    ) {
+
+      return valeur.action;
+    }
+
+
+    /*
+     * Dernier recours :
+     * afficher proprement le JSON
+     * plutôt que [object Object].
+     */
+
+    try {
+
+      return JSON.stringify(
+        valeur,
+        null,
+        2
+      );
+
+    } catch (error) {
+
+      return valeurParDefaut;
+    }
+  }
+
+
+  return String(valeur);
+}
+
+
 function escapeHtml(
   value
 ) {
 
-  if (
-    value === null ||
-    value === undefined
-  ) {
-    return "";
-  }
-
-
-  return String(value)
+  return valeurTexte(
+    value,
+    ""
+  )
     .replace(
       /&/g,
       "&amp;"
