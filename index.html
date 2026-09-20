@@ -1,5 +1,4 @@
 ﻿<!DOCTYPE html>
-
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -95,6 +94,11 @@
       background: #1f2937;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
     .loading {
       display: none;
       margin-top: 15px;
@@ -111,6 +115,16 @@
       border: 1px solid #fecaca;
       padding: 15px;
       border-radius: 8px;
+      margin-top: 15px;
+    }
+
+    .success {
+      background: #ecfdf5;
+      color: #166534;
+      border-left: 4px solid #10b981;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
     }
 
     .result-header {
@@ -120,7 +134,7 @@
     }
 
     .result-header h2 {
-      margin: 0 0 12px 0;
+      margin: 0 0 12px;
       font-size: 21px;
     }
 
@@ -172,14 +186,6 @@
       border-radius: 6px;
     }
 
-    .success {
-      background: #ecfdf5;
-      border-left: 4px solid #10b981;
-      padding: 14px;
-      margin: 15px 0;
-      border-radius: 6px;
-    }
-
     .result-item {
       border: 1px solid #e5e7eb;
       border-radius: 8px;
@@ -209,6 +215,17 @@
       display: none;
     }
 
+    .navigation {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .navigation button {
+      margin-top: 0;
+    }
+
     @media (max-width: 600px) {
       header h1 {
         font-size: 21px;
@@ -223,7 +240,6 @@
       }
     }
   </style>
-
 </head>
 
 <body>
@@ -237,60 +253,56 @@
 
   <div class="card">
 
-```
-<label for="model">Modèle</label>
+    <label for="model">Modèle</label>
 
-<select id="model">
-  <option value="C1538P">C1538P</option>
-  <option value="C1533P">C1533P</option>
-  <option value="LBP1538C">LBP1538C</option>
-</select>
+    <select id="model">
+      <option value="C1538P">C1538P</option>
+      <option value="C1533P">C1533P</option>
+      <option value="LBP1538C">LBP1538C</option>
+    </select>
 
-<br><br>
+    <br><br>
 
-<label for="question">Question technique</label>
+    <label for="question">Question technique</label>
 
-<textarea
-  id="question"
-  placeholder="Exemple : où se trouve la carte contrôleur principale ?"
-></textarea>
+    <textarea
+      id="question"
+      placeholder="Exemple : où se trouve la carte contrôleur principale ?"
+    ></textarea>
 
-<button onclick="poserQuestion()">
-  Rechercher dans le Service Manual
-</button>
+    <button id="searchButton" type="button">
+      Rechercher dans le Service Manual
+    </button>
 
-<div id="loading" class="loading">
-  Recherche dans le Service Manual...
-</div>
-```
+    <div id="loading" class="loading">
+      Recherche dans le Service Manual...
+    </div>
 
   </div>
 
   <div class="card hidden" id="resultCard">
-
-```
-<div id="result"></div>
-```
-
+    <div id="result"></div>
   </div>
 
   <div class="card">
 
-```
-<h2>Ajouter un PV</h2>
+    <h2>Ajouter un PV</h2>
 
-<input
-  type="file"
-  id="pvFile"
-  accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg,.png"
->
+    <input
+      type="file"
+      id="pvFile"
+      accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg,.png"
+    >
 
-<button class="secondary" onclick="envoyerPV()">
-  Envoyer le PV
-</button>
+    <button
+      id="uploadButton"
+      class="secondary"
+      type="button"
+    >
+      Envoyer le PV
+    </button>
 
-<div id="pvResult"></div>
-```
+    <div id="pvResult"></div>
 
   </div>
 
@@ -304,10 +316,6 @@ const ANSWER_URL =
 const UPLOAD_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/upload-pv";
 
-
-/* =========================================================
-   UTILITAIRES
-   ========================================================= */
 
 function valeurTexte(valeur) {
 
@@ -338,22 +346,27 @@ function valeurTexte(valeur) {
       "message",
       "answer",
       "reponse",
+      "réponse",
       "contenu",
       "content",
       "description",
-      "procedure",
       "instruction",
+      "instructions",
       "intention",
       "localisation",
-      "reference"
+      "location",
+      "reference",
+      "référence"
     ];
 
     for (const cle of priorites) {
+
       if (
         Object.prototype.hasOwnProperty.call(valeur, cle) &&
         valeur[cle] !== null &&
         valeur[cle] !== undefined
       ) {
+
         const texte = valeurTexte(valeur[cle]);
 
         if (texte) {
@@ -386,13 +399,10 @@ function echapperHTML(texte) {
 
 function afficherTexte(texte) {
 
-  if (!texte) {
-    return "";
-  }
-
-  return echapperHTML(texte)
-    .replace(/\r\n/g, "\n")
-    .replace(/\n/g, "<br>");
+  return echapperHTML(
+    valeurTexte(texte)
+  ).replace(/\r\n/g, "\n")
+   .replace(/\n/g, "<br>");
 }
 
 
@@ -418,18 +428,106 @@ function chercherPremier(objet, cles) {
 }
 
 
-/* =========================================================
-   QUESTION
-   ========================================================= */
+function obtenirTypeReponse(data) {
+
+  const valeurs = [
+    data?.type,
+    data?.type_reponse,
+    data?.response_type
+  ];
+
+  for (const valeur of valeurs) {
+
+    if (typeof valeur === "string") {
+
+      const type = valeur.toUpperCase();
+
+      if (
+        type.includes("PROCEDURE") ||
+        type.includes("PROCÉDURE")
+      ) {
+        return "PROCEDURE";
+      }
+
+      if (
+        type.includes("REPONSE_TECHNIQUE") ||
+        type.includes("RÉPONSE_TECHNIQUE")
+      ) {
+        return "REPONSE_TECHNIQUE";
+      }
+
+      if (type.includes("LOCALISATION")) {
+        return "LOCALISATION";
+      }
+    }
+
+    if (
+      valeur &&
+      typeof valeur === "object"
+    ) {
+
+      if (valeur.procedure === true) {
+        return "PROCEDURE";
+      }
+
+      if (
+        valeur.REPONSE_TECHNIQUE === true ||
+        valeur.reponse_technique === true
+      ) {
+        return "REPONSE_TECHNIQUE";
+      }
+
+      if (valeur.localisation === true) {
+        return "LOCALISATION";
+      }
+    }
+  }
+
+  if (
+    data?.intention &&
+    typeof data.intention === "object"
+  ) {
+
+    if (data.intention.procedure === true) {
+      return "PROCEDURE";
+    }
+
+    if (
+      data.intention.REPONSE_TECHNIQUE === true ||
+      data.intention.reponse_technique === true
+    ) {
+      return "REPONSE_TECHNIQUE";
+    }
+
+    if (data.intention.localisation === true) {
+      return "LOCALISATION";
+    }
+  }
+
+  return "";
+}
+
 
 async function poserQuestion() {
 
-  const model = document.getElementById("model").value;
-  const question = document.getElementById("question").value.trim();
+  const model =
+    document.getElementById("model").value;
 
-  const resultCard = document.getElementById("resultCard");
-  const result = document.getElementById("result");
-  const loading = document.getElementById("loading");
+  const question =
+    document.getElementById("question").value.trim();
+
+  const resultCard =
+    document.getElementById("resultCard");
+
+  const result =
+    document.getElementById("result");
+
+  const loading =
+    document.getElementById("loading");
+
+  const searchButton =
+    document.getElementById("searchButton");
+
 
   if (!question) {
 
@@ -444,61 +542,88 @@ async function poserQuestion() {
     return;
   }
 
+
+  searchButton.disabled = true;
   loading.style.display = "block";
+
   resultCard.classList.add("hidden");
   result.innerHTML = "";
 
+
   try {
 
-    const response = await fetch(ANSWER_URL, {
+    const response =
+      await fetch(
+        ANSWER_URL,
+        {
+          method: "POST",
 
-      method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
 
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-        model: model,
-        question: question
-      })
-
-    });
+          body: JSON.stringify({
+            model: model,
+            modele: model,
+            question: question
+          })
+        }
+      );
 
 
-    const texteBrut = await response.text();
+    const texteBrut =
+      await response.text();
+
 
     let data;
 
     try {
-      data = JSON.parse(texteBrut);
+
+      data =
+        JSON.parse(texteBrut);
+
     } catch (e) {
 
       throw new Error(
-        "Réponse serveur non JSON : " + texteBrut
+        "Réponse serveur non JSON : " +
+        texteBrut
       );
-
     }
 
 
     if (!response.ok) {
 
-      const messageErreur =
+      const message =
         valeurTexte(
-          chercherPremier(data, [
-            "error",
-            "message",
-            "detail"
-          ])
-        ) || "Erreur serveur";
+          chercherPremier(
+            data,
+            [
+              "error",
+              "erreur",
+              "message",
+              "detail"
+            ]
+          )
+        ) ||
+        "Erreur serveur HTTP " +
+        response.status;
 
-      throw new Error(messageErreur);
+      throw new Error(message);
     }
+
+
+    console.log(
+      "Réponse complète answer-manual :",
+      data
+    );
 
 
     afficherReponse(data);
 
+
   } catch (error) {
+
+    console.error(error);
 
     resultCard.classList.remove("hidden");
 
@@ -509,28 +634,32 @@ async function poserQuestion() {
       </div>
     `;
 
+
   } finally {
 
+    searchButton.disabled = false;
     loading.style.display = "none";
 
   }
-
 }
 
 
-/* =========================================================
-   AFFICHAGE REPONSE
-   ========================================================= */
-
 function afficherReponse(data) {
 
-  const resultCard = document.getElementById("resultCard");
-  const result = document.getElementById("result");
+  const resultCard =
+    document.getElementById("resultCard");
+
+  const result =
+    document.getElementById("result");
+
 
   resultCard.classList.remove("hidden");
 
 
-  if (!data || typeof data !== "object") {
+  if (
+    !data ||
+    typeof data !== "object"
+  ) {
 
     result.innerHTML = `
       <div class="error">
@@ -542,36 +671,19 @@ function afficherReponse(data) {
   }
 
 
-  console.log("Réponse complète answer-manual :", data);
-
-
   const model =
-    chercherPremier(data, [
-      "model",
-      "modele",
-      "modèle"
-    ]);
+    chercherPremier(
+      data,
+      [
+        "model",
+        "modele",
+        "modèle"
+      ]
+    );
 
 
   const type =
-    chercherPremier(data, [
-      "type",
-      "type_reponse",
-      "response_type",
-      "intention"
-    ]);
-
-
-  const texte =
-    chercherPremier(data, [
-      "reponse",
-      "réponse",
-      "answer",
-      "message",
-      "texte",
-      "text",
-      "content"
-    ]);
+    obtenirTypeReponse(data);
 
 
   let html = `
@@ -584,19 +696,27 @@ function afficherReponse(data) {
 
       ${
         model
-          ? `<div class="meta">
+          ? `
+            <div class="meta">
               Modèle :
-              <strong>${afficherTexte(valeurTexte(model))}</strong>
-             </div>`
+              <strong>
+                ${afficherTexte(model)}
+              </strong>
+            </div>
+          `
           : ""
       }
 
       ${
         type
-          ? `<div class="meta">
+          ? `
+            <div class="meta">
               Type de réponse :
-              <strong>${afficherTexte(valeurTexte(type))}</strong>
-             </div>`
+              <strong>
+                ${afficherTexte(type)}
+              </strong>
+            </div>
+          `
           : ""
       }
 
@@ -605,295 +725,610 @@ function afficherReponse(data) {
   `;
 
 
-  /*
-   * -------------------------------------------------------
-   * REPONSE TECHNIQUE / PROCEDURE
-   * -------------------------------------------------------
-   */
+  if (type === "PROCEDURE") {
 
-  const estTechnique =
-    data.type === "REPONSE_TECHNIQUE" ||
-    data.type === "PROCEDURE" ||
-    data.response_type === "REPONSE_TECHNIQUE" ||
-    data.response_type === "PROCEDURE" ||
-    typeof data.reponse === "object" ||
-    typeof data.réponse === "object";
+    html +=
+      afficherProcedure(data);
 
+  } else if (
+    type === "REPONSE_TECHNIQUE"
+  ) {
 
-  if (estTechnique) {
+    html +=
+      afficherReponseTechnique(data);
 
-    html += afficherReponseTechnique(data);
+  } else if (
+    type === "LOCALISATION"
+  ) {
+
+    html +=
+      afficherLocalisation(data);
+
+  } else {
+
+    html +=
+      afficherReponseGenerique(data);
 
   }
 
 
-  /*
-   * -------------------------------------------------------
-   * LOCALISATION
-   * -------------------------------------------------------
-   */
+  html += `
+
+    <details style="margin-top:20px;">
+
+      <summary>
+        Données techniques reçues
+      </summary>
+
+      <pre>${echapperHTML(
+        JSON.stringify(data, null, 2)
+      )}</pre>
+
+    </details>
+
+  `;
+
+
+  result.innerHTML = html;
+}
+
+
+function afficherLocalisation(data) {
 
   const localisation =
-    chercherPremier(data, [
-      "localisation",
-      "location",
-      "position",
-      "emplacement"
-    ]);
+    chercherPremier(
+      data,
+      [
+        "localisation",
+        "location",
+        "position",
+        "emplacement"
+      ]
+    );
 
 
-  if (localisation) {
+  const identification =
+    chercherPremier(
+      data,
+      [
+        "identification",
+        "piece",
+        "part",
+        "component",
+        "composant",
+        "board",
+        "carte"
+      ]
+    );
 
-    html += `
+
+  return `
+
+    <div class="answer-box">
+
+      <div class="answer-title">
+        Localisation
+      </div>
+
+      <div>
+        ${afficherTexte(
+          localisation
+        )}
+      </div>
+
+    </div>
+
+    ${
+      identification
+        ? `
+          <div class="success">
+            <strong>Élément identifié :</strong><br>
+            ${afficherTexte(identification)}
+          </div>
+        `
+        : ""
+    }
+
+  `;
+}
+
+
+function afficherReponseTechnique(data) {
+
+  const objet =
+    data.reponse ||
+    data.réponse ||
+    data.answer ||
+    data;
+
+
+  if (
+    typeof objet === "string" ||
+    typeof objet === "number"
+  ) {
+
+    return `
+
       <div class="answer-box">
 
         <div class="answer-title">
-          Localisation
+          Réponse technique
         </div>
 
         <div>
-          ${afficherTexte(valeurTexte(localisation))}
+          ${afficherTexte(objet)}
         </div>
 
       </div>
-    `;
 
+    `;
   }
 
 
-  /*
-   * -------------------------------------------------------
-   * IDENTIFICATION
-   * -------------------------------------------------------
-   */
-
-  const identification =
-    chercherPremier(data, [
-      "identification",
-      "piece",
-      "part",
-      "component",
-      "composant",
-      "board",
-      "carte"
-    ]);
+  const titre =
+    chercherPremier(
+      objet,
+      [
+        "titre",
+        "title",
+        "nom",
+        "name"
+      ]
+    );
 
 
-  if (identification) {
+  const composant =
+    chercherPremier(
+      objet,
+      [
+        "composant",
+        "component",
+        "piece",
+        "part",
+        "carte",
+        "board"
+      ]
+    );
+
+
+  const emplacement =
+    chercherPremier(
+      objet,
+      [
+        "localisation",
+        "location",
+        "emplacement",
+        "position"
+      ]
+    );
+
+
+  const instructions =
+    chercherPremier(
+      objet,
+      [
+        "instructions",
+        "instruction",
+        "procedure",
+        "procédure",
+        "etapes",
+        "étapes",
+        "steps"
+      ]
+    );
+
+
+  const texte =
+    chercherPremier(
+      objet,
+      [
+        "texte",
+        "text",
+        "message",
+        "description",
+        "content",
+        "contenu",
+        "answer",
+        "reponse",
+        "réponse"
+      ]
+    );
+
+
+  let html = "";
+
+
+  if (
+    titre ||
+    composant ||
+    emplacement ||
+    texte
+  ) {
 
     html += `
-      <div class="success">
 
-        <strong>Élément identifié :</strong><br>
+      <div class="answer-box">
 
-        ${afficherTexte(valeurTexte(identification))}
+        <div class="answer-title">
+          ${
+            afficherTexte(
+              titre || "Réponse technique"
+            )
+          }
+        </div>
+
+        ${
+          composant
+            ? `
+              <div>
+                <strong>Composant :</strong>
+                ${afficherTexte(composant)}
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          emplacement
+            ? `
+              <div>
+                <strong>Emplacement :</strong>
+                ${afficherTexte(emplacement)}
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          texte
+            ? `
+              <div style="margin-top:12px;">
+                ${afficherTexte(texte)}
+              </div>
+            `
+            : ""
+        }
 
       </div>
-    `;
 
+    `;
   }
 
 
-  /*
-   * -------------------------------------------------------
-   * REFERENCE PROCEDURE
-   * -------------------------------------------------------
-   */
-
-  const reference =
-    chercherPremier(data, [
-      "reference",
-      "référence",
-      "procedure_reference",
-      "procedureReference",
-      "manuel_reference",
-      "manual_reference"
-    ]);
-
-
-  if (reference) {
+  if (
+    Array.isArray(instructions)
+  ) {
 
     html += `
       <div class="technical-section">
 
         <h3>
-          Référence Service Manual
+          Procédure
         </h3>
-
-        <div class="answer-box">
-          ${afficherTexte(valeurTexte(reference))}
-        </div>
-
-      </div>
     `;
 
+
+    instructions.forEach(
+      (etape, index) => {
+
+        const texteEtape =
+          typeof etape === "object"
+            ? chercherPremier(
+                etape,
+                [
+                  "description",
+                  "texte",
+                  "text",
+                  "instruction",
+                  "contenu"
+                ]
+              )
+            : etape;
+
+
+        html += `
+
+          <div class="procedure-step">
+
+            <strong>
+              Étape ${index + 1}
+            </strong>
+
+            ${afficherTexte(
+              texteEtape
+            )}
+
+          </div>
+
+        `;
+      }
+    );
+
+
+    html += `
+      </div>
+    `;
   }
 
 
-  /*
-   * -------------------------------------------------------
-   * AVERTISSEMENT
-   * -------------------------------------------------------
-   */
+  if (!html) {
+
+    html = `
+
+      <div class="answer-box">
+
+        <div class="answer-title">
+          Réponse technique
+        </div>
+
+        <pre>${echapperHTML(
+          JSON.stringify(objet, null, 2)
+        )}</pre>
+
+      </div>
+
+    `;
+  }
+
+
+  return html;
+}
+
+
+function afficherProcedure(data) {
+
+  const procedure =
+    data.procedure ||
+    data.reponse?.procedure ||
+    data.réponse?.procedure;
+
+
+  if (
+    !procedure ||
+    typeof procedure !== "object"
+  ) {
+
+    return afficherReponseTechnique(data);
+  }
+
+
+  const titre =
+    chercherPremier(
+      procedure,
+      [
+        "titre",
+        "title",
+        "nom",
+        "name"
+      ]
+    ) ||
+    "Procédure";
+
+
+  const etapes =
+    procedure.etapes ||
+    procedure.étapes ||
+    procedure.steps;
+
+
+  let html = `
+
+    <div class="answer-box">
+
+      <div class="answer-title">
+        ${afficherTexte(titre)}
+      </div>
+
+      ${
+        data.composant
+          ? `
+            <div>
+              <strong>Composant :</strong>
+              ${afficherTexte(data.composant)}
+            </div>
+          `
+          : ""
+      }
+
+    </div>
+
+  `;
+
+
+  if (
+    Array.isArray(etapes) &&
+    etapes.length
+  ) {
+
+    etapes.forEach(
+      (etape, index) => {
+
+        const description =
+          chercherPremier(
+            etape,
+            [
+              "description",
+              "texte",
+              "text",
+              "instruction",
+              "contenu"
+            ]
+          ) ||
+          etape;
+
+
+        const page =
+          chercherPremier(
+            etape,
+            [
+              "page_manuel",
+              "page",
+              "page_pdf"
+            ]
+          );
+
+
+        html += `
+
+          <div class="procedure-step">
+
+            <strong>
+              Étape ${index + 1}
+            </strong>
+
+            ${
+              page !== null
+                ? `
+                  <div>
+                    Page :
+                    ${afficherTexte(page)}
+                  </div>
+                `
+                : ""
+            }
+
+            <div style="margin-top:8px;">
+              ${afficherTexte(description)}
+            </div>
+
+          </div>
+
+        `;
+      }
+    );
+
+  } else {
+
+    html += afficherReponseTechnique(data);
+  }
+
 
   const warning =
-    chercherPremier(data, [
-      "warning",
-      "warnings",
-      "avertissement",
-      "attention",
-      "precaution",
-      "précaution"
-    ]);
+    chercherPremier(
+      procedure,
+      [
+        "avertissement",
+        "attention",
+        "warning",
+        "precaution",
+        "précaution"
+      ]
+    );
 
 
   if (warning) {
 
     html += `
+
       <div class="warning">
 
         <strong>Attention</strong><br>
 
-        ${afficherTexte(valeurTexte(warning))}
+        ${afficherTexte(warning)}
 
       </div>
+
     `;
-
   }
 
 
-  /*
-   * -------------------------------------------------------
-   * REPONSE GENERALE
-   * -------------------------------------------------------
-   */
-
-  if (
-    texte &&
-    !(
-      typeof texte === "object" &&
-      texte === data.reponse
-    )
-  ) {
-
-    const texteFinal = valeurTexte(texte);
-
-    if (texteFinal) {
-
-      html += `
-        <div class="answer-box">
-
-          <div class="answer-title">
-            Réponse
-          </div>
-
-          <div>
-            ${afficherTexte(texteFinal)}
-          </div>
-
-        </div>
-      `;
-
-    }
-
-  }
+  return html;
+}
 
 
-  /*
-   * -------------------------------------------------------
-   * RESULTATS DE RECHERCHE
-   * -------------------------------------------------------
-   */
+function afficherReponseGenerique(data) {
+
+  const texte =
+    chercherPremier(
+      data,
+      [
+        "reponse",
+        "réponse",
+        "answer",
+        "message",
+        "texte",
+        "text",
+        "content",
+        "contenu"
+      ]
+    );
+
 
   const resultats =
-    chercherPremier(data, [
-      "results",
-      "resultats",
-      "résultats",
-      "matches",
-      "documents",
-      "passages",
-      "sources"
-    ]);
+    chercherPremier(
+      data,
+      [
+        "results",
+        "resultats",
+        "résultats",
+        "matches",
+        "documents",
+        "passages",
+        "sources"
+      ]
+    );
 
 
-  if (Array.isArray(resultats) && resultats.length > 0) {
+  let html = "";
+
+
+  if (texte) {
 
     html += `
+
+      <div class="answer-box">
+
+        <div class="answer-title">
+          Réponse
+        </div>
+
+        <div>
+          ${afficherTexte(texte)}
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  if (
+    Array.isArray(resultats) &&
+    resultats.length
+  ) {
+
+    html += `
+
       <div class="technical-section">
 
         <h3>
           Passages du Service Manual
         </h3>
+
     `;
 
 
-    resultats.forEach((item, index) => {
-
-      if (typeof item === "object") {
+    resultats.forEach(
+      (item, index) => {
 
         const contenu =
-          chercherPremier(item, [
-            "text",
-            "texte",
-            "content",
-            "contenu",
-            "page_content",
-            "passage",
-            "description"
-          ]);
-
-        const score =
-          chercherPremier(item, [
-            "score",
-            "similarity",
-            "distance"
-          ]);
-
-        const source =
-          chercherPremier(item, [
-            "source",
-            "file",
-            "filename",
-            "document",
-            "page"
-          ]);
+          typeof item === "object"
+            ? chercherPremier(
+                item,
+                [
+                  "text",
+                  "texte",
+                  "content",
+                  "contenu",
+                  "passage",
+                  "description"
+                ]
+              ) || item
+            : item;
 
 
         html += `
-          <div class="result-item">
 
-            ${
-              score !== null
-                ? `<div class="score">
-                    Pertinence :
-                    ${afficherTexte(valeurTexte(score))}
-                   </div>`
-                : ""
-            }
-
-            ${
-              source
-                ? `<div>
-                    <strong>
-                      ${afficherTexte(valeurTexte(source))}
-                    </strong>
-                   </div>`
-                : ""
-            }
-
-            <div>
-              ${afficherTexte(
-                valeurTexte(contenu || item)
-              )}
-            </div>
-
-          </div>
-        `;
-
-      } else {
-
-        html += `
           <div class="result-item">
 
             <div class="score">
@@ -901,201 +1336,187 @@ function afficherReponse(data) {
             </div>
 
             <div>
-              ${afficherTexte(valeurTexte(item))}
+              ${afficherTexte(contenu)}
             </div>
 
           </div>
+
         `;
-
       }
-
-    });
+    );
 
 
     html += `
       </div>
     `;
-
   }
 
 
-  /*
-   * -------------------------------------------------------
-   * FALLBACK
-   * -------------------------------------------------------
-   */
+  if (!html) {
 
-  if (
-    !html.trim() ||
-    html === `
-    <div class="result-header">
-    </div>
-  `
-  ) {
+    html = `
 
-    html += `
       <div class="answer-box">
 
         <div class="answer-title">
-          Résultat brut
+          Résultat
         </div>
 
-        <pre>${afficherTexte(
+        <pre>${echapperHTML(
           JSON.stringify(data, null, 2)
         )}</pre>
 
-```
-  </div>
-`;
-```
+      </div>
 
+    `;
+  }
+
+
+  return html;
 }
 
-/*
 
-* ---
-* DEBUG TEMPORAIRE
-* ---
-*
-* On garde temporairement la réponse JSON complète
-* en bas de page. Cela permettra de voir exactement
-* ce que renvoie answer-manual si un cas reste incorrect.
-  */
+async function envoyerPV() {
 
-html += `
+  const fichier =
+    document.getElementById("pvFile").files[0];
 
-```
-<details style="margin-top:20px;">
+  const pvResult =
+    document.getElementById("pvResult");
 
-  <summary>
-    Données techniques reçues
-  </summary>
+  const uploadButton =
+    document.getElementById("uploadButton");
 
-  <pre>${afficherTexte(
-    JSON.stringify(data, null, 2)
-  )}</pre>
 
-</details>
-```
+  if (!fichier) {
 
-`;
+    pvResult.innerHTML = `
+      <div class="error">
+        Sélectionne d'abord un fichier.
+      </div>
+    `;
 
-result.innerHTML = html;
+    return;
+  }
 
-}
 
-/* =========================================================
-AFFICHAGE REPONSE TECHNIQUE
-========================================================= */
+  uploadButton.disabled = true;
 
-function afficherReponseTechnique(data) {
 
-let objetReponse =
-data.reponse ||
-data.réponse ||
-data.answer ||
-data.procedure ||
-data;
-
-let html = "";
-
-/*
-
-* Si la réponse est une chaîne simple
-  */
-
-if (
-typeof objetReponse === "string" ||
-typeof objetReponse === "number"
-) {
-
-```
-return `
-
-  <div class="answer-box">
-
-    <div class="answer-title">
-      Réponse technique
+  pvResult.innerHTML = `
+    <div class="loading" style="display:block;">
+      Envoi du PV en cours...
     </div>
+  `;
 
-    <div>
-      ${afficherTexte(
-        valeurTexte(objetReponse)
-      )}
-    </div>
 
-  </div>
+  try {
 
-`;
-```
+    const formData =
+      new FormData();
 
+    formData.append(
+      "file",
+      fichier
+    );
+
+
+    const response =
+      await fetch(
+        UPLOAD_URL,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+
+    const texte =
+      await response.text();
+
+
+    let data = null;
+
+
+    try {
+      data = JSON.parse(texte);
+    } catch (e) {
+      data = {
+        message: texte
+      };
+    }
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        valeurTexte(
+          data?.error ||
+          data?.erreur ||
+          data?.message
+        ) ||
+        "Erreur pendant l'envoi du PV."
+      );
+    }
+
+
+    pvResult.innerHTML = `
+
+      <div class="success">
+
+        PV envoyé avec succès.
+
+      </div>
+
+    `;
+
+
+    document.getElementById(
+      "pvFile"
+    ).value = "";
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    pvResult.innerHTML = `
+
+      <div class="error">
+
+        <strong>Erreur :</strong><br>
+
+        ${afficherTexte(
+          error.message
+        )}
+
+      </div>
+
+    `;
+
+  } finally {
+
+    uploadButton.disabled = false;
+  }
 }
 
-/*
 
-* Si la réponse est un objet
-  */
-
-if (
-objetReponse &&
-typeof objetReponse === "object"
-) {
-
-```
-const titre =
-  chercherPremier(objetReponse, [
-    "titre",
-    "title",
-    "nom",
-    "name"
-  ]);
+document
+  .getElementById("searchButton")
+  .addEventListener(
+    "click",
+    poserQuestion
+  );
 
 
-const composant =
-  chercherPremier(objetReponse, [
-    "composant",
-    "component",
-    "piece",
-    "part",
-    "carte",
-    "board"
-  ]);
+document
+  .getElementById("uploadButton")
+  .addEventListener(
+    "click",
+    envoyerPV
+  );
 
+</script>
 
-const emplacement =
-  chercherPremier(objetReponse, [
-    "localisation",
-    "location",
-    "emplacement",
-    "position"
-  ]);
-
-
-const instructions =
-  chercherPremier(objetReponse, [
-    "instructions",
-    "instruction",
-    "procedure",
-    "procédure",
-    "etapes",
-    "étapes",
-    "steps",
-    "steps_text"
-  ]);
-
-
-const texte =
-  chercherPremier(objetReponse, [
-    "texte",
-    "text",
-    "message",
-    "description",
-    "content",
-    "contenu"
-  ]);
-
-
-html += `
-
-  <di
-```
+</body>
+</html>
