@@ -271,7 +271,7 @@
     .journey-step {
       display: flex;
       gap: 14px;
-      margin-bottom: 12px;
+      margin-bottom: 18px;
       align-items: flex-start;
     }
 
@@ -292,18 +292,60 @@
       background: white;
       border: 1px solid #ddd;
       border-radius: 9px;
-      padding: 10px 12px;
+      padding: 14px;
       flex: 1;
     }
 
     .journey-title {
       font-weight: bold;
+      font-size: 16px;
     }
 
     .journey-page {
       color: #666;
       font-size: 13px;
-      margin-top: 4px;
+      margin-top: 5px;
+    }
+
+    .journey-source {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8f8f8;
+      border-radius: 7px;
+      color: #444;
+      line-height: 1.55;
+      white-space: pre-line;
+      border: 1px solid #e5e5e5;
+    }
+
+    .journey-description {
+      margin-top: 10px;
+      line-height: 1.55;
+      color: #444;
+    }
+
+    .journey-image-wrapper {
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .journey-image {
+      display: block;
+      max-width: 100%;
+      max-height: 700px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      object-fit: contain;
+      background: #f7f7f7;
+    }
+
+    .journey-image-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: bold;
     }
 
     .warning {
@@ -747,6 +789,47 @@ function afficherPagesManuel(localisation) {
 }
 
 
+function afficherImageEtape(etape, titre) {
+
+  const image =
+    valeurTexte(etape.image, "");
+
+  if (!image) {
+    return "";
+  }
+
+  const imageSecurisee =
+    echapperHTML(image);
+
+  return `
+    <div class="journey-image-wrapper">
+
+      <img
+        class="journey-image"
+        src="${imageSecurisee}"
+        alt="${echapperHTML(titre)}"
+        loading="lazy"
+        onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+      >
+
+      <div class="hidden">
+        Impossible d'afficher cette image.
+      </div>
+
+      <a
+        class="journey-image-link"
+        href="${imageSecurisee}"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Ouvrir l'image en grand
+      </a>
+
+    </div>
+  `;
+}
+
+
 function afficherProcedurePrincipale(procedure) {
 
   if (!procedure) {
@@ -790,99 +873,21 @@ function afficherProcedurePrincipale(procedure) {
   `;
 
 
-  if (
-    Array.isArray(procedure.preparatifs) &&
-    procedure.preparatifs.length > 0
-  ) {
-
-    html += `
-      <div class="journey">
-
-        <strong>
-          Prérequis à effectuer dans l'ordre
-        </strong>
-    `;
-
-    procedure.preparatifs.forEach(
-      (preparatif, index) => {
-
-        const titrePreparatif =
-          valeurTexte(
-            preparatif.titre,
-            "Préparation"
-          );
-
-        const pagePreparatif =
-          valeurTexte(
-            preparatif.page_manuel,
-            "—"
-          );
-
-        const pdfPreparatif =
-          valeurTexte(
-            preparatif.page_pdf,
-            "—"
-          );
-
-        html += `
-          <div class="journey-step">
-
-            <div class="journey-number">
-              ${index + 1}
-            </div>
-
-            <div class="journey-content">
-
-              <div class="journey-title">
-                ${echapperHTML(titrePreparatif)}
-              </div>
-
-              <div class="journey-page">
-                Page manuel ${echapperHTML(pagePreparatif)}
-                · PDF ${echapperHTML(pdfPreparatif)}
-              </div>
-
-            </div>
-
-          </div>
-        `;
-      }
-    );
-
-    const numeroProcedure =
-      procedure.preparatifs.length + 1;
-
-    html += `
-        <div class="journey-step">
-
-          <div class="journey-number">
-            ${numeroProcedure}
-          </div>
-
-          <div class="journey-content">
-
-            <div class="journey-title">
-              ${echapperHTML(titre)}
-            </div>
-
-            <div class="journey-page">
-              Page manuel ${echapperHTML(pageManuel)}
-              · PDF ${echapperHTML(pagePdf)}
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-    `;
-  }
-
-
   /*
-   * Si le backend fournit ultérieurement
-   * procedure.etapes, elles seront affichées ici.
+   * Le backend fournit maintenant procedure.etapes.
+   *
+   * On affiche uniquement cette séquence afin d'éviter
+   * de présenter deux fois les mêmes étapes.
+   *
+   * Chaque étape peut contenir :
+   * - titre
+   * - page_manuel
+   * - page_pdf
+   * - description
+   * - source
+   * - image
    */
+
   if (
     Array.isArray(procedure.etapes) &&
     procedure.etapes.length > 0
@@ -892,6 +897,8 @@ function afficherProcedurePrincipale(procedure) {
       <div class="section-title">
         Étapes de dépose
       </div>
+
+      <div class="journey">
     `;
 
     procedure.etapes.forEach(
@@ -909,9 +916,21 @@ function afficherProcedurePrincipale(procedure) {
             ""
           );
 
+        const source =
+          valeurTexte(
+            etape.source,
+            ""
+          );
+
         const pageEtape =
           valeurTexte(
             etape.page_manuel,
+            ""
+          );
+
+        const pdfEtape =
+          valeurTexte(
+            etape.page_pdf,
             ""
           );
 
@@ -929,9 +948,34 @@ function afficherProcedurePrincipale(procedure) {
               </div>
 
               ${
+                pageEtape || pdfEtape
+                  ? `
+                    <div class="journey-page">
+                      ${
+                        pageEtape
+                          ? `Page manuel ${echapperHTML(pageEtape)}`
+                          : ""
+                      }
+                      ${
+                        pageEtape && pdfEtape
+                          ? " · "
+                          : ""
+                      }
+                      ${
+                        pdfEtape
+                          ? `PDF ${echapperHTML(pdfEtape)}`
+                          : ""
+                      }
+                    </div>
+                  `
+                  : ""
+              }
+
+              ${
                 description
                   ? `
-                    <div style="margin-top:6px; line-height:1.5;">
+                    <div class="journey-description">
+                      <strong>Instruction :</strong><br>
                       ${echapperHTML(description)}
                     </div>
                   `
@@ -939,15 +983,22 @@ function afficherProcedurePrincipale(procedure) {
               }
 
               ${
-                pageEtape
+                source
                   ? `
-                    <div class="journey-page">
-                      Page manuel
-                      ${echapperHTML(pageEtape)}
+                    <div class="journey-source">
+                      <strong>Extrait du Service Manual :</strong><br><br>
+                      ${echapperHTML(source)}
                     </div>
                   `
-                  : ""
+                  : `
+                    <div class="journey-source">
+                      Aucun descriptif textuel n'a été fourni
+                      pour cette page du Service Manual.
+                    </div>
+                  `
               }
+
+              ${afficherImageEtape(etape, titreEtape)}
 
             </div>
 
@@ -955,6 +1006,124 @@ function afficherProcedurePrincipale(procedure) {
         `;
       }
     );
+
+    html += `
+      </div>
+    `;
+
+  } else {
+
+    /*
+     * Compatibilité avec une ancienne réponse backend
+     * ne contenant pas encore procedure.etapes.
+     */
+
+    if (
+      Array.isArray(procedure.preparatifs) &&
+      procedure.preparatifs.length > 0
+    ) {
+
+      html += `
+        <div class="section-title">
+          Prérequis à effectuer dans l'ordre
+        </div>
+
+        <div class="journey">
+      `;
+
+      procedure.preparatifs.forEach(
+        (preparatif, index) => {
+
+          const titrePreparatif =
+            valeurTexte(
+              preparatif.titre,
+              "Préparation"
+            );
+
+          const pagePreparatif =
+            valeurTexte(
+              preparatif.page_manuel,
+              "—"
+            );
+
+          const pdfPreparatif =
+            valeurTexte(
+              preparatif.page_pdf,
+              "—"
+            );
+
+          const sourcePreparatif =
+            valeurTexte(
+              preparatif.source,
+              ""
+            );
+
+          html += `
+            <div class="journey-step">
+
+              <div class="journey-number">
+                ${index + 1}
+              </div>
+
+              <div class="journey-content">
+
+                <div class="journey-title">
+                  ${echapperHTML(titrePreparatif)}
+                </div>
+
+                <div class="journey-page">
+                  Page manuel ${echapperHTML(pagePreparatif)}
+                  · PDF ${echapperHTML(pdfPreparatif)}
+                </div>
+
+                ${
+                  sourcePreparatif
+                    ? `
+                      <div class="journey-source">
+                        <strong>Extrait du Service Manual :</strong><br><br>
+                        ${echapperHTML(sourcePreparatif)}
+                      </div>
+                    `
+                    : ""
+                }
+
+                ${afficherImageEtape(
+                  preparatif,
+                  titrePreparatif
+                )}
+
+              </div>
+
+            </div>
+          `;
+        }
+      );
+
+      html += `
+          <div class="journey-step">
+
+            <div class="journey-number">
+              ${procedure.preparatifs.length + 1}
+            </div>
+
+            <div class="journey-content">
+
+              <div class="journey-title">
+                ${echapperHTML(titre)}
+              </div>
+
+              <div class="journey-page">
+                Page manuel ${echapperHTML(pageManuel)}
+                · PDF ${echapperHTML(pagePdf)}
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      `;
+    }
   }
 
 
