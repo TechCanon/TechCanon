@@ -4,399 +4,812 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>TechCanon</title>
+  <title>TechCanon — Assistant Service Manual</title>
 
   <style>
+    :root {
+      --canon-red: #c8102e;
+      --canon-red-dark: #a50d25;
+      --canon-red-light: #fff1f3;
+
+      --background: #f4f6f8;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+
+      --text: #18212b;
+      --text-soft: #647180;
+      --border: #dfe5eb;
+
+      --green: #18864b;
+      --green-light: #eaf7f0;
+
+      --shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+      --radius: 16px;
+    }
+
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      padding: 24px;
+      padding: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: #f5f6f8;
-      color: #202124;
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
     }
 
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      margin-bottom: 4px;
-    }
-
-    .subtitle {
-      color: #666;
-      margin-top: 0;
-      margin-bottom: 24px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    select,
-    textarea,
-    input[type="file"] {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 15px;
-      background: white;
-    }
-
+    button,
+    input,
     textarea {
-      min-height: 110px;
-      resize: vertical;
+      font: inherit;
     }
 
-    .button-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
+    /* =========================
+       HEADER CANON
+       ========================= */
+
+    .topbar {
+      width: 100%;
+      background: var(--canon-red);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     }
 
-    button {
-      border: 0;
-      border-radius: 8px;
-      padding: 12px 18px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 15px;
-    }
-
-    .primary {
-      background: #1a73e8;
-      color: white;
-    }
-
-    .secondary {
-      background: #e8eaed;
-      color: #202124;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .status {
-      margin-top: 12px;
-      padding: 10px;
-      border-radius: 8px;
-      display: none;
-    }
-
-    .status.show {
-      display: block;
-    }
-
-    .status.error {
-      background: #fde7e9;
-      color: #b00020;
-    }
-
-    .status.success {
-      background: #e6f4ea;
-      color: #137333;
-    }
-
-    .status.info {
-      background: #e8f0fe;
-      color: #174ea6;
-    }
-
-    .result {
-      margin-top: 20px;
-    }
-
-    .result h2 {
-      margin-top: 0;
-    }
-
-    .response-title {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .response-text {
-      font-size: 17px;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 24px 0 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .identification-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .info-box {
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 14px;
-      background: #fafafa;
-    }
-
-    .info-label {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 5px;
-    }
-
-    .info-value {
-      font-size: 17px;
-      font-weight: bold;
-    }
-
-    .page-card {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      background: #fff;
-    }
-
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-
-    .page-title {
-      font-size: 17px;
-      font-weight: bold;
-    }
-
-    .page-badges {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: #eef2f7;
-      color: #333;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .page-source {
-      white-space: pre-line;
-      color: #555;
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
-
-    .manual-page-image-wrapper {
-      margin-top: 14px;
-      text-align: center;
-    }
-
-    .manual-page-image {
-      display: block;
-      max-width: 100%;
-      max-height: 750px;
+    .topbar-inner {
+      max-width: 1180px;
       margin: 0 auto;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      object-fit: contain;
-      background: #f7f7f7;
-    }
-
-    .image-link {
-      display: inline-block;
-      margin-top: 8px;
-      color: #1a73e8;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .procedure-card {
-      border-left: 5px solid #1a73e8;
-      background: #f8fbff;
-      border-radius: 10px;
-      padding: 18px;
-      margin-top: 16px;
-    }
-
-    .procedure-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .procedure-pages {
+      padding: 18px 24px;
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
     }
 
-    .journey {
-      margin-top: 15px;
-    }
-
-    .journey-step {
+    .brand {
       display: flex;
+      align-items: center;
       gap: 14px;
-      margin-bottom: 18px;
-      align-items: flex-start;
+      min-width: 0;
     }
 
-    .journey-number {
-      width: 30px;
-      height: 30px;
-      min-width: 30px;
-      border-radius: 50%;
-      background: #1a73e8;
-      color: white;
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: #ffffff;
+      color: var(--canon-red);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
     }
 
-    .journey-content {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 9px;
-      padding: 14px;
-      flex: 1;
+    .brand-text {
+      min-width: 0;
     }
 
-    .journey-title {
-      font-weight: bold;
-      font-size: 16px;
+    .brand-title {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
     }
 
-    .journey-page {
-      color: #666;
+    .brand-subtitle {
+      margin: 3px 0 0;
       font-size: 13px;
-      margin-top: 5px;
+      opacity: 0.88;
     }
 
-    .journey-source {
-      margin-top: 12px;
-      padding: 12px;
-      background: #f8f8f8;
-      border-radius: 7px;
-      color: #444;
-      line-height: 1.55;
-      white-space: pre-line;
-      border: 1px solid #e5e5e5;
+    .manual-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
     }
 
-    .journey-description {
-      margin-top: 10px;
-      line-height: 1.55;
-      color: #444;
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #7df0ad;
+      box-shadow: 0 0 0 3px rgba(125, 240, 173, 0.18);
     }
 
-    .journey-image-wrapper {
-      margin-top: 14px;
-      text-align: center;
-    }
+    /* =========================
+       PAGE
+       ========================= */
 
-    .journey-image {
-      display: block;
-      max-width: 100%;
-      max-height: 700px;
+    .page {
+      max-width: 1180px;
       margin: 0 auto;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      object-fit: contain;
-      background: #f7f7f7;
+      padding: 30px 24px 50px;
     }
 
-    .journey-image-link {
-      display: inline-block;
-      margin-top: 8px;
-      color: #1a73e8;
-      text-decoration: none;
-      font-weight: bold;
+    .intro {
+      margin-bottom: 24px;
     }
 
-    .warning {
-      margin-top: 18px;
-      padding: 13px;
-      border-radius: 8px;
-      background: #fff4e5;
-      color: #8a4b00;
-      line-height: 1.5;
+    .intro h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1.2;
+      letter-spacing: -0.6px;
     }
 
-    .technical-data {
-      margin-top: 20px;
+    .intro p {
+      margin: 0;
+      color: var(--text-soft);
+      font-size: 15px;
+      line-height: 1.6;
     }
 
-    .technical-data pre {
-      background: #f3f4f6;
-      padding: 14px;
-      border-radius: 8px;
-      overflow-x: auto;
+    /* =========================
+       SEARCH CARD
+       ========================= */
+
+    .search-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 26px;
+    }
+
+    .search-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .search-card-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .search-card-description {
+      margin: 4px 0 0;
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+
+    .search-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
       font-size: 12px;
-      white-space: pre-wrap;
-      word-break: break-word;
+      font-weight: 800;
+      color: #3c4854;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .hidden {
-      display: none !important;
+    .field input {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 14px;
+      border: 1px solid #cfd7df;
+      border-radius: 10px;
+      outline: none;
+      background: #ffffff;
+      color: var(--text);
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
 
-    .upload-result {
-      margin-top: 12px;
-      line-height: 1.5;
+    .field input:focus {
+      border-color: var(--canon-red);
+      box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.12);
     }
 
-    @media (max-width: 800px) {
-      .identification-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .question-field {
+      min-width: 0;
+    }
+
+    .search-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+
+    .primary-button {
+      border: 0;
+      border-radius: 10px;
+      background: var(--canon-red);
+      color: #ffffff;
+      min-height: 46px;
+      padding: 0 20px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .primary-button:hover {
+      background: var(--canon-red-dark);
+    }
+
+    .primary-button:active {
+      transform: translateY(1px);
+    }
+
+    .primary-button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    /* =========================
+       STATUS
+       ========================= */
+
+    .status {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+
+    .status.visible {
+      display: flex;
+    }
+
+    .status-spinner {
+      width: 17px;
+      height: 17px;
+      border: 2px solid #e3e7eb;
+      border-top-color: var(--canon-red);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
     }
 
-    @media (max-width: 500px) {
-      body {
-        padding: 12px;
+    /* =========================
+       RESULT
+       ========================= */
+
+    #resultat {
+      display: none;
+    }
+
+    #resultat.visible {
+      display: block;
+    }
+
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .result-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .result-title-wrap {
+      min-width: 0;
+    }
+
+    .result-kicker {
+      color: var(--canon-red);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 6px;
+    }
+
+    .result-title {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.3;
+    }
+
+    .model-badge {
+      background: var(--canon-red-light);
+      color: var(--canon-red);
+      border: 1px solid #f5c7cf;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .result-body {
+      padding: 24px;
+    }
+
+    .answer-text {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* =========================
+       SECTIONS
+       ========================= */
+
+    .section {
+      margin-top: 26px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 14px;
+      font-size: 17px;
+      font-weight: 850;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 22px;
+      border-radius: 999px;
+      background: var(--canon-red);
+      flex-shrink: 0;
+    }
+
+    .section-subtitle {
+      margin: -5px 0 14px 14px;
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+
+    /* =========================
+       IDENTIFICATION
+       ========================= */
+
+    .identification-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .info-box {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 15px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    /* =========================
+       MANUAL PAGES
+       ========================= */
+
+    .manual-pages {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .manual-page-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .manual-page-content {
+      padding: 15px;
+    }
+
+    .manual-page-title {
+      margin: 0 0 8px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .manual-page-meta {
+      color: var(--canon-red);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 9px;
+    }
+
+    .manual-page-source {
+      margin: 0;
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      max-height: 170px;
+      overflow: auto;
+    }
+
+    .manual-image-wrap {
+      background: #eef1f4;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .manual-image-wrap img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 520px;
+      object-fit: contain;
+    }
+
+    /* =========================
+       PROCEDURE
+       ========================= */
+
+    .procedure-intro {
+      background: var(--canon-red-light);
+      border: 1px solid #f2c4cc;
+      border-radius: 13px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .procedure-intro strong {
+      display: block;
+      color: var(--canon-red);
+      margin-bottom: 5px;
+    }
+
+    .procedure-intro p {
+      margin: 0;
+      color: #4b3b3f;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .journey {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .journey::before {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: 21px;
+      bottom: 21px;
+      width: 2px;
+      background: #efc2ca;
+    }
+
+    .journey-step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .journey-number {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--canon-red);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 4px #ffffff;
+    }
+
+    .journey-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      overflow: hidden;
+    }
+
+    .journey-card-header {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .journey-type {
+      display: inline-block;
+      color: var(--canon-red);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .journey-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .journey-meta {
+      margin-top: 7px;
+      color: var(--text-soft);
+      font-size: 12px;
+    }
+
+    .journey-description {
+      padding: 14px 16px;
+      color: #46515d;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .journey-source {
+      padding: 0 16px 15px;
+      color: #66717d;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      max-height: 190px;
+      overflow: auto;
+    }
+
+    .step-image {
+      border-top: 1px solid var(--border);
+      background: #eef1f4;
+    }
+
+    .step-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 600px;
+      object-fit: contain;
+    }
+
+    /* =========================
+       WARNING
+       ========================= */
+
+    .warning {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--canon-red);
+      background: #fff8f9;
+      border-radius: 8px;
+      color: #54373d;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    /* =========================
+       GENERIC ANSWER
+       ========================= */
+
+    .generic-answer {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    /* =========================
+       PV
+       ========================= */
+
+    .pv-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-top: 24px;
+    }
+
+    .pv-card h2 {
+      margin: 0 0 6px;
+      font-size: 17px;
+    }
+
+    .pv-card p {
+      margin: 0 0 16px;
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .pv-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pv-row input[type="file"] {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    /* =========================
+       FOOTER
+       ========================= */
+
+    footer {
+      margin-top: 30px;
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+    }
+
+    .footer-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      color: var(--text-soft);
+      font-size: 12px;
+    }
+
+    .footer-brand {
+      color: var(--canon-red);
+      font-weight: 900;
+    }
+
+    /* =========================
+       RESPONSIVE
+       ========================= */
+
+    @media (max-width: 800px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .manual-status {
+        align-self: flex-start;
+      }
+
+      .search-layout {
+        grid-template-columns: 1fr;
       }
 
       .identification-grid {
         grid-template-columns: 1fr;
       }
 
-      .card {
-        padding: 15px;
+      .manual-pages {
+        grid-template-columns: 1fr;
+      }
+
+      .result-header {
+        flex-direction: column;
+      }
+
+      .model-badge {
+        align-self: flex-start;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        padding: 22px 14px 35px;
+      }
+
+      .topbar-inner {
+        padding: 15px 14px;
+      }
+
+      .brand-title {
+        font-size: 18px;
+      }
+
+      .brand-subtitle {
+        font-size: 12px;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+      }
+
+      .intro h1 {
+        font-size: 25px;
+      }
+
+      .search-card,
+      .result-body,
+      .result-header,
+      .pv-card {
+        padding: 18px;
+      }
+
+      .search-actions {
+        justify-content: stretch;
+      }
+
+      .search-actions .primary-button {
+        width: 100%;
+      }
+
+      .journey-step {
+        grid-template-columns: 36px minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      .journey-number {
+        width: 36px;
+        height: 36px;
+        font-size: 13px;
+      }
+
+      .journey::before {
+        left: 17px;
+      }
+
+      .footer-inner {
+        padding: 16px 14px;
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -404,1211 +817,1066 @@
 
 <body>
 
-<div class="container">
+  <!-- =========================
+       HEADER
+       ========================= -->
 
-  <div class="card">
-    <h1>TechCanon</h1>
-    <p class="subtitle">Assistant technique Service Manual Canon</p>
+  <header class="topbar">
+    <div class="topbar-inner">
 
-    <label for="modele">Modèle</label>
+      <div class="brand">
+        <div class="brand-mark">TC</div>
 
-    <select id="modele">
-      <option value="C1538P">C1538P</option>
-      <option value="C1533P">C1533P</option>
-      <option value="LBP1538C">LBP1538C</option>
-    </select>
-
-    <br><br>
-
-    <label for="question">Question technique</label>
-
-    <textarea
-      id="question"
-      placeholder="Exemple : où se trouve la carte contrôleur principale ?"
-    ></textarea>
-
-    <div class="button-row">
-      <button
-        id="btnRecherche"
-        class="primary"
-        onclick="rechercher()"
-      >
-        Rechercher dans le Service Manual
-      </button>
-    </div>
-
-    <div id="status" class="status"></div>
-  </div>
-
-
-  <div id="resultat" class="card result hidden">
-    <h2>Résultats du Service Manual</h2>
-
-    <div id="contenuReponse"></div>
-  </div>
-
-
-  <div class="card">
-    <h2>Ajouter un PV</h2>
-
-    <input
-      type="file"
-      id="fichierPV"
-      accept=".pdf,.png,.jpg,.jpeg"
-    >
-
-    <div class="button-row">
-      <button
-        id="btnUpload"
-        class="secondary"
-        onclick="envoyerPV()"
-      >
-        Envoyer le PV
-      </button>
-    </div>
-
-    <div id="uploadResult" class="upload-result"></div>
-  </div>
-
-</div>
-
-
-<script>
-
-const ANSWER_URL =
-  "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
-
-const UPLOAD_URL =
-  "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/upload-pv";
-
-
-function echapperHTML(valeur) {
-
-  if (valeur === null || valeur === undefined) {
-    return "";
-  }
-
-  return String(valeur)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-
-function valeurTexte(valeur, valeurDefaut = "") {
-
-  if (
-    valeur === null ||
-    valeur === undefined
-  ) {
-    return valeurDefaut;
-  }
-
-  if (typeof valeur === "string") {
-    return valeur;
-  }
-
-  if (
-    typeof valeur === "number" ||
-    typeof valeur === "boolean"
-  ) {
-    return String(valeur);
-  }
-
-  if (typeof valeur === "object") {
-
-    if (valeur.texte !== undefined) {
-      return valeurTexte(valeur.texte);
-    }
-
-    if (valeur.reponse !== undefined) {
-      return valeurTexte(valeur.reponse);
-    }
-
-    if (valeur.message !== undefined) {
-      return valeurTexte(valeur.message);
-    }
-
-    if (valeur.description !== undefined) {
-      return valeurTexte(valeur.description);
-    }
-
-    try {
-      return JSON.stringify(valeur, null, 2);
-    } catch (e) {
-      return "";
-    }
-  }
-
-  return String(valeur);
-}
-
-
-function obtenirDonneesReponse(data) {
-
-  if (
-    data &&
-    data.reponse &&
-    typeof data.reponse === "object"
-  ) {
-    return data.reponse;
-  }
-
-  return data || {};
-}
-
-
-function obtenirTypeReponse(data) {
-
-  const payload = obtenirDonneesReponse(data);
-
-  if (
-    payload.intention &&
-    String(payload.intention).toUpperCase() === "LOCALISATION"
-  ) {
-    return "LOCALISATION";
-  }
-
-  if (
-    payload.type &&
-    typeof payload.type === "string"
-  ) {
-    return payload.type.toUpperCase();
-  }
-
-  if (
-    data &&
-    data.type &&
-    typeof data.type === "string"
-  ) {
-    return data.type.toUpperCase();
-  }
-
-  return "";
-}
-
-
-function afficherStatus(message, type = "info") {
-
-  const status = document.getElementById("status");
-
-  status.className = "status show " + type;
-  status.textContent = message;
-}
-
-
-function masquerStatus() {
-
-  const status = document.getElementById("status");
-
-  status.className = "status";
-  status.textContent = "";
-}
-
-
-function afficherIdentification(identification) {
-
-  if (!identification) {
-    return "";
-  }
-
-  return `
-    <div class="section-title">
-      Identification
-    </div>
-
-    <div class="identification-grid">
-
-      <div class="info-box">
-        <div class="info-label">
-          Composant
-        </div>
-
-        <div class="info-value">
-          ${echapperHTML(
-            valeurTexte(identification.composant, "—")
-          )}
+        <div class="brand-text">
+          <h1 class="brand-title">TechCanon</h1>
+          <p class="brand-subtitle">
+            Assistant technique — Service Manual Canon
+          </p>
         </div>
       </div>
 
-
-      <div class="info-box">
-        <div class="info-label">
-          Unité
-        </div>
-
-        <div class="info-value">
-          ${echapperHTML(
-            valeurTexte(identification.unite, "—")
-          )}
-        </div>
-      </div>
-
-
-      <div class="info-box">
-        <div class="info-label">
-          Page manuel
-        </div>
-
-        <div class="info-value">
-          ${echapperHTML(
-            valeurTexte(identification.page_manuel, "—")
-          )}
-        </div>
-      </div>
-
-
-      <div class="info-box">
-        <div class="info-label">
-          Page PDF
-        </div>
-
-        <div class="info-value">
-          ${echapperHTML(
-            valeurTexte(identification.page_pdf, "—")
-          )}
-        </div>
+      <div class="manual-status">
+        <span class="status-dot"></span>
+        Service Manual connecté
       </div>
 
     </div>
-  `;
-}
+  </header>
 
+  <!-- =========================
+       MAIN
+       ========================= -->
 
-function afficherPagesManuel(localisation) {
+  <main class="page">
 
-  if (
-    !localisation ||
-    !Array.isArray(localisation.pages) ||
-    localisation.pages.length === 0
-  ) {
-    return "";
-  }
-
-  let html = `
-    <div class="section-title">
-      Localisation dans le Service Manual
+    <div class="intro">
+      <h1>Assistant technique</h1>
+      <p>
+        Recherchez une pièce, une carte, une localisation ou une procédure
+        directement dans le Service Manual.
+      </p>
     </div>
-  `;
 
-  localisation.pages.forEach((page, index) => {
+    <!-- SEARCH -->
 
-    const pageManuel =
-      valeurTexte(page.page_manuel, "—");
+    <section class="search-card">
 
-    const pagePdf =
-      valeurTexte(page.page_pdf, "—");
+      <div class="search-card-header">
+        <div>
+          <h2 class="search-card-title">Nouvelle recherche</h2>
+          <p class="search-card-description">
+            Indiquez le modèle Canon et votre question technique.
+          </p>
+        </div>
+      </div>
 
-    const titre =
-      valeurTexte(
-        page.titre,
-        "Page du Service Manual"
-      );
+      <div class="search-layout">
 
-    const source =
-      valeurTexte(page.source, "");
+        <div class="field">
+          <label for="modele">Modèle</label>
 
-    const image =
-      valeurTexte(page.image, "");
+          <input
+            id="modele"
+            type="text"
+            value="C1538P"
+            placeholder="Ex. C1538P"
+            autocomplete="off"
+          >
+        </div>
 
-    html += `
-      <div class="page-card">
+        <div class="field question-field">
+          <label for="question">Question technique</label>
 
-        <div class="page-header">
+          <input
+            id="question"
+            type="text"
+            placeholder="Ex. où se trouve la carte contrôleur principale ?"
+            autocomplete="off"
+          >
+        </div>
 
-          <div class="page-title">
-            ${index + 1}. ${echapperHTML(titre)}
-          </div>
+      </div>
 
-          <div class="page-badges">
+      <div class="search-actions">
+        <button
+          id="boutonRecherche"
+          class="primary-button"
+          type="button"
+          onclick="rechercher()"
+        >
+          Rechercher
+        </button>
+      </div>
 
-            <span class="badge">
-              Page manuel ${echapperHTML(pageManuel)}
-            </span>
+    </section>
 
-            <span class="badge">
-              PDF ${echapperHTML(pagePdf)}
-            </span>
+    <!-- STATUS -->
+
+    <div id="status" class="status">
+      <div class="status-spinner"></div>
+      <span id="statusTexte">Recherche dans le Service Manual…</span>
+    </div>
+
+    <!-- RESULT -->
+
+    <section id="resultat"></section>
+
+    <!-- PV -->
+
+    <section class="pv-card">
+
+      <h2>Ajouter un procès-verbal</h2>
+
+      <p>
+        Vous pouvez envoyer un fichier PV pour l'associer à votre analyse
+        technique.
+      </p>
+
+      <div class="pv-row">
+
+        <input
+          id="pvFile"
+          type="file"
+          accept=".pdf,.txt,.doc,.docx"
+        >
+
+        <button
+          class="primary-button"
+          type="button"
+          onclick="envoyerPV()"
+        >
+          Envoyer le PV
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =========================
+       FOOTER
+       ========================= -->
+
+  <footer>
+
+    <div class="footer-inner">
+
+      <div>
+        <span class="footer-brand">TechCanon</span>
+        — outil d'assistance technique.
+      </div>
+
+      <div>
+        Données issues du Service Manual Canon.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <script>
+    const ANSWER_URL =
+      "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
+
+    const UPLOAD_URL =
+      "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/upload-pv";
+
+
+    /* =========================
+       UTILITAIRES
+       ========================= */
+
+    function echapperHTML(valeur) {
+      if (valeur === null || valeur === undefined) {
+        return "";
+      }
+
+      return String(valeur)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+
+    function valeurTexte(valeur, valeurParDefaut = "") {
+      if (
+        valeur === null ||
+        valeur === undefined ||
+        String(valeur).trim() === ""
+      ) {
+        return valeurParDefaut;
+      }
+
+      return String(valeur);
+    }
+
+
+    function obtenirDonneesReponse(data) {
+      if (!data) {
+        return null;
+      }
+
+      if (data.reponse) {
+        return data.reponse;
+      }
+
+      return data;
+    }
+
+
+    function obtenirTypeReponse(data) {
+      const reponse = obtenirDonneesReponse(data);
+
+      if (!reponse) {
+        return "";
+      }
+
+      return valeurTexte(
+        reponse.type || reponse.intention,
+        ""
+      ).toUpperCase();
+    }
+
+
+    /* =========================
+       STATUS
+       ========================= */
+
+    function afficherStatus(message) {
+      const status = document.getElementById("status");
+      const statusTexte = document.getElementById("statusTexte");
+
+      if (statusTexte) {
+        statusTexte.textContent = message || "Recherche en cours…";
+      }
+
+      if (status) {
+        status.classList.add("visible");
+      }
+    }
+
+
+    function masquerStatus() {
+      const status = document.getElementById("status");
+
+      if (status) {
+        status.classList.remove("visible");
+      }
+    }
+
+
+    /* =========================
+       IDENTIFICATION
+       ========================= */
+
+    function afficherIdentification(reponse) {
+      if (!reponse || !reponse.identification) {
+        return "";
+      }
+
+      const identification = reponse.identification;
+
+      return `
+        <section class="section">
+
+          <h2 class="section-title">
+            Identification
+          </h2>
+
+          <div class="identification-grid">
+
+            <div class="info-box">
+              <div class="info-label">Composant</div>
+              <div class="info-value">
+                ${echapperHTML(
+                  valeurTexte(
+                    identification.composant,
+                    "Non renseigné"
+                  )
+                )}
+              </div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">Unité</div>
+              <div class="info-value">
+                ${echapperHTML(
+                  valeurTexte(
+                    identification.unite,
+                    "Non renseignée"
+                  )
+                )}
+              </div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">Page manuel</div>
+              <div class="info-value">
+                ${echapperHTML(
+                  valeurTexte(
+                    identification.page_manuel,
+                    "—"
+                  )
+                )}
+              </div>
+            </div>
 
           </div>
 
-        </div>
-    `;
-
-    if (source) {
-
-      html += `
-        <div class="page-source">
-          ${echapperHTML(source)}
-        </div>
+        </section>
       `;
     }
 
 
-    if (image) {
+    /* =========================
+       PAGES MANUEL
+       ========================= */
 
-      const imageSecurisee =
-        echapperHTML(image);
+    function afficherPagesManuel(reponse) {
+      if (
+        !reponse ||
+        !reponse.localisation ||
+        !Array.isArray(reponse.localisation.pages) ||
+        reponse.localisation.pages.length === 0
+      ) {
+        return "";
+      }
 
-      html += `
-        <div class="manual-page-image-wrapper">
+      const pages = reponse.localisation.pages;
+
+      const cartes = pages.map((page) => {
+
+        const image = valeurTexte(page.image, "");
+
+        return `
+          <article class="manual-page-card">
+
+            ${
+              image
+                ? `
+                  <div class="manual-image-wrap">
+                    <img
+                      src="${echapperHTML(image)}"
+                      alt="Page ${echapperHTML(
+                        valeurTexte(page.page_pdf, "")
+                      )} du Service Manual"
+                      loading="lazy"
+                    >
+                  </div>
+                `
+                : ""
+            }
+
+            <div class="manual-page-content">
+
+              <h3 class="manual-page-title">
+                ${echapperHTML(
+                  valeurTexte(
+                    page.titre,
+                    "Page du Service Manual"
+                  )
+                )}
+              </h3>
+
+              <div class="manual-page-meta">
+                Manuel ${echapperHTML(
+                  valeurTexte(page.page_manuel, "—")
+                )}
+                · PDF ${echapperHTML(
+                  valeurTexte(page.page_pdf, "—")
+                )}
+              </div>
+
+              ${
+                page.source
+                  ? `
+                    <p class="manual-page-source">
+                      ${echapperHTML(page.source)}
+                    </p>
+                  `
+                  : ""
+              }
+
+            </div>
+
+          </article>
+        `;
+      }).join("");
+
+      return `
+        <section class="section">
+
+          <h2 class="section-title">
+            Pages du Service Manual
+          </h2>
+
+          <div class="manual-pages">
+            ${cartes}
+          </div>
+
+        </section>
+      `;
+    }
+
+
+    /* =========================
+       IMAGE D'UNE ETAPE
+       ========================= */
+
+    function afficherImageEtape(etape) {
+      if (!etape || !etape.image) {
+        return "";
+      }
+
+      return `
+        <div class="step-image">
 
           <img
-            class="manual-page-image"
-            src="${imageSecurisee}"
-            alt="${echapperHTML(titre)}"
+            src="${echapperHTML(etape.image)}"
+            alt="${echapperHTML(
+              valeurTexte(
+                etape.titre,
+                "Illustration du Service Manual"
+              )
+            )}"
             loading="lazy"
-            onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
           >
-
-          <div class="hidden">
-            Impossible d'afficher cette image.
-          </div>
-
-          <a
-            class="image-link"
-            href="${imageSecurisee}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ouvrir l'image en grand
-          </a>
 
         </div>
       `;
     }
 
-    html += `
-      </div>
-    `;
-  });
 
-  return html;
-}
+    /* =========================
+       PROCEDURE
+       ========================= */
 
+    function afficherProcedurePrincipale(reponse) {
+      if (!reponse || !reponse.procedure) {
+        return "";
+      }
 
-function afficherImageEtape(etape, titre) {
+      const procedure = reponse.procedure;
 
-  const image =
-    valeurTexte(etape.image, "");
+      let etapes = [];
 
-  if (!image) {
-    return "";
-  }
+      if (
+        Array.isArray(procedure.etapes) &&
+        procedure.etapes.length > 0
+      ) {
+        etapes = procedure.etapes;
+      } else {
 
-  const imageSecurisee =
-    echapperHTML(image);
+        if (Array.isArray(procedure.preparatifs)) {
+          etapes = etapes.concat(procedure.preparatifs);
+        }
 
-  return `
-    <div class="journey-image-wrapper">
+        if (procedure.intervention) {
+          etapes.push(procedure.intervention);
+        }
+      }
 
-      <img
-        class="journey-image"
-        src="${imageSecurisee}"
-        alt="${echapperHTML(titre)}"
-        loading="lazy"
-        onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
-      >
+      if (etapes.length === 0) {
+        return "";
+      }
 
-      <div class="hidden">
-        Impossible d'afficher cette image.
-      </div>
+      const titreProcedure = valeurTexte(
+        procedure.titre,
+        "Procédure du Service Manual"
+      );
 
-      <a
-        class="journey-image-link"
-        href="${imageSecurisee}"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Ouvrir l'image en grand
-      </a>
+      const cartes = etapes.map((etape, index) => {
 
-    </div>
-  `;
-}
+        const numero = valeurTexte(
+          etape.numero,
+          index + 1
+        );
 
+        const type = valeurTexte(
+          etape.type,
+          "ÉTAPE"
+        );
 
-function afficherProcedurePrincipale(procedure) {
+        const titre = valeurTexte(
+          etape.titre,
+          "Étape du Service Manual"
+        );
 
-  if (!procedure) {
-    return "";
-  }
+        const pageManuel = valeurTexte(
+          etape.page_manuel,
+          "—"
+        );
 
-  const pageManuel =
-    valeurTexte(procedure.page_manuel, "—");
+        const pagePDF = valeurTexte(
+          etape.page_pdf,
+          "—"
+        );
 
-  const pagePdf =
-    valeurTexte(procedure.page_pdf, "—");
-
-  const titre =
-    valeurTexte(
-      procedure.titre,
-      "Procédure de dépose"
-    );
-
-  let html = `
-    <div class="section-title">
-      Intervention / dépose
-    </div>
-
-    <div class="procedure-card">
-
-      <div class="procedure-title">
-        ${echapperHTML(titre)}
-      </div>
-
-      <div class="procedure-pages">
-
-        <span class="badge">
-          Page manuel ${echapperHTML(pageManuel)}
-        </span>
-
-        <span class="badge">
-          PDF ${echapperHTML(pagePdf)}
-        </span>
-
-      </div>
-  `;
-
-
-  /*
-   * Le backend fournit maintenant procedure.etapes.
-   *
-   * On affiche uniquement cette séquence afin d'éviter
-   * de présenter deux fois les mêmes étapes.
-   *
-   * Chaque étape peut contenir :
-   * - titre
-   * - page_manuel
-   * - page_pdf
-   * - description
-   * - source
-   * - image
-   */
-
-  if (
-    Array.isArray(procedure.etapes) &&
-    procedure.etapes.length > 0
-  ) {
-
-    html += `
-      <div class="section-title">
-        Étapes de dépose
-      </div>
-
-      <div class="journey">
-    `;
-
-    procedure.etapes.forEach(
-      (etape, index) => {
-
-        const titreEtape =
-          valeurTexte(
-            etape.titre,
-            `Étape ${index + 1}`
-          );
-
-        const description =
-          valeurTexte(
-            etape.description,
-            ""
-          );
-
-        const source =
-          valeurTexte(
-            etape.source,
-            ""
-          );
-
-        const pageEtape =
-          valeurTexte(
-            etape.page_manuel,
-            ""
-          );
-
-        const pdfEtape =
-          valeurTexte(
-            etape.page_pdf,
-            ""
-          );
-
-        html += `
-          <div class="journey-step">
+        return `
+          <article class="journey-step">
 
             <div class="journey-number">
-              ${index + 1}
+              ${echapperHTML(numero)}
             </div>
 
-            <div class="journey-content">
+            <div class="journey-card">
 
-              <div class="journey-title">
-                ${echapperHTML(titreEtape)}
+              <div class="journey-card-header">
+
+                <div class="journey-type">
+                  ${echapperHTML(type)}
+                </div>
+
+                <h3 class="journey-title">
+                  ${echapperHTML(titre)}
+                </h3>
+
+                <div class="journey-meta">
+                  Page manuel ${echapperHTML(pageManuel)}
+                  · PDF ${echapperHTML(pagePDF)}
+                </div>
+
               </div>
 
               ${
-                pageEtape || pdfEtape
-                  ? `
-                    <div class="journey-page">
-                      ${
-                        pageEtape
-                          ? `Page manuel ${echapperHTML(pageEtape)}`
-                          : ""
-                      }
-                      ${
-                        pageEtape && pdfEtape
-                          ? " · "
-                          : ""
-                      }
-                      ${
-                        pdfEtape
-                          ? `PDF ${echapperHTML(pdfEtape)}`
-                          : ""
-                      }
-                    </div>
-                  `
-                  : ""
-              }
-
-              ${
-                description
+                etape.description
                   ? `
                     <div class="journey-description">
-                      <strong>Instruction :</strong><br>
-                      ${echapperHTML(description)}
+                      ${echapperHTML(
+                        etape.description
+                      )}
                     </div>
                   `
                   : ""
               }
 
               ${
-                source
+                etape.source
                   ? `
                     <div class="journey-source">
-                      <strong>Extrait du Service Manual :</strong><br><br>
-                      ${echapperHTML(source)}
+                      ${echapperHTML(etape.source)}
                     </div>
                   `
-                  : `
-                    <div class="journey-source">
-                      Aucun descriptif textuel n'a été fourni
-                      pour cette page du Service Manual.
-                    </div>
-                  `
+                  : ""
               }
 
-              ${afficherImageEtape(etape, titreEtape)}
+              ${afficherImageEtape(etape)}
+
+            </div>
+
+          </article>
+        `;
+      }).join("");
+
+      return `
+        <section class="section">
+
+          <h2 class="section-title">
+            Procédure
+          </h2>
+
+          <p class="section-subtitle">
+            ${echapperHTML(titreProcedure)}
+          </p>
+
+          <div class="procedure-intro">
+
+            <strong>
+              Organisation de la procédure
+            </strong>
+
+            <p>
+              Les étapes ci-dessous sont présentées à partir
+              des informations structurées du Service Manual.
+              Pour une intervention, suivre les instructions
+              et illustrations du manuel correspondant aux pages indiquées.
+            </p>
+
+          </div>
+
+          <div class="journey">
+            ${cartes}
+          </div>
+
+        </section>
+      `;
+    }
+
+
+    /* =========================
+       LOCALISATION
+       ========================= */
+
+    function afficherLocalisation(reponse) {
+      if (!reponse || !reponse.localisation) {
+        return "";
+      }
+
+      const localisation = reponse.localisation;
+
+      return `
+        <section class="section">
+
+          <h2 class="section-title">
+            Localisation
+          </h2>
+
+          ${
+            localisation.description
+              ? `
+                <div class="generic-answer">
+                  ${echapperHTML(
+                    localisation.description
+                  )}
+                </div>
+              `
+              : ""
+          }
+
+        </section>
+      `;
+    }
+
+
+    /* =========================
+       REPONSE TECHNIQUE
+       ========================= */
+
+    function afficherReponseTechnique(reponse) {
+      if (!reponse) {
+        return "";
+      }
+
+      const modele = valeurTexte(
+        reponse.modele,
+        "Modèle non renseigné"
+      );
+
+      const titre = valeurTexte(
+        reponse.titre,
+        "Réponse technique"
+      );
+
+      const texte = valeurTexte(
+        reponse.reponse,
+        "Aucune réponse disponible."
+      );
+
+      return `
+        <div class="result-card">
+
+          <div class="result-header">
+
+            <div class="result-title-wrap">
+
+              <div class="result-kicker">
+                Réponse technique
+              </div>
+
+              <h2 class="result-title">
+                ${echapperHTML(titre)}
+              </h2>
+
+            </div>
+
+            <div class="model-badge">
+              ${echapperHTML(modele)}
+            </div>
+
+          </div>
+
+          <div class="result-body">
+
+            <p class="answer-text">
+              ${echapperHTML(texte)}
+            </p>
+
+            ${afficherIdentification(reponse)}
+
+            ${afficherLocalisation(reponse)}
+
+            ${afficherPagesManuel(reponse)}
+
+            ${afficherProcedurePrincipale(reponse)}
+
+            ${
+              reponse.avertissement
+                ? `
+                  <div class="warning">
+                    ${echapperHTML(
+                      reponse.avertissement
+                    )}
+                  </div>
+                `
+                : ""
+            }
+
+          </div>
+
+        </div>
+      `;
+    }
+
+
+    /* =========================
+       REPONSE GENERIQUE
+       ========================= */
+
+    function afficherReponseGenerique(reponse) {
+      const texte =
+        typeof reponse === "string"
+          ? reponse
+          : valeurTexte(
+              reponse?.reponse ||
+              reponse?.message ||
+              reponse?.answer,
+              "Aucune réponse disponible."
+            );
+
+      return `
+        <div class="result-card">
+
+          <div class="result-header">
+
+            <div class="result-title-wrap">
+
+              <div class="result-kicker">
+                Réponse
+              </div>
+
+              <h2 class="result-title">
+                Assistant technique
+              </h2>
 
             </div>
 
           </div>
-        `;
-      }
-    );
 
-    html += `
-      </div>
-    `;
+          <div class="result-body">
 
-  } else {
+            <div class="generic-answer">
+              ${echapperHTML(texte)}
+            </div>
 
-    /*
-     * Compatibilité avec une ancienne réponse backend
-     * ne contenant pas encore procedure.etapes.
-     */
+          </div>
 
-    if (
-      Array.isArray(procedure.preparatifs) &&
-      procedure.preparatifs.length > 0
-    ) {
-
-      html += `
-        <div class="section-title">
-          Prérequis à effectuer dans l'ordre
         </div>
-
-        <div class="journey">
       `;
+    }
 
-      procedure.preparatifs.forEach(
-        (preparatif, index) => {
 
-          const titrePreparatif =
-            valeurTexte(
-              preparatif.titre,
-              "Préparation"
-            );
+    /* =========================
+       AFFICHAGE REPONSE
+       ========================= */
 
-          const pagePreparatif =
-            valeurTexte(
-              preparatif.page_manuel,
-              "—"
-            );
+    function afficherReponse(data) {
+      const resultat = document.getElementById("resultat");
 
-          const pdfPreparatif =
-            valeurTexte(
-              preparatif.page_pdf,
-              "—"
-            );
+      if (!resultat) {
+        return;
+      }
 
-          const sourcePreparatif =
-            valeurTexte(
-              preparatif.source,
-              ""
-            );
+      const reponse = obtenirDonneesReponse(data);
 
-          html += `
-            <div class="journey-step">
+      if (!reponse) {
+        resultat.innerHTML = afficherReponseGenerique(
+          "Aucune donnée n'a été retournée par le Service Manual."
+        );
 
-              <div class="journey-number">
-                ${index + 1}
+        resultat.classList.add("visible");
+        return;
+      }
+
+      const type = obtenirTypeReponse(reponse);
+
+      if (
+        type === "REPONSE_TECHNIQUE" ||
+        reponse.intention ||
+        reponse.identification ||
+        reponse.localisation ||
+        reponse.procedure
+      ) {
+        resultat.innerHTML =
+          afficherReponseTechnique(reponse);
+      } else {
+        resultat.innerHTML =
+          afficherReponseGenerique(reponse);
+      }
+
+      resultat.classList.add("visible");
+
+      setTimeout(() => {
+        resultat.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }, 50);
+    }
+
+
+    /* =========================
+       RECHERCHE
+       ========================= */
+
+    async function rechercher() {
+      const modeleElement =
+        document.getElementById("modele");
+
+      const questionElement =
+        document.getElementById("question");
+
+      const bouton =
+        document.getElementById("boutonRecherche");
+
+      const resultat =
+        document.getElementById("resultat");
+
+      const modele =
+        modeleElement?.value.trim() || "";
+
+      const question =
+        questionElement?.value.trim() || "";
+
+      if (!question) {
+        if (questionElement) {
+          questionElement.focus();
+        }
+
+        alert(
+          "Veuillez saisir une question technique."
+        );
+
+        return;
+      }
+
+      if (resultat) {
+        resultat.classList.remove("visible");
+        resultat.innerHTML = "";
+      }
+
+      afficherStatus(
+        "Recherche dans le Service Manual…"
+      );
+
+      if (bouton) {
+        bouton.disabled = true;
+        bouton.textContent = "Recherche…";
+      }
+
+      try {
+        const response = await fetch(
+          ANSWER_URL,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              modele: modele || "C1538P",
+              question: question
+            })
+          }
+        );
+
+        const texte = await response.text();
+
+        let data;
+
+        try {
+          data = JSON.parse(texte);
+        } catch (parseError) {
+          throw new Error(
+            "La réponse du serveur n'est pas un JSON valide."
+          );
+        }
+
+        if (!response.ok) {
+          const message =
+            data?.error ||
+            data?.message ||
+            "Erreur lors de la recherche.";
+
+          throw new Error(message);
+        }
+
+        afficherReponse(data);
+
+      } catch (error) {
+
+        console.error(error);
+
+        if (resultat) {
+          resultat.innerHTML = `
+            <div class="result-card">
+
+              <div class="result-header">
+
+                <div class="result-title-wrap">
+
+                  <div class="result-kicker">
+                    Erreur
+                  </div>
+
+                  <h2 class="result-title">
+                    Recherche impossible
+                  </h2>
+
+                </div>
+
               </div>
 
-              <div class="journey-content">
+              <div class="result-body">
 
-                <div class="journey-title">
-                  ${echapperHTML(titrePreparatif)}
+                <div class="warning">
+                  ${echapperHTML(
+                    error?.message ||
+                    "Une erreur inconnue est survenue."
+                  )}
                 </div>
-
-                <div class="journey-page">
-                  Page manuel ${echapperHTML(pagePreparatif)}
-                  · PDF ${echapperHTML(pdfPreparatif)}
-                </div>
-
-                ${
-                  sourcePreparatif
-                    ? `
-                      <div class="journey-source">
-                        <strong>Extrait du Service Manual :</strong><br><br>
-                        ${echapperHTML(sourcePreparatif)}
-                      </div>
-                    `
-                    : ""
-                }
-
-                ${afficherImageEtape(
-                  preparatif,
-                  titrePreparatif
-                )}
 
               </div>
 
             </div>
           `;
+
+          resultat.classList.add("visible");
         }
-      );
 
-      html += `
-          <div class="journey-step">
+      } finally {
 
-            <div class="journey-number">
-              ${procedure.preparatifs.length + 1}
-            </div>
+        masquerStatus();
 
-            <div class="journey-content">
-
-              <div class="journey-title">
-                ${echapperHTML(titre)}
-              </div>
-
-              <div class="journey-page">
-                Page manuel ${echapperHTML(pageManuel)}
-                · PDF ${echapperHTML(pagePdf)}
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-      `;
-    }
-  }
-
-
-  html += `
-      </div>
-    </div>
-  `;
-
-  return html;
-}
-
-
-function afficherLocalisation(data) {
-
-  const payload =
-    obtenirDonneesReponse(data);
-
-  let html = "";
-
-  const titre =
-    valeurTexte(
-      payload.titre,
-      "Localisation"
-    );
-
-  const reponse =
-    valeurTexte(
-      payload.reponse,
-      ""
-    );
-
-  html += `
-    <div class="response-title">
-      ${echapperHTML(titre)}
-    </div>
-  `;
-
-
-  if (reponse) {
-
-    html += `
-      <div class="response-text">
-        ${echapperHTML(reponse)}
-      </div>
-    `;
-  }
-
-
-  html += afficherIdentification(
-    payload.identification
-  );
-
-
-  if (
-    payload.localisation &&
-    payload.localisation.description
-  ) {
-
-    html += `
-      <div class="section-title">
-        Où se trouve la carte ?
-      </div>
-
-      <div class="response-text">
-        ${echapperHTML(
-          valeurTexte(
-            payload.localisation.description
-          )
-        )}
-      </div>
-    `;
-  }
-
-
-  html += afficherPagesManuel(
-    payload.localisation
-  );
-
-
-  html += afficherProcedurePrincipale(
-    payload.procedure
-  );
-
-
-  if (payload.avertissement) {
-
-    html += `
-      <div class="warning">
-        <strong>Important :</strong><br>
-        ${echapperHTML(
-          valeurTexte(payload.avertissement)
-        )}
-      </div>
-    `;
-  }
-
-
-  return html;
-}
-
-
-function afficherReponseTechnique(data) {
-
-  const payload =
-    obtenirDonneesReponse(data);
-
-  let html = "";
-
-  const titre =
-    valeurTexte(
-      payload.titre,
-      "Réponse technique"
-    );
-
-  const reponse =
-    valeurTexte(
-      payload.reponse,
-      payload.message || ""
-    );
-
-
-  html += `
-    <div class="response-title">
-      ${echapperHTML(titre)}
-    </div>
-  `;
-
-
-  if (reponse) {
-
-    html += `
-      <div class="response-text">
-        ${echapperHTML(reponse)}
-      </div>
-    `;
-  }
-
-
-  if (payload.identification) {
-
-    html += afficherIdentification(
-      payload.identification
-    );
-  }
-
-
-  if (payload.procedure) {
-
-    html += afficherProcedurePrincipale(
-      payload.procedure
-    );
-  }
-
-
-  return html;
-}
-
-
-function afficherReponseGenerique(data) {
-
-  const payload =
-    obtenirDonneesReponse(data);
-
-  let texte = "";
-
-
-  if (payload.reponse) {
-
-    texte =
-      valeurTexte(payload.reponse);
-  }
-  else if (payload.message) {
-
-    texte =
-      valeurTexte(payload.message);
-  }
-  else if (payload.answer) {
-
-    texte =
-      valeurTexte(payload.answer);
-  }
-  else {
-
-    texte =
-      valeurTexte(payload);
-  }
-
-
-  return `
-    <div class="response-text">
-      ${echapperHTML(texte)}
-    </div>
-  `;
-}
-
-
-function afficherReponse(data) {
-
-  const resultat =
-    document.getElementById("resultat");
-
-  const contenu =
-    document.getElementById("contenuReponse");
-
-
-  resultat.classList.remove("hidden");
-
-
-  const type =
-    obtenirTypeReponse(data);
-
-
-  if (type === "LOCALISATION") {
-
-    contenu.innerHTML =
-      afficherLocalisation(data);
-
-    return;
-  }
-
-
-  if (
-    type === "REPONSE_TECHNIQUE" ||
-    type === "TECHNIQUE" ||
-    type === "PROCEDURE"
-  ) {
-
-    contenu.innerHTML =
-      afficherReponseTechnique(data);
-
-    return;
-  }
-
-
-  contenu.innerHTML =
-    afficherReponseGenerique(data);
-}
-
-
-async function rechercher() {
-
-  const modele =
-    document.getElementById("modele").value;
-
-  const question =
-    document.getElementById("question").value.trim();
-
-  const bouton =
-    document.getElementById("btnRecherche");
-
-
-  if (!question) {
-
-    afficherStatus(
-      "Veuillez saisir une question technique.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  bouton.disabled = true;
-
-  afficherStatus(
-    "Recherche dans le Service Manual...",
-    "info"
-  );
-
-
-  document
-    .getElementById("resultat")
-    .classList.add("hidden");
-
-
-  try {
-
-    const response =
-      await fetch(
-        ANSWER_URL,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            modele: modele,
-            question: question
-          })
+        if (bouton) {
+          bouton.disabled = false;
+          bouton.textContent = "Rechercher";
         }
-      );
-
-
-    const texte =
-      await response.text();
-
-
-    let data;
-
-
-    try {
-
-      data =
-        JSON.parse(texte);
-
-    } catch (e) {
-
-      throw new Error(
-        "La réponse du serveur n'est pas un JSON valide."
-      );
-    }
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        valeurTexte(
-          data.message ||
-          data.error ||
-          texte,
-          "Erreur du serveur."
-        )
-      );
-    }
-
-
-    if (
-      data.ok === false
-    ) {
-
-      throw new Error(
-        valeurTexte(
-          data.message ||
-          data.error,
-          "La recherche a échoué."
-        )
-      );
-    }
-
-
-    afficherReponse(data);
-
-    masquerStatus();
-
-  } catch (error) {
-
-    console.error(error);
-
-    afficherStatus(
-      error.message ||
-      "Une erreur est survenue pendant la recherche.",
-      "error"
-    );
-
-  } finally {
-
-    bouton.disabled = false;
-  }
-}
-
-
-async function envoyerPV() {
-
-  const fichier =
-    document.getElementById("fichierPV").files[0];
-
-  const resultat =
-    document.getElementById("uploadResult");
-
-  const bouton =
-    document.getElementById("btnUpload");
-
-
-  if (!fichier) {
-
-    resultat.textContent =
-      "Veuillez sélectionner un fichier.";
-
-    return;
-  }
-
-
-  bouton.disabled = true;
-
-  resultat.textContent =
-    "Envoi du PV en cours...";
-
-
-  try {
-
-    const formData =
-      new FormData();
-
-    formData.append(
-      "file",
-      fichier
-    );
-
-
-    const response =
-      await fetch(
-        UPLOAD_URL,
-        {
-          method: "POST",
-          body: formData
-        }
-      );
-
-
-    const texte =
-      await response.text();
-
-
-    let data;
-
-
-    try {
-
-      data =
-        JSON.parse(texte);
-
-    } catch (e) {
-
-      throw new Error(
-        "La réponse du serveur n'est pas un JSON valide."
-      );
-    }
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        valeurTexte(
-          data.message ||
-          data.error ||
-          texte,
-          "Erreur pendant l'envoi du PV."
-        )
-      );
-    }
-
-
-    resultat.textContent =
-      valeurTexte(
-        data.message ||
-        data.reponse ||
-        "PV envoyé avec succès."
-      );
-
-  } catch (error) {
-
-    console.error(error);
-
-    resultat.textContent =
-      error.message ||
-      "Erreur pendant l'envoi du PV.";
-
-  } finally {
-
-    bouton.disabled = false;
-  }
-}
-
-
-document
-  .getElementById("question")
-  .addEventListener(
-    "keydown",
-    function(event) {
-
-      if (
-        event.key === "Enter" &&
-        !event.shiftKey
-      ) {
-
-        event.preventDefault();
-
-        rechercher();
       }
     }
-  );
 
-</script>
+
+    /* =========================
+       ENVOI PV
+       ========================= */
+
+    async function envoyerPV() {
+      const fichierElement =
+        document.getElementById("pvFile");
+
+      const fichier =
+        fichierElement?.files?.[0];
+
+      if (!fichier) {
+        alert(
+          "Veuillez sélectionner un fichier PV."
+        );
+
+        return;
+      }
+
+      afficherStatus(
+        "Envoi du PV en cours…"
+      );
+
+      try {
+
+        const formData =
+          new FormData();
+
+        formData.append(
+          "file",
+          fichier
+        );
+
+        const response = await fetch(
+          UPLOAD_URL,
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+        const texte =
+          await response.text();
+
+        let data;
+
+        try {
+          data = JSON.parse(texte);
+        } catch {
+          data = {
+            message: texte
+          };
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data?.error ||
+            data?.message ||
+            "Erreur lors de l'envoi du PV."
+          );
+        }
+
+        alert(
+          data?.message ||
+          "PV envoyé avec succès."
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          error?.message ||
+          "Impossible d'envoyer le PV."
+        );
+
+      } finally {
+
+        masquerStatus();
+      }
+    }
+
+
+    /* =========================
+       ENTER = RECHERCHE
+       ========================= */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        const question =
+          document.getElementById("question");
+
+        if (question) {
+
+          question.addEventListener(
+            "keydown",
+            (event) => {
+
+              if (
+                event.key === "Enter" &&
+                !event.shiftKey
+              ) {
+
+                event.preventDefault();
+
+                rechercher();
+              }
+            }
+          );
+
+        }
+
+      }
+    );
+  </script>
 
 </body>
 </html>
