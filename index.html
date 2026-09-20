@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -42,11 +42,13 @@
     }
 
     .search-box,
-    .pv-box {
+    .pv-box,
+    .result-list,
+    .procedure {
       background: white;
       border-radius: 14px;
       padding: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       margin-bottom: 18px;
     }
 
@@ -91,6 +93,11 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
     #searchButton {
       background: #111827;
       color: white;
@@ -100,11 +107,6 @@
       background: #2563eb;
       color: white;
       margin-top: 12px;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: wait;
     }
 
     #status,
@@ -129,11 +131,109 @@
       margin-bottom: 15px;
     }
 
-    .procedure {
+    .info {
+      background: #eff6ff;
+      color: #1e40af;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .confidence {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .confidence.warning {
+      background: #fff7ed;
+      color: #9a3412;
+    }
+
+    .technical-answer {
       background: white;
       border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .technical-header {
+      padding: 18px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .technical-header h2 {
+      margin: 0 0 10px;
+      font-size: 21px;
+    }
+
+    .technical-header p {
+      margin: 5px 0;
+      color: #475569;
+    }
+
+    .technical-body {
+      padding: 18px;
+    }
+
+    .technical-body h3 {
+      margin-top: 0;
+    }
+
+    .answer-text {
+      white-space: pre-wrap;
+      line-height: 1.55;
+      margin-bottom: 18px;
+    }
+
+    .identification,
+    .localisation,
+    .procedure-reference {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .identification h3,
+    .localisation h3,
+    .procedure-reference h3 {
+      margin-top: 0;
+      font-size: 17px;
+    }
+
+    .page-card {
+      background: white;
+      border: 1px solid #dbe3ec;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .page-card strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .page-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .procedure {
+      overflow: hidden;
+      padding: 0;
     }
 
     .procedure-header {
@@ -185,6 +285,7 @@
     .step-description {
       line-height: 1.5;
       margin-bottom: 15px;
+      white-space: pre-wrap;
     }
 
     .manual-image {
@@ -242,16 +343,11 @@
       cursor: default;
     }
 
-    .result-list {
-      background: white;
-      border-radius: 14px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
     .result-item {
       padding: 12px 0;
       border-bottom: 1px solid #e5e7eb;
+      white-space: pre-wrap;
+      line-height: 1.5;
     }
 
     .result-item:last-child {
@@ -275,6 +371,7 @@
         font-size: 21px;
       }
 
+      .technical-header h2,
       .procedure-header h2 {
         font-size: 18px;
       }
@@ -370,49 +467,35 @@
 const API_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
 
-
-const SUPABASE_URL =
-  "https://cfctnozhiyusrcxglalw.supabase.co";
-
-
-const PV_BUCKET =
-  "PV";
+const UPLOAD_PV_URL =
+  "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/upload-pv";
 
 
 let etapes = [];
-
 let etapeActuelle = 0;
-
 let procedureActuelle = null;
 
 
 const modeleElement =
   document.getElementById("modele");
 
-
 const questionElement =
   document.getElementById("question");
-
 
 const searchButton =
   document.getElementById("searchButton");
 
-
 const statusElement =
   document.getElementById("status");
-
 
 const resultElement =
   document.getElementById("result");
 
-
 const pvFileElement =
   document.getElementById("pvFile");
 
-
 const uploadButton =
   document.getElementById("uploadButton");
-
 
 const pvStatusElement =
   document.getElementById("pvStatus");
@@ -422,7 +505,6 @@ searchButton.addEventListener(
   "click",
   rechercher
 );
-
 
 uploadButton.addEventListener(
   "click",
@@ -448,8 +530,8 @@ async function rechercher() {
 
   searchButton.disabled = true;
 
-  statusElement.textContent =
-    "Recherche dans le Service Manual...";
+  statusElement.innerHTML =
+    '<div class="info">Recherche dans le Service Manual...</div>';
 
   resultElement.innerHTML = "";
 
@@ -501,9 +583,7 @@ async function rechercher() {
     );
 
     statusElement.innerHTML =
-      '<div class="success">' +
-      "Recherche terminée." +
-      "</div>";
+      '<div class="success">Recherche terminée.</div>';
 
   } catch (error) {
 
@@ -512,9 +592,7 @@ async function rechercher() {
     statusElement.innerHTML =
       '<div class="error">' +
       "Erreur : " +
-      escapeHtml(
-        error.message
-      ) +
+      escapeHtml(error.message) +
       "</div>";
 
   } finally {
@@ -542,9 +620,7 @@ async function envoyerPV() {
 
   if (
     fichier.type !== "application/pdf" &&
-    !fichier.name
-      .toLowerCase()
-      .endsWith(".pdf")
+    !fichier.name.toLowerCase().endsWith(".pdf")
   ) {
 
     pvStatusElement.innerHTML =
@@ -558,46 +634,27 @@ async function envoyerPV() {
 
   uploadButton.disabled = true;
 
-  pvStatusElement.textContent =
-    "Envoi du PV en cours...";
+  pvStatusElement.innerHTML =
+    '<div class="info">Envoi du PV en cours...</div>';
 
 
   try {
 
-    const nomSecurise =
-      creerNomFichier(
-        fichier.name
-      );
+    const formulaire =
+      new FormData();
 
-
-    /*
-      Pour l'instant le fichier est envoyé
-      directement dans le bucket privé PV.
-
-      La prochaine étape sera l'extraction
-      automatique du contenu et son analyse.
-    */
-
-    const url =
-      SUPABASE_URL +
-      "/storage/v1/object/" +
-      PV_BUCKET +
-      "/" +
-      nomSecurise;
+    formulaire.append(
+      "file",
+      fichier
+    );
 
 
     const response =
       await fetch(
-        url,
+        UPLOAD_PV_URL,
         {
           method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/pdf"
-          },
-
-          body: fichier
+          body: formulaire
         }
       );
 
@@ -616,14 +673,23 @@ async function envoyerPV() {
     }
 
 
+    const data =
+      await response.json();
+
+
+    console.log(
+      "Réponse upload PV :",
+      data
+    );
+
+
     pvStatusElement.innerHTML =
       '<div class="success">' +
-      "✅ PV envoyé avec succès : " +
+      "✅ PV envoyé avec succès.<br><br>" +
       escapeHtml(
+        data.fichier ||
         fichier.name
       ) +
-      "<br><br>" +
-      "Le fichier est maintenant stocké dans TechCanon." +
       "</div>";
 
 
@@ -637,9 +703,7 @@ async function envoyerPV() {
     pvStatusElement.innerHTML =
       '<div class="error">' +
       "Erreur pendant l'envoi : " +
-      escapeHtml(
-        error.message
-      ) +
+      escapeHtml(error.message) +
       "</div>";
 
   } finally {
@@ -649,44 +713,46 @@ async function envoyerPV() {
 }
 
 
-function creerNomFichier(
-  nomOriginal
-) {
-
-  const date =
-    new Date()
-      .toISOString()
-      .replace(
-        /[:.]/g,
-        "-"
-      );
-
-  const nom =
-    nomOriginal
-      .normalize("NFD")
-      .replace(
-        /[\u0300-\u036f]/g,
-        ""
-      )
-      .replace(
-        /[^a-zA-Z0-9._-]/g,
-        "_"
-      );
-
-  return (
-    date +
-    "_" +
-    nom
-  );
-}
-
-
 function afficherReponse(
   reponse
 ) {
 
+  if (!reponse) {
+
+    resultElement.innerHTML =
+      '<div class="error">' +
+      "TechCanon n'a retourné aucune réponse." +
+      "</div>";
+
+    return;
+  }
+
+
+  /*
+   * NOUVELLE RÉPONSE TECHNIQUE
+   *
+   * Exemple :
+   * type = REPONSE_TECHNIQUE
+   * intention = LOCALISATION
+   */
+
   if (
-    reponse &&
+    reponse.type === "REPONSE_TECHNIQUE"
+  ) {
+
+    afficherReponseTechnique(
+      reponse
+    );
+
+    return;
+  }
+
+
+  /*
+   * ANCIEN FORMAT PROCÉDURE
+   */
+
+  if (
     reponse.type === "PROCEDURE" &&
     reponse.procedure
   ) {
@@ -698,9 +764,363 @@ function afficherReponse(
     return;
   }
 
+
+  /*
+   * FALLBACK RECHERCHE
+   */
+
   afficherRecherche(
     reponse
   );
+}
+
+
+function afficherReponseTechnique(
+  reponse
+) {
+
+  const titre =
+    reponse.titre ||
+    "Réponse technique";
+
+
+  const intention =
+    reponse.intention ||
+    "";
+
+
+  const texte =
+    reponse.reponse ||
+    reponse.texte ||
+    "Aucune réponse textuelle fournie.";
+
+
+  let html = `
+
+    <section class="technical-answer">
+
+      <div class="technical-header">
+
+        <h2>
+          ${escapeHtml(titre)}
+        </h2>
+
+        <p>
+          Modèle :
+          <strong>
+            ${escapeHtml(
+              reponse.modele || ""
+            )}
+          </strong>
+        </p>
+
+        ${
+          intention
+            ? `
+              <p>
+                Type de réponse :
+                <strong>
+                  ${escapeHtml(intention)}
+                </strong>
+              </p>
+            `
+            : ""
+        }
+
+      </div>
+
+
+      <div class="technical-body">
+
+        <div class="answer-text">
+          ${escapeHtml(texte)}
+        </div>
+  `;
+
+
+  /*
+   * IDENTIFICATION
+   */
+
+  if (
+    reponse.identification
+  ) {
+
+    const identification =
+      reponse.identification;
+
+
+    html += `
+
+      <div class="identification">
+
+        <h3>
+          Identification
+        </h3>
+
+        ${
+          identification.unite
+            ? `
+              <p>
+                <strong>Unité :</strong>
+                ${escapeHtml(
+                  identification.unite
+                )}
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          identification.composant
+            ? `
+              <p>
+                <strong>Composant :</strong>
+                ${escapeHtml(
+                  identification.composant
+                )}
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          identification.description
+            ? `
+              <p>
+                ${escapeHtml(
+                  identification.description
+                )}
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          identification.page_manuel !== undefined
+            ? `
+              <p>
+                <strong>
+                  Page manuel :
+                </strong>
+                ${escapeHtml(
+                  identification.page_manuel
+                )}
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          identification.page_pdf !== undefined
+            ? `
+              <p>
+                <strong>
+                  Page PDF :
+                </strong>
+                ${escapeHtml(
+                  identification.page_pdf
+                )}
+              </p>
+            `
+            : ""
+        }
+
+      </div>
+    `;
+  }
+
+
+  /*
+   * LOCALISATION
+   */
+
+  if (
+    reponse.localisation &&
+    Array.isArray(
+      reponse.localisation.pages
+    )
+  ) {
+
+    html += `
+
+      <div class="localisation">
+
+        <h3>
+          Localisation dans le Service Manual
+        </h3>
+    `;
+
+
+    reponse.localisation.pages.forEach(
+      (page) => {
+
+        html += `
+
+          <div class="page-card">
+
+            <strong>
+              ${escapeHtml(
+                page.titre ||
+                "Page du manuel"
+              )}
+            </strong>
+
+            <div>
+              Page manuel :
+              ${escapeHtml(
+                page.page_manuel ??
+                "?"
+              )}
+              &nbsp;|&nbsp;
+              Page PDF :
+              ${escapeHtml(
+                page.page_pdf ??
+                "?"
+              )}
+            </div>
+        `;
+
+
+        if (
+          page.image
+        ) {
+
+          html += `
+
+            <img
+              class="page-image"
+              src="${escapeAttribute(
+                page.image
+              )}"
+              alt="Illustration du Service Manual"
+              loading="lazy"
+            >
+
+          `;
+        }
+
+
+        html += `
+
+          </div>
+
+        `;
+      }
+    );
+
+
+    html += `
+
+      </div>
+
+    `;
+  }
+
+
+  /*
+   * RÉFÉRENCE PROCÉDURE
+   */
+
+  if (
+    reponse.procedure
+  ) {
+
+    const procedure =
+      reponse.procedure;
+
+
+    html += `
+
+      <div class="procedure-reference">
+
+        <h3>
+          Procédure de maintenance
+        </h3>
+
+        ${
+          procedure.titre
+            ? `
+              <p>
+                <strong>
+                  ${escapeHtml(
+                    procedure.titre
+                  )}
+                </strong>
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          procedure.page_manuel !== undefined
+            ? `
+              <p>
+                Page manuel :
+                <strong>
+                  ${escapeHtml(
+                    procedure.page_manuel
+                  )}
+                </strong>
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          procedure.page_pdf !== undefined
+            ? `
+              <p>
+                Page PDF :
+                <strong>
+                  ${escapeHtml(
+                    procedure.page_pdf
+                  )}
+                </strong>
+              </p>
+            `
+            : ""
+        }
+
+      </div>
+
+    `;
+  }
+
+
+  /*
+   * AVERTISSEMENT
+   */
+
+  if (
+    reponse.avertissement
+  ) {
+
+    html += `
+
+      <div class="warning">
+
+        ${escapeHtml(
+          reponse.avertissement
+        )}
+
+      </div>
+
+    `;
+  }
+
+
+  html += `
+
+      </div>
+
+    </section>
+
+  `;
+
+
+  resultElement.innerHTML =
+    html;
 }
 
 
@@ -837,18 +1257,15 @@ function afficherEtape() {
       "stepCounter"
     );
 
-
   const container =
     document.getElementById(
       "stepContainer"
     );
 
-
   const previousButton =
     document.getElementById(
       "previousButton"
     );
-
 
   const nextButton =
     document.getElementById(
@@ -1070,7 +1487,8 @@ function afficherRecherche(
 
           <strong>
             Page ${escapeHtml(
-              item.page ??
+              item.page_manuel ??
+              item.page_pdf ??
               "?"
             )}
           </strong>
@@ -1078,6 +1496,7 @@ function afficherRecherche(
           <br><br>
 
           ${escapeHtml(
+            item.extrait ||
             item.contenu ||
             ""
           )}
