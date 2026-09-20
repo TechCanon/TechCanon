@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>TechCanon</title>
 
   <style>
@@ -12,32 +13,25 @@
 
     body {
       margin: 0;
+      padding: 24px;
       font-family: Arial, Helvetica, sans-serif;
-      background: #f4f6f8;
-      color: #222;
+      background: #f5f6f8;
+      color: #202124;
     }
 
-    header {
-      background: #111827;
-      color: white;
-      padding: 18px 20px;
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 24px;
+    h1 {
+      margin-bottom: 4px;
     }
 
-    header p {
-      margin: 6px 0 0;
-      color: #d1d5db;
-      font-size: 14px;
-    }
-
-    main {
-      max-width: 1000px;
-      margin: 20px auto;
-      padding: 0 15px;
+    .subtitle {
+      color: #666;
+      margin-top: 0;
+      margin-bottom: 24px;
     }
 
     .card {
@@ -45,7 +39,7 @@
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     label {
@@ -58,9 +52,9 @@
     textarea,
     input[type="file"] {
       width: 100%;
-      border: 1px solid #d1d5db;
+      padding: 12px;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      padding: 11px;
       font-size: 15px;
       background: white;
     }
@@ -70,169 +64,293 @@
       resize: vertical;
     }
 
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
     button {
       border: 0;
       border-radius: 8px;
       padding: 12px 18px;
-      font-size: 15px;
-      font-weight: bold;
       cursor: pointer;
-      background: #2563eb;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .primary {
+      background: #1a73e8;
       color: white;
-      margin-top: 12px;
     }
 
-    button:hover {
-      background: #1d4ed8;
-    }
-
-    button.secondary {
-      background: #374151;
-    }
-
-    button.secondary:hover {
-      background: #1f2937;
+    .secondary {
+      background: #e8eaed;
+      color: #202124;
     }
 
     button:disabled {
       opacity: 0.6;
-      cursor: wait;
+      cursor: not-allowed;
     }
 
-    .loading {
+    .status {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
       display: none;
-      margin-top: 15px;
-      padding: 12px;
-      background: #eff6ff;
-      border-radius: 8px;
-      color: #1d4ed8;
-      font-weight: bold;
     }
 
-    .error {
-      background: #fef2f2;
-      color: #991b1b;
-      border: 1px solid #fecaca;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 15px;
-    }
-
-    .success {
-      background: #ecfdf5;
-      color: #166534;
-      border-left: 4px solid #10b981;
-      padding: 15px;
-      border-radius: 6px;
-      margin-top: 15px;
-    }
-
-    .result-header {
-      border-bottom: 1px solid #e5e7eb;
-      padding-bottom: 15px;
-      margin-bottom: 20px;
-    }
-
-    .result-header h2 {
-      margin: 0 0 12px;
-      font-size: 21px;
-    }
-
-    .meta {
-      margin: 6px 0;
-    }
-
-    .answer-box {
-      background: #f8fafc;
-      border-left: 4px solid #2563eb;
-      padding: 18px;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
-    .answer-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .technical-section {
-      margin-top: 18px;
-    }
-
-    .technical-section h3 {
-      margin-bottom: 8px;
-    }
-
-    .procedure-step {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 14px;
-      margin-bottom: 10px;
-    }
-
-    .procedure-step strong {
+    .status.show {
       display: block;
-      margin-bottom: 6px;
     }
 
-    .warning {
-      background: #fff7ed;
-      border-left: 4px solid #f97316;
-      padding: 14px;
-      margin: 15px 0;
-      border-radius: 6px;
+    .status.error {
+      background: #fde7e9;
+      color: #b00020;
     }
 
-    .result-item {
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 14px;
-      margin-bottom: 10px;
-      background: white;
+    .status.success {
+      background: #e6f4ea;
+      color: #137333;
     }
 
-    .result-item .score {
-      color: #6b7280;
-      font-size: 12px;
-      margin-bottom: 6px;
+    .status.info {
+      background: #e8f0fe;
+      color: #174ea6;
     }
 
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
-      background: #111827;
-      color: #e5e7eb;
-      padding: 15px;
-      border-radius: 8px;
-      overflow-x: auto;
-      font-size: 13px;
+    .result {
+      margin-top: 20px;
     }
 
-    .hidden {
-      display: none;
-    }
-
-    .navigation {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .navigation button {
+    .result h2 {
       margin-top: 0;
     }
 
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 21px;
+    .response-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .response-text {
+      font-size: 17px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 24px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .identification-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .info-box {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 14px;
+      background: #fafafa;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .info-value {
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .page-card {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      background: #fff;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .page-title {
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .page-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #eef2f7;
+      color: #333;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .page-source {
+      white-space: pre-line;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .manual-page-image-wrapper {
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .manual-page-image {
+      display: block;
+      max-width: 100%;
+      max-height: 750px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      object-fit: contain;
+      background: #f7f7f7;
+    }
+
+    .image-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .procedure-card {
+      border-left: 5px solid #1a73e8;
+      background: #f8fbff;
+      border-radius: 10px;
+      padding: 18px;
+      margin-top: 16px;
+    }
+
+    .procedure-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .procedure-pages {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .journey {
+      margin-top: 15px;
+    }
+
+    .journey-step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+
+    .journey-number {
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      border-radius: 50%;
+      background: #1a73e8;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .journey-content {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 9px;
+      padding: 10px 12px;
+      flex: 1;
+    }
+
+    .journey-title {
+      font-weight: bold;
+    }
+
+    .journey-page {
+      color: #666;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .warning {
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 8px;
+      background: #fff4e5;
+      color: #8a4b00;
+      line-height: 1.5;
+    }
+
+    .technical-data {
+      margin-top: 20px;
+    }
+
+    .technical-data pre {
+      background: #f3f4f6;
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .upload-result {
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 800px) {
+      .identification-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 12px;
       }
 
-      main {
-        margin-top: 10px;
+      .identification-grid {
+        grid-template-columns: 1fr;
       }
 
       .card {
@@ -244,18 +362,15 @@
 
 <body>
 
-<header>
-  <h1>TechCanon</h1>
-  <p>Assistant technique Service Manual Canon</p>
-</header>
-
-<main>
+<div class="container">
 
   <div class="card">
+    <h1>TechCanon</h1>
+    <p class="subtitle">Assistant technique Service Manual Canon</p>
 
-    <label for="model">Modèle</label>
+    <label for="modele">Modèle</label>
 
-    <select id="model">
+    <select id="modele">
       <option value="C1538P">C1538P</option>
       <option value="C1533P">C1533P</option>
       <option value="LBP1538C">LBP1538C</option>
@@ -270,43 +385,51 @@
       placeholder="Exemple : où se trouve la carte contrôleur principale ?"
     ></textarea>
 
-    <button id="searchButton" type="button">
-      Rechercher dans le Service Manual
-    </button>
-
-    <div id="loading" class="loading">
-      Recherche dans le Service Manual...
+    <div class="button-row">
+      <button
+        id="btnRecherche"
+        class="primary"
+        onclick="rechercher()"
+      >
+        Rechercher dans le Service Manual
+      </button>
     </div>
 
+    <div id="status" class="status"></div>
   </div>
 
-  <div class="card hidden" id="resultCard">
-    <div id="result"></div>
+
+  <div id="resultat" class="card result hidden">
+    <h2>Résultats du Service Manual</h2>
+
+    <div id="contenuReponse"></div>
   </div>
+
 
   <div class="card">
-
     <h2>Ajouter un PV</h2>
 
     <input
       type="file"
-      id="pvFile"
-      accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg,.png"
+      id="fichierPV"
+      accept=".pdf,.png,.jpg,.jpeg"
     >
 
-    <button
-      id="uploadButton"
-      class="secondary"
-      type="button"
-    >
-      Envoyer le PV
-    </button>
+    <div class="button-row">
+      <button
+        id="btnUpload"
+        class="secondary"
+        onclick="envoyerPV()"
+      >
+        Envoyer le PV
+      </button>
+    </div>
 
-    <div id="pvResult"></div>
-
+    <div id="uploadResult" class="upload-result"></div>
   </div>
 
-</main>
+</div>
+
 
 <script>
 
@@ -317,62 +440,57 @@ const UPLOAD_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/upload-pv";
 
 
-function valeurTexte(valeur) {
+function echapperHTML(valeur) {
 
   if (valeur === null || valeur === undefined) {
     return "";
   }
 
+  return String(valeur)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function valeurTexte(valeur, valeurDefaut = "") {
+
   if (
-    typeof valeur === "string" ||
+    valeur === null ||
+    valeur === undefined
+  ) {
+    return valeurDefaut;
+  }
+
+  if (typeof valeur === "string") {
+    return valeur;
+  }
+
+  if (
     typeof valeur === "number" ||
     typeof valeur === "boolean"
   ) {
     return String(valeur);
   }
 
-  if (Array.isArray(valeur)) {
-    return valeur
-      .map(item => valeurTexte(item))
-      .filter(Boolean)
-      .join("\n");
-  }
-
   if (typeof valeur === "object") {
 
-    const priorites = [
-      "texte",
-      "text",
-      "message",
-      "answer",
-      "reponse",
-      "réponse",
-      "contenu",
-      "content",
-      "description",
-      "instruction",
-      "instructions",
-      "intention",
-      "localisation",
-      "location",
-      "reference",
-      "référence"
-    ];
+    if (valeur.texte !== undefined) {
+      return valeurTexte(valeur.texte);
+    }
 
-    for (const cle of priorites) {
+    if (valeur.reponse !== undefined) {
+      return valeurTexte(valeur.reponse);
+    }
 
-      if (
-        Object.prototype.hasOwnProperty.call(valeur, cle) &&
-        valeur[cle] !== null &&
-        valeur[cle] !== undefined
-      ) {
+    if (valeur.message !== undefined) {
+      return valeurTexte(valeur.message);
+    }
 
-        const texte = valeurTexte(valeur[cle]);
-
-        if (texte) {
-          return texte;
-        }
-      }
+    if (valeur.description !== undefined) {
+      return valeurTexte(valeur.description);
     }
 
     try {
@@ -386,168 +504,730 @@ function valeurTexte(valeur) {
 }
 
 
-function echapperHTML(texte) {
+function obtenirDonneesReponse(data) {
 
-  return String(texte)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-
-function afficherTexte(texte) {
-
-  return echapperHTML(
-    valeurTexte(texte)
-  ).replace(/\r\n/g, "\n")
-   .replace(/\n/g, "<br>");
-}
-
-
-function chercherPremier(objet, cles) {
-
-  if (!objet || typeof objet !== "object") {
-    return null;
+  if (
+    data &&
+    data.reponse &&
+    typeof data.reponse === "object"
+  ) {
+    return data.reponse;
   }
 
-  for (const cle of cles) {
-
-    if (
-      Object.prototype.hasOwnProperty.call(objet, cle) &&
-      objet[cle] !== null &&
-      objet[cle] !== undefined &&
-      objet[cle] !== ""
-    ) {
-      return objet[cle];
-    }
-  }
-
-  return null;
+  return data || {};
 }
 
 
 function obtenirTypeReponse(data) {
 
-  const valeurs = [
-    data?.type,
-    data?.type_reponse,
-    data?.response_type
-  ];
+  const payload = obtenirDonneesReponse(data);
 
-  for (const valeur of valeurs) {
-
-    if (typeof valeur === "string") {
-
-      const type = valeur.toUpperCase();
-
-      if (
-        type.includes("PROCEDURE") ||
-        type.includes("PROCÉDURE")
-      ) {
-        return "PROCEDURE";
-      }
-
-      if (
-        type.includes("REPONSE_TECHNIQUE") ||
-        type.includes("RÉPONSE_TECHNIQUE")
-      ) {
-        return "REPONSE_TECHNIQUE";
-      }
-
-      if (type.includes("LOCALISATION")) {
-        return "LOCALISATION";
-      }
-    }
-
-    if (
-      valeur &&
-      typeof valeur === "object"
-    ) {
-
-      if (valeur.procedure === true) {
-        return "PROCEDURE";
-      }
-
-      if (
-        valeur.REPONSE_TECHNIQUE === true ||
-        valeur.reponse_technique === true
-      ) {
-        return "REPONSE_TECHNIQUE";
-      }
-
-      if (valeur.localisation === true) {
-        return "LOCALISATION";
-      }
-    }
+  if (
+    payload.intention &&
+    String(payload.intention).toUpperCase() === "LOCALISATION"
+  ) {
+    return "LOCALISATION";
   }
 
   if (
-    data?.intention &&
-    typeof data.intention === "object"
+    payload.type &&
+    typeof payload.type === "string"
   ) {
+    return payload.type.toUpperCase();
+  }
 
-    if (data.intention.procedure === true) {
-      return "PROCEDURE";
-    }
-
-    if (
-      data.intention.REPONSE_TECHNIQUE === true ||
-      data.intention.reponse_technique === true
-    ) {
-      return "REPONSE_TECHNIQUE";
-    }
-
-    if (data.intention.localisation === true) {
-      return "LOCALISATION";
-    }
+  if (
+    data &&
+    data.type &&
+    typeof data.type === "string"
+  ) {
+    return data.type.toUpperCase();
   }
 
   return "";
 }
 
 
-async function poserQuestion() {
+function afficherStatus(message, type = "info") {
 
-  const model =
-    document.getElementById("model").value;
+  const status = document.getElementById("status");
 
-  const question =
-    document.getElementById("question").value.trim();
-
-  const resultCard =
-    document.getElementById("resultCard");
-
-  const result =
-    document.getElementById("result");
-
-  const loading =
-    document.getElementById("loading");
-
-  const searchButton =
-    document.getElementById("searchButton");
+  status.className = "status show " + type;
+  status.textContent = message;
+}
 
 
-  if (!question) {
+function masquerStatus() {
 
-    resultCard.classList.remove("hidden");
+  const status = document.getElementById("status");
 
-    result.innerHTML = `
-      <div class="error">
-        Veuillez saisir une question technique.
+  status.className = "status";
+  status.textContent = "";
+}
+
+
+function afficherIdentification(identification) {
+
+  if (!identification) {
+    return "";
+  }
+
+  return `
+    <div class="section-title">
+      Identification
+    </div>
+
+    <div class="identification-grid">
+
+      <div class="info-box">
+        <div class="info-label">
+          Composant
+        </div>
+
+        <div class="info-value">
+          ${echapperHTML(
+            valeurTexte(identification.composant, "—")
+          )}
+        </div>
+      </div>
+
+
+      <div class="info-box">
+        <div class="info-label">
+          Unité
+        </div>
+
+        <div class="info-value">
+          ${echapperHTML(
+            valeurTexte(identification.unite, "—")
+          )}
+        </div>
+      </div>
+
+
+      <div class="info-box">
+        <div class="info-label">
+          Page manuel
+        </div>
+
+        <div class="info-value">
+          ${echapperHTML(
+            valeurTexte(identification.page_manuel, "—")
+          )}
+        </div>
+      </div>
+
+
+      <div class="info-box">
+        <div class="info-label">
+          Page PDF
+        </div>
+
+        <div class="info-value">
+          ${echapperHTML(
+            valeurTexte(identification.page_pdf, "—")
+          )}
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+
+function afficherPagesManuel(localisation) {
+
+  if (
+    !localisation ||
+    !Array.isArray(localisation.pages) ||
+    localisation.pages.length === 0
+  ) {
+    return "";
+  }
+
+  let html = `
+    <div class="section-title">
+      Localisation dans le Service Manual
+    </div>
+  `;
+
+  localisation.pages.forEach((page, index) => {
+
+    const pageManuel =
+      valeurTexte(page.page_manuel, "—");
+
+    const pagePdf =
+      valeurTexte(page.page_pdf, "—");
+
+    const titre =
+      valeurTexte(
+        page.titre,
+        "Page du Service Manual"
+      );
+
+    const source =
+      valeurTexte(page.source, "");
+
+    const image =
+      valeurTexte(page.image, "");
+
+    html += `
+      <div class="page-card">
+
+        <div class="page-header">
+
+          <div class="page-title">
+            ${index + 1}. ${echapperHTML(titre)}
+          </div>
+
+          <div class="page-badges">
+
+            <span class="badge">
+              Page manuel ${echapperHTML(pageManuel)}
+            </span>
+
+            <span class="badge">
+              PDF ${echapperHTML(pagePdf)}
+            </span>
+
+          </div>
+
+        </div>
+    `;
+
+    if (source) {
+
+      html += `
+        <div class="page-source">
+          ${echapperHTML(source)}
+        </div>
+      `;
+    }
+
+
+    if (image) {
+
+      const imageSecurisee =
+        echapperHTML(image);
+
+      html += `
+        <div class="manual-page-image-wrapper">
+
+          <img
+            class="manual-page-image"
+            src="${imageSecurisee}"
+            alt="${echapperHTML(titre)}"
+            loading="lazy"
+            onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+          >
+
+          <div class="hidden">
+            Impossible d'afficher cette image.
+          </div>
+
+          <a
+            class="image-link"
+            href="${imageSecurisee}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ouvrir l'image en grand
+          </a>
+
+        </div>
+      `;
+    }
+
+    html += `
       </div>
     `;
+  });
+
+  return html;
+}
+
+
+function afficherProcedurePrincipale(procedure) {
+
+  if (!procedure) {
+    return "";
+  }
+
+  const pageManuel =
+    valeurTexte(procedure.page_manuel, "—");
+
+  const pagePdf =
+    valeurTexte(procedure.page_pdf, "—");
+
+  const titre =
+    valeurTexte(
+      procedure.titre,
+      "Procédure de dépose"
+    );
+
+  let html = `
+    <div class="section-title">
+      Intervention / dépose
+    </div>
+
+    <div class="procedure-card">
+
+      <div class="procedure-title">
+        ${echapperHTML(titre)}
+      </div>
+
+      <div class="procedure-pages">
+
+        <span class="badge">
+          Page manuel ${echapperHTML(pageManuel)}
+        </span>
+
+        <span class="badge">
+          PDF ${echapperHTML(pagePdf)}
+        </span>
+
+      </div>
+  `;
+
+
+  if (
+    Array.isArray(procedure.preparatifs) &&
+    procedure.preparatifs.length > 0
+  ) {
+
+    html += `
+      <div class="journey">
+
+        <strong>
+          Prérequis à effectuer dans l'ordre
+        </strong>
+    `;
+
+    procedure.preparatifs.forEach(
+      (preparatif, index) => {
+
+        const titrePreparatif =
+          valeurTexte(
+            preparatif.titre,
+            "Préparation"
+          );
+
+        const pagePreparatif =
+          valeurTexte(
+            preparatif.page_manuel,
+            "—"
+          );
+
+        const pdfPreparatif =
+          valeurTexte(
+            preparatif.page_pdf,
+            "—"
+          );
+
+        html += `
+          <div class="journey-step">
+
+            <div class="journey-number">
+              ${index + 1}
+            </div>
+
+            <div class="journey-content">
+
+              <div class="journey-title">
+                ${echapperHTML(titrePreparatif)}
+              </div>
+
+              <div class="journey-page">
+                Page manuel ${echapperHTML(pagePreparatif)}
+                · PDF ${echapperHTML(pdfPreparatif)}
+              </div>
+
+            </div>
+
+          </div>
+        `;
+      }
+    );
+
+    const numeroProcedure =
+      procedure.preparatifs.length + 1;
+
+    html += `
+        <div class="journey-step">
+
+          <div class="journey-number">
+            ${numeroProcedure}
+          </div>
+
+          <div class="journey-content">
+
+            <div class="journey-title">
+              ${echapperHTML(titre)}
+            </div>
+
+            <div class="journey-page">
+              Page manuel ${echapperHTML(pageManuel)}
+              · PDF ${echapperHTML(pagePdf)}
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  }
+
+
+  /*
+   * Si le backend fournit ultérieurement
+   * procedure.etapes, elles seront affichées ici.
+   */
+  if (
+    Array.isArray(procedure.etapes) &&
+    procedure.etapes.length > 0
+  ) {
+
+    html += `
+      <div class="section-title">
+        Étapes de dépose
+      </div>
+    `;
+
+    procedure.etapes.forEach(
+      (etape, index) => {
+
+        const titreEtape =
+          valeurTexte(
+            etape.titre,
+            `Étape ${index + 1}`
+          );
+
+        const description =
+          valeurTexte(
+            etape.description,
+            ""
+          );
+
+        const pageEtape =
+          valeurTexte(
+            etape.page_manuel,
+            ""
+          );
+
+        html += `
+          <div class="journey-step">
+
+            <div class="journey-number">
+              ${index + 1}
+            </div>
+
+            <div class="journey-content">
+
+              <div class="journey-title">
+                ${echapperHTML(titreEtape)}
+              </div>
+
+              ${
+                description
+                  ? `
+                    <div style="margin-top:6px; line-height:1.5;">
+                      ${echapperHTML(description)}
+                    </div>
+                  `
+                  : ""
+              }
+
+              ${
+                pageEtape
+                  ? `
+                    <div class="journey-page">
+                      Page manuel
+                      ${echapperHTML(pageEtape)}
+                    </div>
+                  `
+                  : ""
+              }
+
+            </div>
+
+          </div>
+        `;
+      }
+    );
+  }
+
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  return html;
+}
+
+
+function afficherLocalisation(data) {
+
+  const payload =
+    obtenirDonneesReponse(data);
+
+  let html = "";
+
+  const titre =
+    valeurTexte(
+      payload.titre,
+      "Localisation"
+    );
+
+  const reponse =
+    valeurTexte(
+      payload.reponse,
+      ""
+    );
+
+  html += `
+    <div class="response-title">
+      ${echapperHTML(titre)}
+    </div>
+  `;
+
+
+  if (reponse) {
+
+    html += `
+      <div class="response-text">
+        ${echapperHTML(reponse)}
+      </div>
+    `;
+  }
+
+
+  html += afficherIdentification(
+    payload.identification
+  );
+
+
+  if (
+    payload.localisation &&
+    payload.localisation.description
+  ) {
+
+    html += `
+      <div class="section-title">
+        Où se trouve la carte ?
+      </div>
+
+      <div class="response-text">
+        ${echapperHTML(
+          valeurTexte(
+            payload.localisation.description
+          )
+        )}
+      </div>
+    `;
+  }
+
+
+  html += afficherPagesManuel(
+    payload.localisation
+  );
+
+
+  html += afficherProcedurePrincipale(
+    payload.procedure
+  );
+
+
+  if (payload.avertissement) {
+
+    html += `
+      <div class="warning">
+        <strong>Important :</strong><br>
+        ${echapperHTML(
+          valeurTexte(payload.avertissement)
+        )}
+      </div>
+    `;
+  }
+
+
+  return html;
+}
+
+
+function afficherReponseTechnique(data) {
+
+  const payload =
+    obtenirDonneesReponse(data);
+
+  let html = "";
+
+  const titre =
+    valeurTexte(
+      payload.titre,
+      "Réponse technique"
+    );
+
+  const reponse =
+    valeurTexte(
+      payload.reponse,
+      payload.message || ""
+    );
+
+
+  html += `
+    <div class="response-title">
+      ${echapperHTML(titre)}
+    </div>
+  `;
+
+
+  if (reponse) {
+
+    html += `
+      <div class="response-text">
+        ${echapperHTML(reponse)}
+      </div>
+    `;
+  }
+
+
+  if (payload.identification) {
+
+    html += afficherIdentification(
+      payload.identification
+    );
+  }
+
+
+  if (payload.procedure) {
+
+    html += afficherProcedurePrincipale(
+      payload.procedure
+    );
+  }
+
+
+  return html;
+}
+
+
+function afficherReponseGenerique(data) {
+
+  const payload =
+    obtenirDonneesReponse(data);
+
+  let texte = "";
+
+
+  if (payload.reponse) {
+
+    texte =
+      valeurTexte(payload.reponse);
+  }
+  else if (payload.message) {
+
+    texte =
+      valeurTexte(payload.message);
+  }
+  else if (payload.answer) {
+
+    texte =
+      valeurTexte(payload.answer);
+  }
+  else {
+
+    texte =
+      valeurTexte(payload);
+  }
+
+
+  return `
+    <div class="response-text">
+      ${echapperHTML(texte)}
+    </div>
+  `;
+}
+
+
+function afficherReponse(data) {
+
+  const resultat =
+    document.getElementById("resultat");
+
+  const contenu =
+    document.getElementById("contenuReponse");
+
+
+  resultat.classList.remove("hidden");
+
+
+  const type =
+    obtenirTypeReponse(data);
+
+
+  if (type === "LOCALISATION") {
+
+    contenu.innerHTML =
+      afficherLocalisation(data);
 
     return;
   }
 
 
-  searchButton.disabled = true;
-  loading.style.display = "block";
+  if (
+    type === "REPONSE_TECHNIQUE" ||
+    type === "TECHNIQUE" ||
+    type === "PROCEDURE"
+  ) {
 
-  resultCard.classList.add("hidden");
-  result.innerHTML = "";
+    contenu.innerHTML =
+      afficherReponseTechnique(data);
+
+    return;
+  }
+
+
+  contenu.innerHTML =
+    afficherReponseGenerique(data);
+}
+
+
+async function rechercher() {
+
+  const modele =
+    document.getElementById("modele").value;
+
+  const question =
+    document.getElementById("question").value.trim();
+
+  const bouton =
+    document.getElementById("btnRecherche");
+
+
+  if (!question) {
+
+    afficherStatus(
+      "Veuillez saisir une question technique.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  bouton.disabled = true;
+
+  afficherStatus(
+    "Recherche dans le Service Manual...",
+    "info"
+  );
+
+
+  document
+    .getElementById("resultat")
+    .classList.add("hidden");
 
 
   try {
@@ -563,851 +1243,106 @@ async function poserQuestion() {
           },
 
           body: JSON.stringify({
-            model: model,
-            modele: model,
+            modele: modele,
             question: question
           })
         }
       );
 
 
-    const texteBrut =
+    const texte =
       await response.text();
 
 
     let data;
 
+
     try {
 
       data =
-        JSON.parse(texteBrut);
+        JSON.parse(texte);
 
     } catch (e) {
 
       throw new Error(
-        "Réponse serveur non JSON : " +
-        texteBrut
+        "La réponse du serveur n'est pas un JSON valide."
       );
     }
 
 
     if (!response.ok) {
 
-      const message =
+      throw new Error(
         valeurTexte(
-          chercherPremier(
-            data,
-            [
-              "error",
-              "erreur",
-              "message",
-              "detail"
-            ]
-          )
-        ) ||
-        "Erreur serveur HTTP " +
-        response.status;
-
-      throw new Error(message);
+          data.message ||
+          data.error ||
+          texte,
+          "Erreur du serveur."
+        )
+      );
     }
 
 
-    console.log(
-      "Réponse complète answer-manual :",
-      data
-    );
+    if (
+      data.ok === false
+    ) {
+
+      throw new Error(
+        valeurTexte(
+          data.message ||
+          data.error,
+          "La recherche a échoué."
+        )
+      );
+    }
 
 
     afficherReponse(data);
 
+    masquerStatus();
 
   } catch (error) {
 
     console.error(error);
 
-    resultCard.classList.remove("hidden");
-
-    result.innerHTML = `
-      <div class="error">
-        <strong>Erreur :</strong><br>
-        ${afficherTexte(error.message)}
-      </div>
-    `;
-
+    afficherStatus(
+      error.message ||
+      "Une erreur est survenue pendant la recherche.",
+      "error"
+    );
 
   } finally {
 
-    searchButton.disabled = false;
-    loading.style.display = "none";
-
+    bouton.disabled = false;
   }
-}
-
-
-function afficherReponse(data) {
-
-  const resultCard =
-    document.getElementById("resultCard");
-
-  const result =
-    document.getElementById("result");
-
-
-  resultCard.classList.remove("hidden");
-
-
-  if (
-    !data ||
-    typeof data !== "object"
-  ) {
-
-    result.innerHTML = `
-      <div class="error">
-        Réponse du serveur invalide.
-      </div>
-    `;
-
-    return;
-  }
-
-
-  const model =
-    chercherPremier(
-      data,
-      [
-        "model",
-        "modele",
-        "modèle"
-      ]
-    );
-
-
-  const type =
-    obtenirTypeReponse(data);
-
-
-  let html = `
-
-    <div class="result-header">
-
-      <h2>
-        Résultats du Service Manual
-      </h2>
-
-      ${
-        model
-          ? `
-            <div class="meta">
-              Modèle :
-              <strong>
-                ${afficherTexte(model)}
-              </strong>
-            </div>
-          `
-          : ""
-      }
-
-      ${
-        type
-          ? `
-            <div class="meta">
-              Type de réponse :
-              <strong>
-                ${afficherTexte(type)}
-              </strong>
-            </div>
-          `
-          : ""
-      }
-
-    </div>
-
-  `;
-
-
-  if (type === "PROCEDURE") {
-
-    html +=
-      afficherProcedure(data);
-
-  } else if (
-    type === "REPONSE_TECHNIQUE"
-  ) {
-
-    html +=
-      afficherReponseTechnique(data);
-
-  } else if (
-    type === "LOCALISATION"
-  ) {
-
-    html +=
-      afficherLocalisation(data);
-
-  } else {
-
-    html +=
-      afficherReponseGenerique(data);
-
-  }
-
-
-  html += `
-
-    <details style="margin-top:20px;">
-
-      <summary>
-        Données techniques reçues
-      </summary>
-
-      <pre>${echapperHTML(
-        JSON.stringify(data, null, 2)
-      )}</pre>
-
-    </details>
-
-  `;
-
-
-  result.innerHTML = html;
-}
-
-
-function afficherLocalisation(data) {
-
-  const localisation =
-    chercherPremier(
-      data,
-      [
-        "localisation",
-        "location",
-        "position",
-        "emplacement"
-      ]
-    );
-
-
-  const identification =
-    chercherPremier(
-      data,
-      [
-        "identification",
-        "piece",
-        "part",
-        "component",
-        "composant",
-        "board",
-        "carte"
-      ]
-    );
-
-
-  return `
-
-    <div class="answer-box">
-
-      <div class="answer-title">
-        Localisation
-      </div>
-
-      <div>
-        ${afficherTexte(
-          localisation
-        )}
-      </div>
-
-    </div>
-
-    ${
-      identification
-        ? `
-          <div class="success">
-            <strong>Élément identifié :</strong><br>
-            ${afficherTexte(identification)}
-          </div>
-        `
-        : ""
-    }
-
-  `;
-}
-
-
-function afficherReponseTechnique(data) {
-
-  const objet =
-    data.reponse ||
-    data.réponse ||
-    data.answer ||
-    data;
-
-
-  if (
-    typeof objet === "string" ||
-    typeof objet === "number"
-  ) {
-
-    return `
-
-      <div class="answer-box">
-
-        <div class="answer-title">
-          Réponse technique
-        </div>
-
-        <div>
-          ${afficherTexte(objet)}
-        </div>
-
-      </div>
-
-    `;
-  }
-
-
-  const titre =
-    chercherPremier(
-      objet,
-      [
-        "titre",
-        "title",
-        "nom",
-        "name"
-      ]
-    );
-
-
-  const composant =
-    chercherPremier(
-      objet,
-      [
-        "composant",
-        "component",
-        "piece",
-        "part",
-        "carte",
-        "board"
-      ]
-    );
-
-
-  const emplacement =
-    chercherPremier(
-      objet,
-      [
-        "localisation",
-        "location",
-        "emplacement",
-        "position"
-      ]
-    );
-
-
-  const instructions =
-    chercherPremier(
-      objet,
-      [
-        "instructions",
-        "instruction",
-        "procedure",
-        "procédure",
-        "etapes",
-        "étapes",
-        "steps"
-      ]
-    );
-
-
-  const texte =
-    chercherPremier(
-      objet,
-      [
-        "texte",
-        "text",
-        "message",
-        "description",
-        "content",
-        "contenu",
-        "answer",
-        "reponse",
-        "réponse"
-      ]
-    );
-
-
-  let html = "";
-
-
-  if (
-    titre ||
-    composant ||
-    emplacement ||
-    texte
-  ) {
-
-    html += `
-
-      <div class="answer-box">
-
-        <div class="answer-title">
-          ${
-            afficherTexte(
-              titre || "Réponse technique"
-            )
-          }
-        </div>
-
-        ${
-          composant
-            ? `
-              <div>
-                <strong>Composant :</strong>
-                ${afficherTexte(composant)}
-              </div>
-            `
-            : ""
-        }
-
-        ${
-          emplacement
-            ? `
-              <div>
-                <strong>Emplacement :</strong>
-                ${afficherTexte(emplacement)}
-              </div>
-            `
-            : ""
-        }
-
-        ${
-          texte
-            ? `
-              <div style="margin-top:12px;">
-                ${afficherTexte(texte)}
-              </div>
-            `
-            : ""
-        }
-
-      </div>
-
-    `;
-  }
-
-
-  if (
-    Array.isArray(instructions)
-  ) {
-
-    html += `
-      <div class="technical-section">
-
-        <h3>
-          Procédure
-        </h3>
-    `;
-
-
-    instructions.forEach(
-      (etape, index) => {
-
-        const texteEtape =
-          typeof etape === "object"
-            ? chercherPremier(
-                etape,
-                [
-                  "description",
-                  "texte",
-                  "text",
-                  "instruction",
-                  "contenu"
-                ]
-              )
-            : etape;
-
-
-        html += `
-
-          <div class="procedure-step">
-
-            <strong>
-              Étape ${index + 1}
-            </strong>
-
-            ${afficherTexte(
-              texteEtape
-            )}
-
-          </div>
-
-        `;
-      }
-    );
-
-
-    html += `
-      </div>
-    `;
-  }
-
-
-  if (!html) {
-
-    html = `
-
-      <div class="answer-box">
-
-        <div class="answer-title">
-          Réponse technique
-        </div>
-
-        <pre>${echapperHTML(
-          JSON.stringify(objet, null, 2)
-        )}</pre>
-
-      </div>
-
-    `;
-  }
-
-
-  return html;
-}
-
-
-function afficherProcedure(data) {
-
-  const procedure =
-    data.procedure ||
-    data.reponse?.procedure ||
-    data.réponse?.procedure;
-
-
-  if (
-    !procedure ||
-    typeof procedure !== "object"
-  ) {
-
-    return afficherReponseTechnique(data);
-  }
-
-
-  const titre =
-    chercherPremier(
-      procedure,
-      [
-        "titre",
-        "title",
-        "nom",
-        "name"
-      ]
-    ) ||
-    "Procédure";
-
-
-  const etapes =
-    procedure.etapes ||
-    procedure.étapes ||
-    procedure.steps;
-
-
-  let html = `
-
-    <div class="answer-box">
-
-      <div class="answer-title">
-        ${afficherTexte(titre)}
-      </div>
-
-      ${
-        data.composant
-          ? `
-            <div>
-              <strong>Composant :</strong>
-              ${afficherTexte(data.composant)}
-            </div>
-          `
-          : ""
-      }
-
-    </div>
-
-  `;
-
-
-  if (
-    Array.isArray(etapes) &&
-    etapes.length
-  ) {
-
-    etapes.forEach(
-      (etape, index) => {
-
-        const description =
-          chercherPremier(
-            etape,
-            [
-              "description",
-              "texte",
-              "text",
-              "instruction",
-              "contenu"
-            ]
-          ) ||
-          etape;
-
-
-        const page =
-          chercherPremier(
-            etape,
-            [
-              "page_manuel",
-              "page",
-              "page_pdf"
-            ]
-          );
-
-
-        html += `
-
-          <div class="procedure-step">
-
-            <strong>
-              Étape ${index + 1}
-            </strong>
-
-            ${
-              page !== null
-                ? `
-                  <div>
-                    Page :
-                    ${afficherTexte(page)}
-                  </div>
-                `
-                : ""
-            }
-
-            <div style="margin-top:8px;">
-              ${afficherTexte(description)}
-            </div>
-
-          </div>
-
-        `;
-      }
-    );
-
-  } else {
-
-    html += afficherReponseTechnique(data);
-  }
-
-
-  const warning =
-    chercherPremier(
-      procedure,
-      [
-        "avertissement",
-        "attention",
-        "warning",
-        "precaution",
-        "précaution"
-      ]
-    );
-
-
-  if (warning) {
-
-    html += `
-
-      <div class="warning">
-
-        <strong>Attention</strong><br>
-
-        ${afficherTexte(warning)}
-
-      </div>
-
-    `;
-  }
-
-
-  return html;
-}
-
-
-function afficherReponseGenerique(data) {
-
-  const texte =
-    chercherPremier(
-      data,
-      [
-        "reponse",
-        "réponse",
-        "answer",
-        "message",
-        "texte",
-        "text",
-        "content",
-        "contenu"
-      ]
-    );
-
-
-  const resultats =
-    chercherPremier(
-      data,
-      [
-        "results",
-        "resultats",
-        "résultats",
-        "matches",
-        "documents",
-        "passages",
-        "sources"
-      ]
-    );
-
-
-  let html = "";
-
-
-  if (texte) {
-
-    html += `
-
-      <div class="answer-box">
-
-        <div class="answer-title">
-          Réponse
-        </div>
-
-        <div>
-          ${afficherTexte(texte)}
-        </div>
-
-      </div>
-
-    `;
-  }
-
-
-  if (
-    Array.isArray(resultats) &&
-    resultats.length
-  ) {
-
-    html += `
-
-      <div class="technical-section">
-
-        <h3>
-          Passages du Service Manual
-        </h3>
-
-    `;
-
-
-    resultats.forEach(
-      (item, index) => {
-
-        const contenu =
-          typeof item === "object"
-            ? chercherPremier(
-                item,
-                [
-                  "text",
-                  "texte",
-                  "content",
-                  "contenu",
-                  "passage",
-                  "description"
-                ]
-              ) || item
-            : item;
-
-
-        html += `
-
-          <div class="result-item">
-
-            <div class="score">
-              Résultat ${index + 1}
-            </div>
-
-            <div>
-              ${afficherTexte(contenu)}
-            </div>
-
-          </div>
-
-        `;
-      }
-    );
-
-
-    html += `
-      </div>
-    `;
-  }
-
-
-  if (!html) {
-
-    html = `
-
-      <div class="answer-box">
-
-        <div class="answer-title">
-          Résultat
-        </div>
-
-        <pre>${echapperHTML(
-          JSON.stringify(data, null, 2)
-        )}</pre>
-
-      </div>
-
-    `;
-  }
-
-
-  return html;
 }
 
 
 async function envoyerPV() {
 
   const fichier =
-    document.getElementById("pvFile").files[0];
+    document.getElementById("fichierPV").files[0];
 
-  const pvResult =
-    document.getElementById("pvResult");
+  const resultat =
+    document.getElementById("uploadResult");
 
-  const uploadButton =
-    document.getElementById("uploadButton");
+  const bouton =
+    document.getElementById("btnUpload");
 
 
   if (!fichier) {
 
-    pvResult.innerHTML = `
-      <div class="error">
-        Sélectionne d'abord un fichier.
-      </div>
-    `;
+    resultat.textContent =
+      "Veuillez sélectionner un fichier.";
 
     return;
   }
 
 
-  uploadButton.disabled = true;
+  bouton.disabled = true;
 
-
-  pvResult.innerHTML = `
-    <div class="loading" style="display:block;">
-      Envoi du PV en cours...
-    </div>
-  `;
+  resultat.textContent =
+    "Envoi du PV en cours...";
 
 
   try {
@@ -1435,15 +1370,19 @@ async function envoyerPV() {
       await response.text();
 
 
-    let data = null;
+    let data;
 
 
     try {
-      data = JSON.parse(texte);
+
+      data =
+        JSON.parse(texte);
+
     } catch (e) {
-      data = {
-        message: texte
-      };
+
+      throw new Error(
+        "La réponse du serveur n'est pas un JSON valide."
+      );
     }
 
 
@@ -1451,69 +1390,53 @@ async function envoyerPV() {
 
       throw new Error(
         valeurTexte(
-          data?.error ||
-          data?.erreur ||
-          data?.message
-        ) ||
-        "Erreur pendant l'envoi du PV."
+          data.message ||
+          data.error ||
+          texte,
+          "Erreur pendant l'envoi du PV."
+        )
       );
     }
 
 
-    pvResult.innerHTML = `
-
-      <div class="success">
-
-        PV envoyé avec succès.
-
-      </div>
-
-    `;
-
-
-    document.getElementById(
-      "pvFile"
-    ).value = "";
-
+    resultat.textContent =
+      valeurTexte(
+        data.message ||
+        data.reponse ||
+        "PV envoyé avec succès."
+      );
 
   } catch (error) {
 
     console.error(error);
 
-    pvResult.innerHTML = `
-
-      <div class="error">
-
-        <strong>Erreur :</strong><br>
-
-        ${afficherTexte(
-          error.message
-        )}
-
-      </div>
-
-    `;
+    resultat.textContent =
+      error.message ||
+      "Erreur pendant l'envoi du PV.";
 
   } finally {
 
-    uploadButton.disabled = false;
+    bouton.disabled = false;
   }
 }
 
 
 document
-  .getElementById("searchButton")
+  .getElementById("question")
   .addEventListener(
-    "click",
-    poserQuestion
-  );
+    "keydown",
+    function(event) {
 
+      if (
+        event.key === "Enter" &&
+        !event.shiftKey
+      ) {
 
-document
-  .getElementById("uploadButton")
-  .addEventListener(
-    "click",
-    envoyerPV
+        event.preventDefault();
+
+        rechercher();
+      }
+    }
   );
 
 </script>
