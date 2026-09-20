@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>TechCanon</title>
 
   <style>
@@ -15,8 +14,8 @@
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: #f4f5f7;
-      color: #202124;
+      background: #f4f6f8;
+      color: #222;
     }
 
     header {
@@ -31,336 +30,196 @@
     }
 
     header p {
-      margin: 5px 0 0;
-      color: #cbd5e1;
+      margin: 6px 0 0;
+      color: #d1d5db;
       font-size: 14px;
     }
 
     main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 18px;
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 15px;
     }
 
-    .search-box,
-    .pv-box,
-    .result-list,
-    .procedure {
+    .card {
       background: white;
-      border-radius: 14px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      margin-bottom: 18px;
-    }
-
-    .pv-box h2 {
-      margin-top: 0;
-      font-size: 20px;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
     }
 
     label {
       display: block;
       font-weight: bold;
-      margin-bottom: 7px;
-    }
-
-    select,
-    textarea,
-    input[type="file"],
-    button {
-      width: 100%;
-      font-size: 16px;
-      border-radius: 10px;
+      margin-bottom: 8px;
     }
 
     select,
     textarea,
     input[type="file"] {
-      border: 1px solid #cbd5e1;
-      padding: 12px;
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 15px;
       background: white;
     }
 
     textarea {
-      min-height: 100px;
+      min-height: 110px;
       resize: vertical;
-      margin-bottom: 12px;
     }
 
     button {
       border: 0;
-      padding: 13px;
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-size: 15px;
       font-weight: bold;
       cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-
-    #searchButton {
-      background: #111827;
-      color: white;
-    }
-
-    #uploadButton {
       background: #2563eb;
       color: white;
       margin-top: 12px;
     }
 
-    #status,
-    #pvStatus {
-      margin-top: 12px;
-      font-size: 14px;
+    button:hover {
+      background: #1d4ed8;
     }
 
-    .error {
-      background: #fee2e2;
-      color: #991b1b;
+    button.secondary {
+      background: #374151;
+    }
+
+    button.secondary:hover {
+      background: #1f2937;
+    }
+
+    .loading {
+      display: none;
+      margin-top: 15px;
       padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .success {
-      background: #dcfce7;
-      color: #166534;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .info {
       background: #eff6ff;
-      color: #1e40af;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .technical-answer {
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-      margin-bottom: 18px;
-    }
-
-    .technical-header {
-      padding: 18px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .technical-header h2 {
-      margin: 0 0 10px;
-      font-size: 21px;
-    }
-
-    .technical-header p {
-      margin: 5px 0;
-      color: #475569;
-    }
-
-    .technical-body {
-      padding: 18px;
-    }
-
-    .answer-text {
-      white-space: pre-wrap;
-      line-height: 1.55;
-      margin-bottom: 18px;
-    }
-
-    .identification,
-    .localisation,
-    .procedure-reference {
-      background: #f8fafc;
-      border-radius: 10px;
-      padding: 14px;
-      margin-top: 14px;
-    }
-
-    .identification h3,
-    .localisation h3,
-    .procedure-reference h3 {
-      margin-top: 0;
-      font-size: 17px;
-    }
-
-    .page-card {
-      background: white;
-      border: 1px solid #dbe3ec;
-      border-radius: 10px;
-      padding: 12px;
-      margin-top: 10px;
-    }
-
-    .page-card strong {
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .page-image {
-      width: 100%;
-      height: auto;
-      display: block;
-      margin-top: 12px;
-      border: 1px solid #d1d5db;
       border-radius: 8px;
-      background: #f8fafc;
-    }
-
-    .procedure {
-      overflow: hidden;
-      padding: 0;
-    }
-
-    .procedure-header {
-      padding: 18px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .procedure-header h2 {
-      margin: 0 0 8px;
-      font-size: 21px;
-    }
-
-    .procedure-header p {
-      margin: 4px 0;
-      color: #475569;
-    }
-
-    .step-counter {
-      padding: 14px 18px;
-      background: #f8fafc;
+      color: #1d4ed8;
       font-weight: bold;
     }
 
-    .step {
-      padding: 18px;
+    .error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      padding: 15px;
+      border-radius: 8px;
     }
 
-    .step-type {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 20px;
-      background: #e2e8f0;
-      font-size: 12px;
+    .result-header {
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .result-header h2 {
+      margin: 0 0 12px 0;
+      font-size: 21px;
+    }
+
+    .meta {
+      margin: 6px 0;
+    }
+
+    .answer-box {
+      background: #f8fafc;
+      border-left: 4px solid #2563eb;
+      padding: 18px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .answer-title {
+      font-size: 18px;
       font-weight: bold;
       margin-bottom: 10px;
     }
 
-    .step h3 {
-      margin: 0 0 8px;
-      font-size: 20px;
+    .technical-section {
+      margin-top: 18px;
     }
 
-    .page-info {
-      color: #475569;
-      font-size: 14px;
-      margin-bottom: 15px;
+    .technical-section h3 {
+      margin-bottom: 8px;
     }
 
-    .step-description {
-      line-height: 1.5;
-      margin-bottom: 15px;
-      white-space: pre-wrap;
+    .procedure-step {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
     }
 
-    .manual-image {
-      width: 100%;
-      height: auto;
+    .procedure-step strong {
       display: block;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      background: #f8fafc;
-    }
-
-    .no-image {
-      padding: 25px;
-      background: #f1f5f9;
-      border-radius: 10px;
-      text-align: center;
-      color: #64748b;
-    }
-
-    .source {
-      margin-top: 15px;
-      padding: 12px;
-      background: #f8fafc;
-      border-left: 4px solid #64748b;
-      font-size: 13px;
-      white-space: pre-wrap;
-      line-height: 1.4;
+      margin-bottom: 6px;
     }
 
     .warning {
-      margin: 18px;
-      padding: 14px;
       background: #fff7ed;
-      border: 1px solid #fed7aa;
-      border-radius: 10px;
-      color: #9a3412;
-      font-size: 14px;
+      border-left: 4px solid #f97316;
+      padding: 14px;
+      margin: 15px 0;
+      border-radius: 6px;
     }
 
-    .navigation {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      padding: 18px;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .navigation button {
-      background: #111827;
-      color: white;
-    }
-
-    .navigation button:disabled {
-      opacity: 0.35;
-      cursor: default;
+    .success {
+      background: #ecfdf5;
+      border-left: 4px solid #10b981;
+      padding: 14px;
+      margin: 15px 0;
+      border-radius: 6px;
     }
 
     .result-item {
-      padding: 12px 0;
-      border-bottom: 1px solid #e5e7eb;
-      white-space: pre-wrap;
-      line-height: 1.5;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
+      background: white;
     }
 
-    .result-item:last-child {
-      border-bottom: 0;
+    .result-item .score {
+      color: #6b7280;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #111827;
+      color: #e5e7eb;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+
+    .hidden {
+      display: none;
     }
 
     @media (max-width: 600px) {
-      main {
-        padding: 10px;
-      }
-
-      header {
-        padding: 15px;
-      }
-
       header h1 {
         font-size: 21px;
       }
 
-      .technical-header h2,
-      .procedure-header h2 {
-        font-size: 18px;
+      main {
+        margin-top: 10px;
       }
 
-      .step h3 {
-        font-size: 18px;
-      }
-
-      .navigation {
-        position: sticky;
-        bottom: 0;
-        background: white;
+      .card {
+        padding: 15px;
       }
     }
   </style>
@@ -371,17 +230,17 @@
 
 <header>
   <h1>TechCanon</h1>
-  <p>Assistant technique Canon</p>
+  <p>Assistant technique Service Manual Canon</p>
 </header>
 
 <main>
 
-  <section class="search-box">
+  <div class="card">
 
 ```
-<label for="modele">Modèle</label>
+<label for="model">Modèle</label>
 
-<select id="modele">
+<select id="model">
   <option value="C1538P">C1538P</option>
   <option value="C1533P">C1533P</option>
   <option value="LBP1538C">LBP1538C</option>
@@ -393,1438 +252,850 @@
 
 <textarea
   id="question"
-  placeholder="Exemple : Comment démonter la carte de contrôleur CC UN2 ?"
+  placeholder="Exemple : où se trouve la carte contrôleur principale ?"
 ></textarea>
 
-<button id="searchButton" type="button">
-  Rechercher
+<button onclick="poserQuestion()">
+  Rechercher dans le Service Manual
 </button>
 
-<div id="status"></div>
+<div id="loading" class="loading">
+  Recherche dans le Service Manual...
+</div>
 ```
 
-  </section>
+  </div>
 
-  <section class="pv-box">
+  <div class="card hidden" id="resultCard">
 
 ```
-<h2>Ajouter un PV d'intervention</h2>
+<div id="result"></div>
+```
 
-<p>
-  Sélectionne un PV PDF depuis ton téléphone.
-  TechCanon pourra ensuite l'enregistrer pour l'utiliser comme historique.
-</p>
+  </div>
 
-<label for="pvFile">
-  Fichier PDF
-</label>
+  <div class="card">
+
+```
+<h2>Ajouter un PV</h2>
 
 <input
-  id="pvFile"
   type="file"
-  accept="application/pdf,.pdf"
+  id="pvFile"
+  accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg,.png"
 >
 
-<button id="uploadButton" type="button">
+<button class="secondary" onclick="envoyerPV()">
   Envoyer le PV
 </button>
 
-<div id="pvStatus"></div>
+<div id="pvResult"></div>
 ```
 
-  </section>
-
-  <div id="result"></div>
+  </div>
 
 </main>
 
 <script>
 
-const API_URL =
+const ANSWER_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/answer-manual";
 
-const UPLOAD_PV_URL =
+const UPLOAD_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/upload-pv";
 
 
-let etapes = [];
-let etapeActuelle = 0;
-let procedureActuelle = null;
+/* =========================================================
+   UTILITAIRES
+   ========================================================= */
 
+function valeurTexte(valeur) {
 
-const modeleElement =
-  document.getElementById("modele");
-
-const questionElement =
-  document.getElementById("question");
-
-const searchButton =
-  document.getElementById("searchButton");
-
-const statusElement =
-  document.getElementById("status");
-
-const resultElement =
-  document.getElementById("result");
-
-const pvFileElement =
-  document.getElementById("pvFile");
-
-const uploadButton =
-  document.getElementById("uploadButton");
-
-const pvStatusElement =
-  document.getElementById("pvStatus");
-
-
-searchButton.addEventListener(
-  "click",
-  rechercher
-);
-
-uploadButton.addEventListener(
-  "click",
-  envoyerPV
-);
-
-
-async function rechercher() {
-
-  const modele =
-    modeleElement.value;
-
-  const question =
-    questionElement.value.trim();
-
-  if (!question) {
-
-    statusElement.innerHTML =
-      '<div class="error">Veuillez saisir une question.</div>';
-
-    return;
+  if (valeur === null || valeur === undefined) {
+    return "";
   }
-
-  searchButton.disabled = true;
-
-  statusElement.innerHTML =
-    '<div class="info">Recherche dans le Service Manual...</div>';
-
-  resultElement.innerHTML = "";
-
-  try {
-
-    const response =
-      await fetch(
-        API_URL,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            modele: modele,
-            question: question
-          })
-        }
-      );
-
-    if (!response.ok) {
-
-      throw new Error(
-        "Erreur serveur HTTP " +
-        response.status
-      );
-    }
-
-    const data =
-      await response.json();
-
-    console.log(
-      "Réponse TechCanon :",
-      data
-    );
-
-    if (!data.ok) {
-
-      throw new Error(
-        data.erreur ||
-        "Erreur inconnue."
-      );
-    }
-
-    afficherReponse(
-      data.reponse
-    );
-
-    statusElement.innerHTML =
-      '<div class="success">Recherche terminée.</div>';
-
-  } catch (error) {
-
-    console.error(error);
-
-    statusElement.innerHTML =
-      '<div class="error">' +
-      "Erreur : " +
-      escapeHtml(error.message) +
-      "</div>";
-
-  } finally {
-
-    searchButton.disabled = false;
-  }
-}
-
-
-async function envoyerPV() {
-
-  const fichier =
-    pvFileElement.files[0];
-
-  if (!fichier) {
-
-    pvStatusElement.innerHTML =
-      '<div class="error">' +
-      "Sélectionne d'abord un PDF." +
-      "</div>";
-
-    return;
-  }
-
 
   if (
-    fichier.type !== "application/pdf" &&
-    !fichier.name.toLowerCase().endsWith(".pdf")
-  ) {
-
-    pvStatusElement.innerHTML =
-      '<div class="error">' +
-      "Le fichier doit être un PDF." +
-      "</div>";
-
-    return;
-  }
-
-
-  uploadButton.disabled = true;
-
-  pvStatusElement.innerHTML =
-    '<div class="info">Envoi du PV en cours...</div>';
-
-
-  try {
-
-    const formulaire =
-      new FormData();
-
-    formulaire.append(
-      "file",
-      fichier
-    );
-
-
-    const response =
-      await fetch(
-        UPLOAD_PV_URL,
-        {
-          method: "POST",
-          body: formulaire
-        }
-      );
-
-
-    if (!response.ok) {
-
-      const texte =
-        await response.text();
-
-      throw new Error(
-        "Upload impossible : " +
-        response.status +
-        " " +
-        texte
-      );
-    }
-
-
-    const data =
-      await response.json();
-
-
-    console.log(
-      "Réponse upload PV :",
-      data
-    );
-
-
-    pvStatusElement.innerHTML =
-      '<div class="success">' +
-      "PV envoyé avec succès.<br><br>" +
-      escapeHtml(
-        data.fichier ||
-        fichier.name
-      ) +
-      "</div>";
-
-
-    pvFileElement.value = "";
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    pvStatusElement.innerHTML =
-      '<div class="error">' +
-      "Erreur pendant l'envoi : " +
-      escapeHtml(error.message) +
-      "</div>";
-
-  } finally {
-
-    uploadButton.disabled = false;
-  }
-}
-
-
-function afficherReponse(
-  reponse
-) {
-
-  if (!reponse) {
-
-    resultElement.innerHTML =
-      '<div class="error">' +
-      "TechCanon n'a retourné aucune réponse." +
-      "</div>";
-
-    return;
-  }
-
-
-  /*
-   * Réponse technique structurée
-   */
-
-  if (
-    reponse.type === "REPONSE_TECHNIQUE"
-  ) {
-
-    afficherReponseTechnique(
-      reponse
-    );
-
-    return;
-  }
-
-
-  /*
-   * Procédure structurée
-   */
-
-  if (
-    reponse.type === "PROCEDURE" &&
-    reponse.procedure
-  ) {
-
-    afficherProcedure(
-      reponse
-    );
-
-    return;
-  }
-
-
-  /*
-   * Si le backend renvoie directement
-   * une intention de procédure sous forme
-   * d'objet, on l'affiche également comme
-   * réponse technique.
-   */
-
-  if (
-    reponse.intention &&
-    typeof reponse.intention === "object"
-  ) {
-
-    afficherReponseTechnique(
-      reponse
-    );
-
-    return;
-  }
-
-
-  /*
-   * Fallback recherche
-   */
-
-  afficherRecherche(
-    reponse
-  );
-}
-
-
-function afficherReponseTechnique(
-  reponse
-) {
-
-  const titre =
-    valeurTexte(
-      reponse.titre,
-      "Réponse technique"
-    );
-
-
-  const intention =
-    valeurTexte(
-      reponse.intention,
-      ""
-    );
-
-
-  const texte =
-    valeurTexte(
-      reponse.reponse ||
-      reponse.texte ||
-      reponse.message,
-      "J'ai trouvé des passages pertinents dans le Service Manual."
-    );
-
-
-  let html = `
-
-    <section class="technical-answer">
-
-      <div class="technical-header">
-
-        <h2>
-          ${escapeHtml(titre)}
-        </h2>
-
-        <p>
-          Modèle :
-          <strong>
-            ${escapeHtml(
-              valeurTexte(
-                reponse.modele,
-                modeleElement.value
-              )
-            )}
-          </strong>
-        </p>
-
-        ${
-          intention
-            ? `
-              <p>
-                Type de réponse :
-                <strong>
-                  ${escapeHtml(intention)}
-                </strong>
-              </p>
-            `
-            : ""
-        }
-
-      </div>
-
-      <div class="technical-body">
-
-        <div class="answer-text">
-          ${escapeHtml(texte)}
-        </div>
-  `;
-
-
-  /*
-   * Identification
-   */
-
-  if (
-    reponse.identification
-  ) {
-
-    const identification =
-      reponse.identification;
-
-
-    html += `
-
-      <div class="identification">
-
-        <h3>
-          Identification
-        </h3>
-
-        ${
-          identification.unite
-            ? `
-              <p>
-                <strong>Unité :</strong>
-                ${escapeHtml(
-                  valeurTexte(
-                    identification.unite
-                  )
-                )}
-              </p>
-            `
-            : ""
-        }
-
-        ${
-          identification.composant
-            ? `
-              <p>
-                <strong>Composant :</strong>
-                ${escapeHtml(
-                  valeurTexte(
-                    identification.composant
-                  )
-                )}
-              </p>
-            `
-            : ""
-        }
-
-        ${
-          identification.description
-            ? `
-              <p>
-                ${escapeHtml(
-                  valeurTexte(
-                    identification.description
-                  )
-                )}
-              </p>
-            `
-            : ""
-        }
-
-        ${
-          identification.page_manuel !== undefined
-            ? `
-              <p>
-                <strong>
-                  Page manuel :
-                </strong>
-                ${escapeHtml(
-                  valeurTexte(
-                    identification.page_manuel
-                  )
-                )}
-              </p>
-            `
-            : ""
-        }
-
-        ${
-          identification.page_pdf !== undefined
-            ? `
-              <p>
-                <strong>
-                  Page PDF :
-                </strong>
-                ${escapeHtml(
-                  valeurTexte(
-                    identification.page_pdf
-                  )
-                )}
-              </p>
-            `
-            : ""
-        }
-
-      </div>
-    `;
-  }
-
-
-  /*
-   * Localisation
-   */
-
-  if (
-    reponse.localisation
-  ) {
-
-    const localisation =
-      reponse.localisation;
-
-
-    const pages =
-      Array.isArray(
-        localisation.pages
-      )
-        ? localisation.pages
-        : [];
-
-
-    if (pages.length) {
-
-      html += `
-
-        <div class="localisation">
-
-          <h3>
-            Localisation dans le Service Manual
-          </h3>
-      `;
-
-
-      pages.forEach(
-        (page) => {
-
-          html += `
-
-            <div class="page-card">
-
-              <strong>
-                ${escapeHtml(
-                  valeurTexte(
-                    page.titre,
-                    "Page du manuel"
-                  )
-                )}
-              </strong>
-
-              <div>
-                Page manuel :
-                ${escapeHtml(
-                  valeurTexte(
-                    page.page_manuel,
-                    "?"
-                  )
-                )}
-
-                &nbsp;|&nbsp;
-
-                Page PDF :
-                ${escapeHtml(
-                  valeurTexte(
-                    page.page_pdf,
-                    "?"
-                  )
-                )}
-              </div>
-          `;
-
-
-          if (
-            page.image
-          ) {
-
-            html += `
-
-              <img
-                class="page-image"
-                src="${escapeAttribute(
-                  page.image
-                )}"
-                alt="Illustration du Service Manual"
-                loading="lazy"
-              >
-
-            `;
-          }
-
-
-          html += `
-
-            </div>
-
-          `;
-        }
-      );
-
-
-      html += `
-
-        </div>
-
-      `;
-    }
-  }
-
-
-  /*
-   * Procédure de maintenance
-   */
-
-  if (
-    reponse.procedure
-  ) {
-
-    const procedure =
-      reponse.procedure;
-
-
-    html += `
-
-      <div class="procedure-reference">
-
-        <h3>
-          Procédure de maintenance
-        </h3>
-
-        ${
-          procedure.titre
-            ? `
-              <p>
-                <strong>
-                  ${escapeHtml(
-                    valeurTexte(
-                      procedure.titre
-                    )
-                  )}
-                </strong>
-              </p>
-            `
-            : ""
-        }
-
-        ${
-          procedure.page_manuel !== undefined
-            ? `
-              <p>
-                Page manuel :
-                <strong>
-                  ${escapeHtml(
-                    valeurTexte(
-                      procedure.page_manuel
-                    )
-                  )}
-                </strong>
-              </p>
-            `
-            : ""
-        }
-
-        ${
-          procedure.page_pdf !== undefined
-            ? `
-              <p>
-                Page PDF :
-                <strong>
-                  ${escapeHtml(
-                    valeurTexte(
-                      procedure.page_pdf
-                    )
-                  )}
-                </strong>
-              </p>
-            `
-            : ""
-        }
-
-      </div>
-
-    `;
-  }
-
-
-  /*
-   * Avertissement
-   */
-
-  if (
-    reponse.avertissement
-  ) {
-
-    html += `
-
-      <div class="warning">
-
-        ${escapeHtml(
-          valeurTexte(
-            reponse.avertissement
-          )
-        )}
-
-      </div>
-
-    `;
-  }
-
-
-  /*
-   * Si le backend a renvoyé une liste
-   * de résultats en plus de la réponse,
-   * on les affiche.
-   */
-
-  if (
-    Array.isArray(
-      reponse.resultats
-    ) &&
-    reponse.resultats.length
-  ) {
-
-    html += `
-
-      <div class="procedure-reference">
-
-        <h3>
-          Résultats du Service Manual
-        </h3>
-    `;
-
-
-    reponse.resultats.forEach(
-      (item) => {
-
-        html += `
-
-          <div class="page-card">
-
-            <strong>
-              Page ${escapeHtml(
-                valeurTexte(
-                  item.page_manuel ??
-                  item.page_pdf ??
-                  "?"
-                )
-              )}
-            </strong>
-
-            <div>
-              ${escapeHtml(
-                valeurTexte(
-                  item.extrait ||
-                  item.contenu ||
-                  item.texte ||
-                  ""
-                )
-              )}
-            </div>
-
-          </div>
-
-        `;
-      }
-    );
-
-
-    html += `
-
-      </div>
-
-    `;
-  }
-
-
-  html += `
-
-      </div>
-
-    </section>
-
-  `;
-
-
-  resultElement.innerHTML =
-    html;
-}
-
-
-function afficherProcedure(
-  reponse
-) {
-
-  procedureActuelle =
-    reponse.procedure;
-
-  etapes =
-    Array.isArray(
-      reponse.procedure.etapes
-    )
-      ? reponse.procedure.etapes
-      : [];
-
-  etapeActuelle = 0;
-
-
-  if (!etapes.length) {
-
-    resultElement.innerHTML =
-      '<div class="error">' +
-      "Aucune étape de procédure trouvée." +
-      "</div>";
-
-    return;
-  }
-
-
-  resultElement.innerHTML = `
-
-    <section class="procedure">
-
-      <div class="procedure-header">
-
-        <h2>
-          ${escapeHtml(
-            valeurTexte(
-              reponse.procedure.titre,
-              "Procédure"
-            )
-          )}
-        </h2>
-
-        <p>
-          Modèle :
-          <strong>
-            ${escapeHtml(
-              valeurTexte(
-                reponse.modele,
-                modeleElement.value
-              )
-            )}
-          </strong>
-        </p>
-
-        <p>
-          Composant :
-          <strong>
-            ${escapeHtml(
-              valeurTexte(
-                reponse.composant,
-                ""
-              )
-            )}
-          </strong>
-        </p>
-
-        <p>
-          Unité :
-          <strong>
-            ${escapeHtml(
-              valeurTexte(
-                reponse.unite,
-                ""
-              )
-            )}
-          </strong>
-        </p>
-
-      </div>
-
-      <div
-        id="stepCounter"
-        class="step-counter"
-      ></div>
-
-      <div
-        id="stepContainer"
-        class="step"
-      ></div>
-
-      <div class="warning">
-
-        ${escapeHtml(
-          valeurTexte(
-            reponse.procedure.avertissement,
-            "Vérifier les illustrations et les opérations dans le Service Manual avant toute intervention."
-          )
-        )}
-
-      </div>
-
-      <div class="navigation">
-
-        <button
-          id="previousButton"
-          type="button"
-          onclick="etapePrecedente()"
-        >
-          Précédent
-        </button>
-
-        <button
-          id="nextButton"
-          type="button"
-          onclick="etapeSuivante()"
-        >
-          Suivant
-        </button>
-
-      </div>
-
-    </section>
-  `;
-
-
-  afficherEtape();
-}
-
-
-function afficherEtape() {
-
-  if (!etapes.length) {
-    return;
-  }
-
-
-  const etape =
-    etapes[etapeActuelle];
-
-
-  const counter =
-    document.getElementById(
-      "stepCounter"
-    );
-
-  const container =
-    document.getElementById(
-      "stepContainer"
-    );
-
-  const previousButton =
-    document.getElementById(
-      "previousButton"
-    );
-
-  const nextButton =
-    document.getElementById(
-      "nextButton"
-    );
-
-
-  if (
-    !counter ||
-    !container ||
-    !previousButton ||
-    !nextButton
-  ) {
-    return;
-  }
-
-
-  counter.textContent =
-    "Étape " +
-    (etapeActuelle + 1) +
-    " / " +
-    etapes.length;
-
-
-  const type =
-    etape.type === "INTERVENTION"
-      ? "INTERVENTION"
-      : "PRÉPARATIF";
-
-
-  let imageHtml = "";
-
-
-  if (etape.image) {
-
-    imageHtml = `
-
-      <img
-        class="manual-image"
-        src="${escapeAttribute(
-          etape.image
-        )}"
-        alt="Illustration du Service Manual"
-        loading="eager"
-      >
-
-    `;
-
-  } else {
-
-    imageHtml = `
-
-      <div class="no-image">
-        Illustration non disponible pour cette étape.
-      </div>
-
-    `;
-  }
-
-
-  container.innerHTML = `
-
-    <div class="step-type">
-      ${type}
-    </div>
-
-    <h3>
-      ${escapeHtml(
-        valeurTexte(
-          etape.titre,
-          "Étape"
-        )
-      )}
-    </h3>
-
-    <div class="page-info">
-
-      Page manuel :
-      <strong>
-        ${escapeHtml(
-          valeurTexte(
-            etape.page_manuel,
-            "?"
-          )
-        )}
-      </strong>
-
-      &nbsp;|&nbsp;
-
-      Page PDF :
-      <strong>
-        ${escapeHtml(
-          valeurTexte(
-            etape.page_pdf,
-            "?"
-          )
-        )}
-      </strong>
-
-    </div>
-
-    <div class="step-description">
-
-      ${escapeHtml(
-        valeurTexte(
-          etape.description,
-          ""
-        )
-      )}
-
-    </div>
-
-    ${imageHtml}
-
-    <div class="source">
-
-      <strong>
-        Source Service Manual
-      </strong>
-
-      <br><br>
-
-      ${escapeHtml(
-        valeurTexte(
-          etape.source,
-          ""
-        )
-      )}
-
-    </div>
-  `;
-
-
-  previousButton.disabled =
-    etapeActuelle === 0;
-
-
-  nextButton.disabled =
-    etapeActuelle ===
-    etapes.length - 1;
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-}
-
-
-function etapePrecedente() {
-
-  if (
-    etapeActuelle <= 0
-  ) {
-    return;
-  }
-
-  etapeActuelle--;
-
-  afficherEtape();
-}
-
-
-function etapeSuivante() {
-
-  if (
-    etapeActuelle >=
-    etapes.length - 1
-  ) {
-    return;
-  }
-
-  etapeActuelle++;
-
-  afficherEtape();
-}
-
-
-function afficherRecherche(
-  reponse
-) {
-
-  const resultats =
-    Array.isArray(
-      reponse?.resultats
-    )
-      ? reponse.resultats
-      : [];
-
-
-  if (!resultats.length) {
-
-    resultElement.innerHTML = `
-
-      <div class="result-list">
-
-        <strong>
-          Aucun résultat trouvé.
-        </strong>
-
-        <p>
-          Les informations disponibles dans les documents ne permettent pas de répondre précisément à cette question.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  let html = `
-
-    <div class="result-list">
-
-      <h2>
-        Résultats du Service Manual
-      </h2>
-  `;
-
-
-  resultats.forEach(
-    (item) => {
-
-      html += `
-
-        <div class="result-item">
-
-          <strong>
-            Page ${escapeHtml(
-              valeurTexte(
-                item.page_manuel ??
-                item.page_pdf,
-                "?"
-              )
-            )}
-          </strong>
-
-          <br><br>
-
-          ${escapeHtml(
-            valeurTexte(
-              item.extrait ||
-              item.contenu ||
-              item.texte,
-              ""
-            )
-          )}
-
-        </div>
-
-      `;
-    }
-  );
-
-
-  html += `
-    </div>
-  `;
-
-
-  resultElement.innerHTML =
-    html;
-}
-
-
-/*
- * Convertit proprement n'importe quelle
- * valeur provenant du backend en texte.
- *
- * C'est notamment ce qui évite :
- *
- * [object Object]
- *
- * lorsque "intention" ou un autre champ
- * arrive sous forme d'objet JSON.
- */
-
-function valeurTexte(
-  valeur,
-  valeurParDefaut = ""
-) {
-
-  if (
-    valeur === null ||
-    valeur === undefined
-  ) {
-
-    return valeurParDefaut;
-  }
-
-
-  if (
-    typeof valeur === "string"
-  ) {
-
-    return valeur;
-  }
-
-
-  if (
+    typeof valeur === "string" ||
     typeof valeur === "number" ||
     typeof valeur === "boolean"
   ) {
-
     return String(valeur);
   }
 
-
-  if (
-    Array.isArray(valeur)
-  ) {
-
+  if (Array.isArray(valeur)) {
     return valeur
-      .map(
-        (element) =>
-          valeurTexte(
-            element,
-            ""
-          )
-      )
-      .filter(
-        (element) =>
-          element !== ""
-      )
-      .join(", ");
+      .map(item => valeurTexte(item))
+      .filter(Boolean)
+      .join("\n");
   }
 
+  if (typeof valeur === "object") {
 
-  if (
-    typeof valeur === "object"
-  ) {
+    const priorites = [
+      "texte",
+      "text",
+      "message",
+      "answer",
+      "reponse",
+      "contenu",
+      "content",
+      "description",
+      "procedure",
+      "instruction",
+      "intention",
+      "localisation",
+      "reference"
+    ];
 
-    /*
-     * Cas fréquents :
-     *
-     * { nom: "LOCALISATION" }
-     * { type: "LOCALISATION" }
-     * { intention: "LOCALISATION" }
-     * { action: "DEPOSE" }
-     */
+    for (const cle of priorites) {
+      if (
+        Object.prototype.hasOwnProperty.call(valeur, cle) &&
+        valeur[cle] !== null &&
+        valeur[cle] !== undefined
+      ) {
+        const texte = valeurTexte(valeur[cle]);
 
-    if (
-      typeof valeur.nom === "string"
-    ) {
-
-      return valeur.nom;
+        if (texte) {
+          return texte;
+        }
+      }
     }
-
-
-    if (
-      typeof valeur.type === "string"
-    ) {
-
-      return valeur.type;
-    }
-
-
-    if (
-      typeof valeur.intention === "string"
-    ) {
-
-      return valeur.intention;
-    }
-
-
-    if (
-      typeof valeur.action === "string"
-    ) {
-
-      return valeur.action;
-    }
-
-
-    /*
-     * Dernier recours :
-     * afficher proprement le JSON
-     * plutôt que [object Object].
-     */
 
     try {
-
-      return JSON.stringify(
-        valeur,
-        null,
-        2
-      );
-
-    } catch (error) {
-
-      return valeurParDefaut;
+      return JSON.stringify(valeur, null, 2);
+    } catch (e) {
+      return "";
     }
   }
-
 
   return String(valeur);
 }
 
 
-function escapeHtml(
-  value
-) {
+function echapperHTML(texte) {
 
-  return valeurTexte(
-    value,
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+  return String(texte)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 
-function escapeAttribute(
-  value
-) {
+function afficherTexte(texte) {
 
-  return escapeHtml(
-    value
-  );
+  if (!texte) {
+    return "";
+  }
+
+  return echapperHTML(texte)
+    .replace(/\r\n/g, "\n")
+    .replace(/\n/g, "<br>");
 }
 
-</script>
 
-</body>
-</html>
+function chercherPremier(objet, cles) {
+
+  if (!objet || typeof objet !== "object") {
+    return null;
+  }
+
+  for (const cle of cles) {
+
+    if (
+      Object.prototype.hasOwnProperty.call(objet, cle) &&
+      objet[cle] !== null &&
+      objet[cle] !== undefined &&
+      objet[cle] !== ""
+    ) {
+      return objet[cle];
+    }
+  }
+
+  return null;
+}
+
+
+/* =========================================================
+   QUESTION
+   ========================================================= */
+
+async function poserQuestion() {
+
+  const model = document.getElementById("model").value;
+  const question = document.getElementById("question").value.trim();
+
+  const resultCard = document.getElementById("resultCard");
+  const result = document.getElementById("result");
+  const loading = document.getElementById("loading");
+
+  if (!question) {
+
+    resultCard.classList.remove("hidden");
+
+    result.innerHTML = `
+      <div class="error">
+        Veuillez saisir une question technique.
+      </div>
+    `;
+
+    return;
+  }
+
+  loading.style.display = "block";
+  resultCard.classList.add("hidden");
+  result.innerHTML = "";
+
+  try {
+
+    const response = await fetch(ANSWER_URL, {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        model: model,
+        question: question
+      })
+
+    });
+
+
+    const texteBrut = await response.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(texteBrut);
+    } catch (e) {
+
+      throw new Error(
+        "Réponse serveur non JSON : " + texteBrut
+      );
+
+    }
+
+
+    if (!response.ok) {
+
+      const messageErreur =
+        valeurTexte(
+          chercherPremier(data, [
+            "error",
+            "message",
+            "detail"
+          ])
+        ) || "Erreur serveur";
+
+      throw new Error(messageErreur);
+    }
+
+
+    afficherReponse(data);
+
+  } catch (error) {
+
+    resultCard.classList.remove("hidden");
+
+    result.innerHTML = `
+      <div class="error">
+        <strong>Erreur :</strong><br>
+        ${afficherTexte(error.message)}
+      </div>
+    `;
+
+  } finally {
+
+    loading.style.display = "none";
+
+  }
+
+}
+
+
+/* =========================================================
+   AFFICHAGE REPONSE
+   ========================================================= */
+
+function afficherReponse(data) {
+
+  const resultCard = document.getElementById("resultCard");
+  const result = document.getElementById("result");
+
+  resultCard.classList.remove("hidden");
+
+
+  if (!data || typeof data !== "object") {
+
+    result.innerHTML = `
+      <div class="error">
+        Réponse du serveur invalide.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  console.log("Réponse complète answer-manual :", data);
+
+
+  const model =
+    chercherPremier(data, [
+      "model",
+      "modele",
+      "modèle"
+    ]);
+
+
+  const type =
+    chercherPremier(data, [
+      "type",
+      "type_reponse",
+      "response_type",
+      "intention"
+    ]);
+
+
+  const texte =
+    chercherPremier(data, [
+      "reponse",
+      "réponse",
+      "answer",
+      "message",
+      "texte",
+      "text",
+      "content"
+    ]);
+
+
+  let html = `
+
+    <div class="result-header">
+
+      <h2>
+        Résultats du Service Manual
+      </h2>
+
+      ${
+        model
+          ? `<div class="meta">
+              Modèle :
+              <strong>${afficherTexte(valeurTexte(model))}</strong>
+             </div>`
+          : ""
+      }
+
+      ${
+        type
+          ? `<div class="meta">
+              Type de réponse :
+              <strong>${afficherTexte(valeurTexte(type))}</strong>
+             </div>`
+          : ""
+      }
+
+    </div>
+
+  `;
+
+
+  /*
+   * -------------------------------------------------------
+   * REPONSE TECHNIQUE / PROCEDURE
+   * -------------------------------------------------------
+   */
+
+  const estTechnique =
+    data.type === "REPONSE_TECHNIQUE" ||
+    data.type === "PROCEDURE" ||
+    data.response_type === "REPONSE_TECHNIQUE" ||
+    data.response_type === "PROCEDURE" ||
+    typeof data.reponse === "object" ||
+    typeof data.réponse === "object";
+
+
+  if (estTechnique) {
+
+    html += afficherReponseTechnique(data);
+
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * LOCALISATION
+   * -------------------------------------------------------
+   */
+
+  const localisation =
+    chercherPremier(data, [
+      "localisation",
+      "location",
+      "position",
+      "emplacement"
+    ]);
+
+
+  if (localisation) {
+
+    html += `
+      <div class="answer-box">
+
+        <div class="answer-title">
+          Localisation
+        </div>
+
+        <div>
+          ${afficherTexte(valeurTexte(localisation))}
+        </div>
+
+      </div>
+    `;
+
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * IDENTIFICATION
+   * -------------------------------------------------------
+   */
+
+  const identification =
+    chercherPremier(data, [
+      "identification",
+      "piece",
+      "part",
+      "component",
+      "composant",
+      "board",
+      "carte"
+    ]);
+
+
+  if (identification) {
+
+    html += `
+      <div class="success">
+
+        <strong>Élément identifié :</strong><br>
+
+        ${afficherTexte(valeurTexte(identification))}
+
+      </div>
+    `;
+
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * REFERENCE PROCEDURE
+   * -------------------------------------------------------
+   */
+
+  const reference =
+    chercherPremier(data, [
+      "reference",
+      "référence",
+      "procedure_reference",
+      "procedureReference",
+      "manuel_reference",
+      "manual_reference"
+    ]);
+
+
+  if (reference) {
+
+    html += `
+      <div class="technical-section">
+
+        <h3>
+          Référence Service Manual
+        </h3>
+
+        <div class="answer-box">
+          ${afficherTexte(valeurTexte(reference))}
+        </div>
+
+      </div>
+    `;
+
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * AVERTISSEMENT
+   * -------------------------------------------------------
+   */
+
+  const warning =
+    chercherPremier(data, [
+      "warning",
+      "warnings",
+      "avertissement",
+      "attention",
+      "precaution",
+      "précaution"
+    ]);
+
+
+  if (warning) {
+
+    html += `
+      <div class="warning">
+
+        <strong>Attention</strong><br>
+
+        ${afficherTexte(valeurTexte(warning))}
+
+      </div>
+    `;
+
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * REPONSE GENERALE
+   * -------------------------------------------------------
+   */
+
+  if (
+    texte &&
+    !(
+      typeof texte === "object" &&
+      texte === data.reponse
+    )
+  ) {
+
+    const texteFinal = valeurTexte(texte);
+
+    if (texteFinal) {
+
+      html += `
+        <div class="answer-box">
+
+          <div class="answer-title">
+            Réponse
+          </div>
+
+          <div>
+            ${afficherTexte(texteFinal)}
+          </div>
+
+        </div>
+      `;
+
+    }
+
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * RESULTATS DE RECHERCHE
+   * -------------------------------------------------------
+   */
+
+  const resultats =
+    chercherPremier(data, [
+      "results",
+      "resultats",
+      "résultats",
+      "matches",
+      "documents",
+      "passages",
+      "sources"
+    ]);
+
+
+  if (Array.isArray(resultats) && resultats.length > 0) {
+
+    html += `
+      <div class="technical-section">
+
+        <h3>
+          Passages du Service Manual
+        </h3>
+    `;
+
+
+    resultats.forEach((item, index) => {
+
+      if (typeof item === "object") {
+
+        const contenu =
+          chercherPremier(item, [
+            "text",
+            "texte",
+            "content",
+            "contenu",
+            "page_content",
+            "passage",
+            "description"
+          ]);
+
+        const score =
+          chercherPremier(item, [
+            "score",
+            "similarity",
+            "distance"
+          ]);
+
+        const source =
+          chercherPremier(item, [
+            "source",
+            "file",
+            "filename",
+            "document",
+            "page"
+          ]);
+
+
+        html += `
+          <div class="result-item">
+
+            ${
+              score !== null
+                ? `<div class="score">
+                    Pertinence :
+                    ${afficherTexte(valeurTexte(score))}
+                   </div>`
+                : ""
+            }
+
+            ${
+              source
+                ? `<div>
+                    <strong>
+                      ${afficherTexte(valeurTexte(source))}
+                    </strong>
+                   </div>`
+                : ""
+            }
+
+            <div>
+              ${afficherTexte(
+                valeurTexte(contenu || item)
+              )}
+            </div>
+
+          </div>
+        `;
+
+      } else {
+
+        html += `
+          <div class="result-item">
+
+            <div class="score">
+              Résultat ${index + 1}
+            </div>
+
+            <div>
+              ${afficherTexte(valeurTexte(item))}
+            </div>
+
+          </div>
+        `;
+
+      }
+
+    });
+
+
+    html += `
+      </div>
+    `;
+
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * FALLBACK
+   * -------------------------------------------------------
+   */
+
+  if (
+    !html.trim() ||
+    html === `
+    <div class="result-header">
+    </div>
+  `
+  ) {
+
+    html += `
+      <div class="answer-box">
+
+        <div class="answer-title">
+          Résultat brut
+        </div>
+
+        <pre>${afficherTexte(
+          JSON.stringify(data, null, 2)
+        )}</pre>
+
+```
+  </div>
+`;
+```
+
+}
+
+/*
+
+* ---
+* DEBUG TEMPORAIRE
+* ---
+*
+* On garde temporairement la réponse JSON complète
+* en bas de page. Cela permettra de voir exactement
+* ce que renvoie answer-manual si un cas reste incorrect.
+  */
+
+html += `
+
+```
+<details style="margin-top:20px;">
+
+  <summary>
+    Données techniques reçues
+  </summary>
+
+  <pre>${afficherTexte(
+    JSON.stringify(data, null, 2)
+  )}</pre>
+
+</details>
+```
+
+`;
+
+result.innerHTML = html;
+
+}
+
+/* =========================================================
+AFFICHAGE REPONSE TECHNIQUE
+========================================================= */
+
+function afficherReponseTechnique(data) {
+
+let objetReponse =
+data.reponse ||
+data.réponse ||
+data.answer ||
+data.procedure ||
+data;
+
+let html = "";
+
+/*
+
+* Si la réponse est une chaîne simple
+  */
+
+if (
+typeof objetReponse === "string" ||
+typeof objetReponse === "number"
+) {
+
+```
+return `
+
+  <div class="answer-box">
+
+    <div class="answer-title">
+      Réponse technique
+    </div>
+
+    <div>
+      ${afficherTexte(
+        valeurTexte(objetReponse)
+      )}
+    </div>
+
+  </div>
+
+`;
+```
+
+}
+
+/*
+
+* Si la réponse est un objet
+  */
+
+if (
+objetReponse &&
+typeof objetReponse === "object"
+) {
+
+```
+const titre =
+  chercherPremier(objetReponse, [
+    "titre",
+    "title",
+    "nom",
+    "name"
+  ]);
+
+
+const composant =
+  chercherPremier(objetReponse, [
+    "composant",
+    "component",
+    "piece",
+    "part",
+    "carte",
+    "board"
+  ]);
+
+
+const emplacement =
+  chercherPremier(objetReponse, [
+    "localisation",
+    "location",
+    "emplacement",
+    "position"
+  ]);
+
+
+const instructions =
+  chercherPremier(objetReponse, [
+    "instructions",
+    "instruction",
+    "procedure",
+    "procédure",
+    "etapes",
+    "étapes",
+    "steps",
+    "steps_text"
+  ]);
+
+
+const texte =
+  chercherPremier(objetReponse, [
+    "texte",
+    "text",
+    "message",
+    "description",
+    "content",
+    "contenu"
+  ]);
+
+
+html += `
+
+  <di
+```
