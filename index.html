@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TechCanon</title>
+  <meta name="theme-color" content="#CC0000">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23CC0000'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' font-weight='bold' font-style='italic' text-anchor='middle' fill='white'%3ETC%3C/text%3E%3C/svg%3E">
 
   <style>
     * { box-sizing: border-box; }
@@ -386,6 +388,88 @@
     .vision-zone { flex: 1; overflow: auto; text-align: center; }
     .vision-zone img { max-width: 100%; cursor: zoom-in; background: white; }
     .vision-zone img.zoom { max-width: none; width: 230%; cursor: zoom-out; }
+
+    /* =========================
+       THEME ROUGE CANON
+       ========================= */
+    :root {
+      --rouge: #CC0000;
+      --rouge-fonce: #9E0000;
+      --rouge-clair: #FDECEC;
+      --noir: #1A1A1A;
+    }
+
+    body { background: var(--rouge); }
+
+    header {
+      background: white;
+      color: var(--noir);
+      border-bottom: 4px solid var(--rouge-fonce);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      padding: 10px 16px;
+    }
+    header h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+      font-weight: 900;
+      font-size: 32px;
+      line-height: 1;
+      letter-spacing: -1.5px;
+    }
+    header h1 .tech { color: var(--noir); }
+    header h1 .canon { color: var(--rouge); }
+    header p {
+      color: #555;
+      font-size: 12px;
+      margin: 4px 0 0;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-secondaire {
+      background: white;
+      color: var(--rouge);
+      border: 1px solid var(--rouge);
+      font-weight: bold;
+    }
+
+    .barre-modele { border-bottom: 1px solid #e5e5e5; }
+    .barre-modele select:focus,
+    #question:focus { outline: 2px solid var(--rouge); border-color: var(--rouge); }
+
+    .msg.moi .bulle { background: var(--noir); color: white; }
+    .msg.agent .bulle { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.30); }
+
+    .exemple {
+      background: var(--rouge-clair);
+      color: var(--rouge-fonce);
+      border: 1px solid #F5B5B5;
+    }
+
+    .section.principale { border-left-color: var(--rouge); background: #FFF5F5; }
+    .section.principale .section-num { background: var(--rouge); }
+
+    .titre-bloc { color: var(--rouge-fonce); }
+
+    .erreur {
+      background: white;
+      color: var(--rouge-fonce);
+      border-left: 5px solid var(--rouge-fonce);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.30);
+    }
+
+    #envoyer { background: var(--rouge); }
+    #envoyerPV { background: var(--noir); }
+
+    .saisie { border-top: 4px solid var(--rouge-fonce); }
+
+    /* Grand ecran : l'en-tete et la barre du modele s'alignent sur la conversation */
+    header,
+    .barre-modele {
+      padding-left: max(16px, calc((100% - 900px) / 2 + 12px));
+      padding-right: max(16px, calc((100% - 900px) / 2 + 12px));
+    }
+    details.pv summary { color: var(--noir); }
   </style>
 </head>
 
@@ -393,7 +477,7 @@
 
 <header>
   <div>
-    <h1>TechCanon</h1>
+    <h1><span class="tech">Tech</span><span class="canon">Canon</span></h1>
     <p>Assistant technique Canon</p>
   </div>
   <button class="btn-secondaire" id="nouvelle" type="button">Nouvelle conversation</button>
@@ -409,7 +493,7 @@
 <div class="saisie">
   <div class="saisie-interne">
     <textarea id="question" rows="1"
-      placeholder="Pose ta question : code erreur, pièce, procédure, symptôme..."></textarea>
+      placeholder="Pose ta question..."></textarea>
     <button id="envoyer" type="button">Envoyer</button>
   </div>
 
