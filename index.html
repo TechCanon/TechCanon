@@ -458,8 +458,9 @@
       display: block;
       width: 100%;
       height: auto;
-      max-height: 520px;
+      max-height: 900px;
       object-fit: contain;
+      margin: 0 auto;
     }
 
     .procedure-intro {
@@ -585,6 +586,33 @@
       height: auto;
       max-height: 600px;
       object-fit: contain;
+    }
+
+    .procedure-images {
+      margin-top: 28px;
+    }
+
+    .procedure-images .manual-page-card {
+      width: 100%;
+    }
+
+    .procedure-images .manual-image-wrap {
+      background: #eef1f4;
+      padding: 10px;
+    }
+
+    .procedure-images .manual-image-wrap img {
+      max-height: 1100px;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .procedure-image-note {
+      margin: 0;
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.55;
     }
 
     .warning {
@@ -1175,6 +1203,107 @@
 
 
     /* =========================
+       IMAGES DE LA PROCEDURE
+       ========================= */
+
+    function afficherImagesProcedure(reponse) {
+      if (
+        !reponse ||
+        !Array.isArray(reponse.images) ||
+        reponse.images.length === 0
+      ) {
+        return "";
+      }
+
+      const images = reponse.images
+        .map((image) => {
+
+          const url = valeurTexte(
+            image?.url ||
+            image?.image,
+            ""
+          );
+
+          if (!url) {
+            return "";
+          }
+
+          const pageManuel = valeurTexte(
+            image?.page_manuel,
+            "—"
+          );
+
+          const pagePDF = valeurTexte(
+            image?.page_pdf,
+            "—"
+          );
+
+          return `
+            <article class="manual-page-card">
+
+              <div class="manual-image-wrap">
+                <img
+                  src="${echapperHTML(url)}"
+                  alt="Page ${echapperHTML(
+                    pagePDF
+                  )} du Service Manual"
+                  loading="lazy"
+                >
+              </div>
+
+              <div class="manual-page-content">
+
+                <h3 class="manual-page-title">
+                  Illustration de la procédure
+                </h3>
+
+                <div class="manual-page-meta">
+                  Manuel ${echapperHTML(
+                    pageManuel
+                  )}
+                  · PDF ${echapperHTML(
+                    pagePDF
+                  )}
+                </div>
+
+                <p class="procedure-image-note">
+                  Page source du Service Manual utilisée
+                  pour les opérations de dépose.
+                </p>
+
+              </div>
+
+            </article>
+          `;
+        })
+        .join("");
+
+      if (!images) {
+        return "";
+      }
+
+      return `
+        <section class="section procedure-images">
+
+          <h2 class="section-title">
+            Illustration du Service Manual
+          </h2>
+
+          <p class="section-subtitle">
+            Les opérations graphiques de dépose sont visibles
+            directement sur la page source du manuel.
+          </p>
+
+          <div class="manual-pages">
+            ${images}
+          </div>
+
+        </section>
+      `;
+    }
+
+
+    /* =========================
        PROCEDURE
        ========================= */
 
@@ -1352,6 +1481,8 @@
           <div class="journey">
             ${cartes}
           </div>
+
+          ${afficherImagesProcedure(reponse)}
 
         </section>
       `;
@@ -1543,7 +1674,7 @@
         return;
       }
 
-      const reponse = obtenirDonneesReponse(data);
+      let reponse = obtenirDonneesReponse(data);
 
       if (!reponse) {
         resultat.innerHTML = afficherReponseGenerique(
@@ -1552,6 +1683,25 @@
 
         resultat.classList.add("visible");
         return;
+      }
+
+      /*
+       * IMPORTANT :
+       * Le backend peut renvoyer "images" au niveau racine
+       * de la réponse HTTP, tandis que les données techniques
+       * sont dans "data.reponse".
+       *
+       * On rattache donc les images à l'objet utilisé
+       * par l'affichage sans modifier le backend.
+       */
+      if (
+        Array.isArray(data?.images) &&
+        data.images.length > 0
+      ) {
+        reponse = {
+          ...reponse,
+          images: data.images
+        };
       }
 
       const type = obtenirTypeReponse(reponse);
