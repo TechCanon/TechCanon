@@ -159,6 +159,51 @@
     .section-sous { font-size: 12px; color: #64748b; margin-top: 2px; }
     .note { font-size: 14px; color: #64748b; margin-bottom: 8px; }
 
+    /* Preparatifs : liste depliable */
+    .prep-outils { display: flex; justify-content: flex-end; margin: -4px 0 8px; }
+    .prep-outils button {
+      background: transparent;
+      border: 1px solid #d97706;
+      color: #92400e;
+      border-radius: 14px;
+      padding: 4px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    details.prep {
+      background: white;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+    details.prep summary {
+      cursor: pointer;
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      list-style: none;
+    }
+    details.prep summary::-webkit-details-marker { display: none; }
+    details.prep summary::after { content: "▾"; margin-left: auto; color: #92400e; }
+    details.prep[open] summary::after { content: "▴"; }
+    .prep-num {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fcd34d;
+      color: #451a03;
+      font-weight: bold;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .prep-nom { font-size: 14px; font-weight: bold; }
+    .prep-page { font-size: 11px; color: #64748b; white-space: nowrap; }
+    .prep-corps { padding: 2px 10px 10px; }
+
     /* Etapes numerotees */
     ol.etapes { list-style: none; counter-reset: etape; margin: 0; padding: 0; }
     ol.etapes li {
@@ -641,6 +686,76 @@ function creerSection(numero, titre, classe, sousTitre) {
   return section;
 }
 
+function creerSectionPreparatifs(numero, prealables, parId, dejaMontrees) {
+  const section = creerSection(
+    numero,
+    "Préparatifs (" + prealables.length + ")",
+    "prealable",
+    "À faire avant de commencer, dans cet ordre"
+  );
+
+  const outils = el("div", "prep-outils");
+  const basculer = el("button", "", "Tout ouvrir / fermer");
+  basculer.type = "button";
+  outils.appendChild(basculer);
+  section.appendChild(outils);
+
+  const blocs = [];
+
+  prealables.forEach((pre, i) => {
+    const bloc = document.createElement("details");
+    bloc.className = "prep";
+    blocs.push(bloc);
+
+    const resume = document.createElement("summary");
+    resume.appendChild(el("span", "prep-num", String(i + 1)));
+    resume.appendChild(el("span", "prep-nom", pre.nom));
+    if (pre.page_imprimee) {
+      resume.appendChild(el("span", "prep-page", "manuel p." + pre.page_imprimee));
+    }
+    bloc.appendChild(resume);
+
+    const corps = el("div", "prep-corps");
+
+    if (Array.isArray(pre.etapes) && pre.etapes.length > 0) {
+      corps.appendChild(creerListeEtapes(pre.etapes, parId, dejaMontrees));
+    }
+
+    const sourcesPre = (pre.sources || []).map((id) => parId[id]).filter(Boolean);
+
+    if (sourcesPre.length > 0) {
+      sourcesPre.forEach((s) => dejaMontrees.add(s.id));
+      corps.appendChild(creerMiniatures(sourcesPre));
+      if (pre.incertain) {
+        corps.appendChild(el("div", "note",
+          "Page à vérifier : le titre n'a pas été retrouvé exactement à cet endroit."));
+      }
+    } else if (!(pre.etapes && pre.etapes.length > 0)) {
+      corps.appendChild(el("div", "note",
+        pre.note || "Page non trouvée automatiquement."));
+    }
+
+    const detail = el("button", "exemple", "Détailler les étapes");
+    detail.type = "button";
+    detail.style.marginTop = "8px";
+    detail.addEventListener("click", () => {
+      champ.value = "Comment faire : " + pre.nom + " ?";
+      envoyer();
+    });
+    corps.appendChild(detail);
+
+    bloc.appendChild(corps);
+    section.appendChild(bloc);
+  });
+
+  basculer.addEventListener("click", () => {
+    const ouvrir = blocs.some((b) => !b.open);
+    blocs.forEach((b) => { b.open = ouvrir; });
+  });
+
+  return section;
+}
+
 function afficherReponse(data) {
   const { ligne, bulle } = ajouterBulleAgent();
   const sources = Array.isArray(data.sources) ? data.sources : [];
@@ -671,36 +786,16 @@ function afficherReponse(data) {
   const etapes = Array.isArray(data.etapes) ? data.etapes : [];
 
   // Les sections sont numerotees dans l'ordre a suivre
-  const total = prealables.length + (etapes.length > 0 ? 1 : 0);
+  const total = (prealables.length > 0 ? 1 : 0) + (etapes.length > 0 ? 1 : 0);
   let compteur = 0;
   const numeroSuivant = () => (total > 1 ? ++compteur : 0);
 
-  // 1) Operations preliminaires
-  prealables.forEach((pre) => {
-    const section = creerSection(
-      numeroSuivant(),
-      "Préalable : " + pre.nom,
-      "prealable",
-      pre.raison
+  // 1) Preparatifs : une seule section, chaque operation se deplie
+  if (prealables.length > 0) {
+    bulle.appendChild(
+      creerSectionPreparatifs(numeroSuivant(), prealables, parId, dejaMontrees)
     );
-
-    if (pre.trouve && Array.isArray(pre.etapes) && pre.etapes.length > 0) {
-      section.appendChild(creerListeEtapes(pre.etapes, parId, dejaMontrees));
-    } else {
-      section.appendChild(el("div", "note",
-        pre.note || "Procédure non trouvée dans les pages consultées."));
-
-      const bouton = el("button", "exemple", "Chercher : " + pre.nom);
-      bouton.type = "button";
-      bouton.addEventListener("click", () => {
-        champ.value = "Comment faire : " + pre.nom + " ?";
-        envoyer();
-      });
-      section.appendChild(bouton);
-    }
-
-    bulle.appendChild(section);
-  });
+  }
 
   // 2) Operation demandee
   if (etapes.length > 0) {
