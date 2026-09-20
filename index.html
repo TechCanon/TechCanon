@@ -50,10 +50,6 @@
       font: inherit;
     }
 
-    /* =========================
-       HEADER CANON
-       ========================= */
-
     .topbar {
       width: 100%;
       background: var(--canon-red);
@@ -131,10 +127,6 @@
       box-shadow: 0 0 0 3px rgba(125, 240, 173, 0.18);
     }
 
-    /* =========================
-       PAGE
-       ========================= */
-
     .page {
       max-width: 1180px;
       margin: 0 auto;
@@ -158,10 +150,6 @@
       font-size: 15px;
       line-height: 1.6;
     }
-
-    /* =========================
-       SEARCH CARD
-       ========================= */
 
     .search-card {
       background: var(--surface);
@@ -264,10 +252,6 @@
       cursor: wait;
     }
 
-    /* =========================
-       STATUS
-       ========================= */
-
     .status {
       display: none;
       align-items: center;
@@ -300,10 +284,6 @@
         transform: rotate(360deg);
       }
     }
-
-    /* =========================
-       RESULT
-       ========================= */
 
     #resultat {
       display: none;
@@ -371,10 +351,6 @@
       line-height: 1.7;
     }
 
-    /* =========================
-       SECTIONS
-       ========================= */
-
     .section {
       margin-top: 26px;
     }
@@ -402,10 +378,6 @@
       color: var(--text-soft);
       font-size: 13px;
     }
-
-    /* =========================
-       IDENTIFICATION
-       ========================= */
 
     .identification-grid {
       display: grid;
@@ -435,10 +407,6 @@
       color: var(--text);
       word-break: break-word;
     }
-
-    /* =========================
-       MANUAL PAGES
-       ========================= */
 
     .manual-pages {
       display: grid;
@@ -493,10 +461,6 @@
       max-height: 520px;
       object-fit: contain;
     }
-
-    /* =========================
-       PROCEDURE
-       ========================= */
 
     .procedure-intro {
       background: var(--canon-red-light);
@@ -623,10 +587,6 @@
       object-fit: contain;
     }
 
-    /* =========================
-       WARNING
-       ========================= */
-
     .warning {
       margin-top: 20px;
       padding: 14px 16px;
@@ -638,10 +598,6 @@
       line-height: 1.55;
     }
 
-    /* =========================
-       GENERIC ANSWER
-       ========================= */
-
     .generic-answer {
       background: #ffffff;
       border: 1px solid var(--border);
@@ -650,10 +606,6 @@
       line-height: 1.7;
       white-space: pre-wrap;
     }
-
-    /* =========================
-       PV
-       ========================= */
 
     .pv-card {
       background: #ffffff;
@@ -688,10 +640,6 @@
       min-width: 220px;
     }
 
-    /* =========================
-       FOOTER
-       ========================= */
-
     footer {
       margin-top: 30px;
       border-top: 1px solid var(--border);
@@ -714,10 +662,6 @@
       color: var(--canon-red);
       font-weight: 900;
     }
-
-    /* =========================
-       RESPONSIVE
-       ========================= */
 
     @media (max-width: 800px) {
       .topbar-inner {
@@ -817,10 +761,6 @@
 
 <body>
 
-  <!-- =========================
-       HEADER
-       ========================= -->
-
   <header class="topbar">
     <div class="topbar-inner">
 
@@ -843,10 +783,6 @@
     </div>
   </header>
 
-  <!-- =========================
-       MAIN
-       ========================= -->
-
   <main class="page">
 
     <div class="intro">
@@ -856,8 +792,6 @@
         directement dans le Service Manual.
       </p>
     </div>
-
-    <!-- SEARCH -->
 
     <section class="search-card">
 
@@ -910,18 +844,12 @@
 
     </section>
 
-    <!-- STATUS -->
-
     <div id="status" class="status">
       <div class="status-spinner"></div>
       <span id="statusTexte">Recherche dans le Service Manual…</span>
     </div>
 
-    <!-- RESULT -->
-
     <section id="resultat"></section>
-
-    <!-- PV -->
 
     <section class="pv-card">
 
@@ -954,10 +882,6 @@
 
   </main>
 
-  <!-- =========================
-       FOOTER
-       ========================= -->
-
   <footer>
 
     <div class="footer-inner">
@@ -974,7 +898,6 @@
     </div>
 
   </footer>
-
 
   <script>
     const ANSWER_URL =
@@ -1256,42 +1179,69 @@
        ========================= */
 
     function afficherProcedurePrincipale(reponse) {
-      if (!reponse || !reponse.procedure) {
+      if (!reponse || !Array.isArray(reponse.procedure)) {
         return "";
       }
 
-      const procedure = reponse.procedure;
-
       let etapes = [];
 
+      /*
+       * Le backend renvoie maintenant directement :
+       *
+       * preparatifs: [...]
+       * procedure: [...]
+       *
+       * et non :
+       *
+       * procedure: {
+       *   preparatifs: [...],
+       *   etapes: [...]
+       * }
+       */
+
       if (
-        Array.isArray(procedure.etapes) &&
-        procedure.etapes.length > 0
+        Array.isArray(reponse.preparatifs)
       ) {
-        etapes = procedure.etapes;
-      } else {
-
-        if (Array.isArray(procedure.preparatifs)) {
-          etapes = etapes.concat(procedure.preparatifs);
-        }
-
-        if (procedure.intervention) {
-          etapes.push(procedure.intervention);
-        }
+        etapes = etapes.concat(
+          reponse.preparatifs.map((etape) => ({
+            ...etape,
+            type: "PRÉPARATIF",
+            titre: valeurTexte(
+              etape.action,
+              "Préparatif"
+            ),
+            description: valeurTexte(
+              etape.description,
+              etape.action || ""
+            )
+          }))
+        );
       }
+
+      etapes = etapes.concat(
+        reponse.procedure.map((etape) => ({
+          ...etape,
+          type: "PROCÉDURE",
+          titre: valeurTexte(
+            etape.titre,
+            "Étape du Service Manual"
+          )
+        }))
+      );
 
       if (etapes.length === 0) {
         return "";
       }
 
       const titreProcedure = valeurTexte(
-        procedure.titre,
+        reponse.titre,
         "Procédure du Service Manual"
       );
 
       const cartes = etapes.map((etape, index) => {
 
         const numero = valeurTexte(
+          etape.etape ??
           etape.numero,
           index + 1
         );
@@ -1303,6 +1253,7 @@
 
         const titre = valeurTexte(
           etape.titre,
+          etape.action ||
           "Étape du Service Manual"
         );
 
@@ -1463,7 +1414,9 @@
 
       const texte = valeurTexte(
         reponse.reponse,
-        "Aucune réponse disponible."
+        reponse.type === "PROCEDURE"
+          ? ""
+          : "Aucune réponse disponible."
       );
 
       return `
@@ -1474,7 +1427,11 @@
             <div class="result-title-wrap">
 
               <div class="result-kicker">
-                Réponse technique
+                ${
+                  reponse.type === "PROCEDURE"
+                    ? "Procédure Service Manual"
+                    : "Réponse technique"
+                }
               </div>
 
               <h2 class="result-title">
@@ -1491,9 +1448,15 @@
 
           <div class="result-body">
 
-            <p class="answer-text">
-              ${echapperHTML(texte)}
-            </p>
+            ${
+              texte
+                ? `
+                  <p class="answer-text">
+                    ${echapperHTML(texte)}
+                  </p>
+                `
+                : ""
+            }
 
             ${afficherIdentification(reponse)}
 
@@ -1595,10 +1558,11 @@
 
       if (
         type === "REPONSE_TECHNIQUE" ||
+        type === "PROCEDURE" ||
         reponse.intention ||
         reponse.identification ||
         reponse.localisation ||
-        reponse.procedure
+        Array.isArray(reponse.procedure)
       ) {
         resultat.innerHTML =
           afficherReponseTechnique(reponse);
