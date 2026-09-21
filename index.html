@@ -622,11 +622,16 @@ async function appeler(corps, essai) {
    Menu des modeles
    ========================= */
 
-// "C3926i", "C3900" -> "C39XX" : on garde les lettres et les 2 premiers chiffres,
-// la suite (la vitesse de la machine) est remplacee par XX.
+// Regles de simplification du nom de modele pour le menu :
+// - 4 chiffres ou plus (C3926i, C5840i) : les 2 premiers = modele, les 2 suivants = vitesse
+//   -> on garde les 2 premiers et on remplace le reste par XX (C39XX, C58XX)
+// - 3 chiffres (C257, C359) : le chiffre de fin definit le MODELE, pas la vitesse
+//   -> on garde le nom tel quel, pas de simplification
+// - LBP + chiffres : idem, on garde tel quel
 function etiquetteSerie(nom) {
-  const m = /^([A-Za-z]+)(\d{2})\d{2}[A-Za-z]*$/.exec(nom);
-  return m ? m[1] + m[2] + "XX" : nom;
+  const m4 = /^([A-Za-z]+)(\d{2})\d{2,}[A-Za-z]*$/.exec(nom);
+  if (m4 && !nom.toUpperCase().startsWith("LBP")) return m4[1] + m4[2] + "XX";
+  return nom;
 }
 
 // Plus petit nombre d'entrees du menu qui couvrent tous les documents
