@@ -525,7 +525,7 @@ const ANSWER_URL =
 const UPLOAD_URL =
   "https://cfctnozhiyusrcxglalw.supabase.co/functions/v1/upload-pv";
 
-const MODELES_SECOURS = ["C1538P", "C1533P", "LBP1538C"];
+const MODELES_SECOURS = ["C15XX", "C39XX"];
 
 const EXEMPLES = [
   "Où se trouve la carte contrôleur principale ?",
@@ -622,38 +622,76 @@ async function appeler(corps, essai) {
    Menu des modeles
    ========================= */
 
+// "C3926i", "C3900" -> "C39XX" : on garde les lettres et les 2 premiers chiffres,
+// la suite (la vitesse de la machine) est remplacee par XX.
+function etiquetteSerie(nom) {
+  const m = /^([A-Za-z]+)(\d{2})\d{2}[A-Za-z]*$/.exec(nom);
+  return m ? m[1] + m[2] + "XX" : nom;
+}
+
+// Plus petit nombre d'entrees du menu qui couvrent tous les documents
+function choisirEtiquettes(chaines) {
+  const etiquettesParChaine = chaines.map((chaine) =>
+    new Set(
+      chaine.split("/").map((t) => t.trim()).filter(Boolean).map(etiquetteSerie)
+    )
+  );
+
+  const restantes = new Set(chaines.map((_, i) => i));
+  const choisies = [];
+
+  while (restantes.size > 0) {
+    const compte = {};
+    restantes.forEach((i) => {
+      etiquettesParChaine[i].forEach((e) => { compte[e] = (compte[e] || 0) + 1; });
+    });
+
+    const entrees = Object.entries(compte);
+    if (entrees.length === 0) break;
+
+    entrees.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    const meilleure = entrees[0][0];
+    choisies.push(meilleure);
+
+    [...restantes].forEach((i) => {
+      if (etiquettesParChaine[i].has(meilleure)) restantes.delete(i);
+    });
+  }
+
+  return choisies.sort();
+}
+
 async function chargerModeles() {
-  let jetons = [];
+  let noms = [];
 
   try {
     const reponse = await appeler({ action: "modeles" });
     const data = await reponse.json();
 
     if (data && data.ok && Array.isArray(data.modeles)) {
-      const ensemble = new Set();
-      data.modeles.forEach((m) => {
-        String(m.modele || "").split("/").forEach((t) => {
-          t = t.trim();
-          if (t) ensemble.add(t);
-        });
-      });
-      jetons = [...ensemble].sort();
+      const chaines = [...new Set(
+        data.modeles.map((m) => String(m.modele || "").trim()).filter(Boolean)
+      )];
+      noms = choisirEtiquettes(chaines);
     }
   } catch (erreur) {
     console.error("Liste des modèles indisponible :", erreur);
   }
 
-  if (jetons.length === 0) jetons = MODELES_SECOURS;
+  if (noms.length === 0) noms = MODELES_SECOURS;
 
   selectModele.innerHTML = "";
-  jetons.forEach((nom) => {
+  noms.forEach((nom) => {
     const option = document.createElement("option");
     option.value = nom;
     option.textContent = nom;
     selectModele.appendChild(option);
   });
 
-  if (jetons.includes("C1538P")) selectModele.value = "C1538P";
+  // on retrouve le dernier modele utilise
+  let dernier = "";
+  try { dernier = localStorage.getItem("techcanon_modele") || ""; } catch (e) { /* rien */ }
+  if (dernier && noms.includes(dernier)) selectModele.value = dernier;
 }
 
 
@@ -1045,6 +1083,7 @@ document.getElementById("nouvelle").addEventListener("click", () => {
 selectModele.addEventListener("change", () => {
   historique = [];
   afficherAccueil();
+  try { localStorage.setItem("techcanon_modele", selectModele.value); } catch (e) { /* rien */ }
 });
 
 
