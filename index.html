@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -142,6 +143,7 @@
     .section.prealable { border-left-color: #f59e0b; background: #fffbeb; }
     .section.principale { border-left-color: #2563eb; background: #eff6ff; }
     .section.repose { border-left-color: #16a34a; background: #f0fdf4; }
+    .section.reglage { border-left-color: #7c3aed; background: #f5f3ff; }
 
     .section-entete { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
     .section-num {
@@ -944,6 +946,24 @@ function afficherReponse(data) {
     bulle.appendChild(section);
   }
 
+  // 4) Reglage associe (optionnel : le manuel le documente parfois juste
+  // apres une depose/un remplacement, souvent conditionne a un symptome)
+  if (data.reglage && data.reglage.necessaire) {
+    const section = creerSection(
+      0,
+      "Réglage",
+      "reglage",
+      data.reglage.condition ? "Si : " + data.reglage.condition : "Après remontage"
+    );
+
+    const reglageEtapes = Array.isArray(data.reglage.etapes) ? data.reglage.etapes : [];
+    if (reglageEtapes.length > 0) {
+      section.appendChild(creerListeEtapes(reglageEtapes, parId, dejaMontrees));
+    }
+
+    bulle.appendChild(section);
+  }
+
   // Pieces
   if (Array.isArray(data.pieces) && data.pieces.length > 0) {
     bulle.appendChild(el("div", "titre-bloc", "Pièces"));
@@ -1009,6 +1029,14 @@ function resumePourHistorique(data) {
   if (Array.isArray(data.pieces) && data.pieces.length > 0) {
     texte += "\nPieces : " + data.pieces
       .map((p) => p.reference + " " + p.designation).join(" | ");
+  }
+  if (data.reglage && data.reglage.necessaire) {
+    const etapesReglage = Array.isArray(data.reglage.etapes)
+      ? data.reglage.etapes.map((e) => e.texte).join(" | ")
+      : "";
+    texte += "\nReglage" +
+      (data.reglage.condition ? " (" + data.reglage.condition + ")" : "") +
+      " : " + etapesReglage;
   }
   return texte.slice(0, 1500);
 }
